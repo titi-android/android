@@ -1,9 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-//    id("busSchedule.android.library")
-//    alias(libs.plugins.busschedule.android.library)
-    id("busSchedule.android.compose")
     id("busSchedule.android.hilt")
 }
 
@@ -59,8 +56,8 @@ android {
 
 dependencies {
     implementation(projects.feature.main)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.ui.graphics)
-    testImplementation(libs.junit4)
+//    implementation(libs.androidx.core.ktx)
+//    implementation(libs.androidx.lifecycle.runtime.ktx)
+//    implementation(libs.androidx.ui.graphics)
+//    testImplementation(libs.junit4)
 }

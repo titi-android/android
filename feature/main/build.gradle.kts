@@ -6,11 +6,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.busschedule"
+    namespace = "com.example.busschedule.feature.main"
+//    namespace = "com.example.busschedule"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.busschedule"
+        applicationId = "com.example.busschedule.feature.main"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -20,6 +21,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+    }
+    buildFeatures {
+        compose = true
     }
 
     buildTypes {
@@ -52,8 +56,9 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.ui.graphics)
-    testImplementation(libs.junit4)
+    implementation(projects.core.designsystem)
+//    implementation(libs.androidx.core.ktx)
+//    implementation(libs.androidx.lifecycle.runtime.ktx)
+//    implementation(libs.androidx.ui.graphics)
+//    testImplementation(libs.junit4)
 }

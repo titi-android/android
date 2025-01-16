@@ -19,3 +19,5 @@ rootProject.name = "BusSchedule"
 include(":app")
 include(":feature")
 include(":feature:main")
+include(":core")
+include(":core:designsystem")
