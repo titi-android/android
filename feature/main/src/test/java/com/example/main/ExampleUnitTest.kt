@@ -1,4 +1,4 @@
-package com.example.busschedule
+package com.example.main
 
 import org.junit.Test
 
