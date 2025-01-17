@@ -1,4 +1,5 @@
 import com.android.build.gradle.LibraryExtension
+import com.example.build_logic.configureCompose
 import com.example.build_logic.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -14,6 +15,7 @@ internal class AndroidLibraryPlugin : Plugin<Project> {
 
         extensions.configure<LibraryExtension> {
             configureKotlinAndroid(this)
+            configureCompose(this)
             buildTypes {
                 release {
                     isMinifyEnabled = false

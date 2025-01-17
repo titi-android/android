@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.busschedule.feature.main"
+    namespace = "com.example.feature.main"
 
     defaultConfig {
         applicationId = "com.example.busschedule.feature.main"
