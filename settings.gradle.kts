@@ -18,7 +18,8 @@ dependencyResolutionManagement {
 rootProject.name = "BusSchedule"
 include(":app")
 include(":feature")
-include(":feature:main")
 include(":core")
 include(":core:designsystem")
 include(":core:util")
+include(":feature:login")
+include(":feature:navigate")

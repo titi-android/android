@@ -25,6 +25,8 @@ class ApplicationState(
     private var currentRoute: String? = Constants.HOME_GRAPH
     var deepLink: Uri? = null
 
+    fun getNavController() = navController
+
     fun changeBottomBarVisibility(visibility: Boolean) {
         bottomBarState.value = visibility
     }
