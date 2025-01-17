@@ -1,13 +1,14 @@
 plugins {
     id("busSchedule.android.application")
+    id("busSchedule.android.compose")
     id("busSchedule.android.hilt")
 }
 
 android {
-    namespace = "com.example.busschedule.app"
+    namespace = "com.example.busschedule"
 
     defaultConfig {
-        applicationId = "com.example.busschedule"
+        applicationId = "com.example.busschedule.app"
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -21,7 +22,9 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.main)
+    implementation(projects.feature.navigate)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.util)
 //    implementation(libs.androidx.core.ktx)
 //    implementation(libs.androidx.lifecycle.runtime.ktx)
 //    implementation(libs.androidx.ui.graphics)
