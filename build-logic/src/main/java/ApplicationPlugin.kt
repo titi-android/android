@@ -1,19 +1,24 @@
+
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
+import com.example.build_logic.configureCompose
 import com.example.build_logic.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
-internal class AndroidLibraryPlugin : Plugin<Project> {
+internal class ApplicationPlugin : Plugin<Project> {
 
     override fun apply(target: Project) = with(target) {
         with(pluginManager) {
-            apply("com.android.library")
+            apply("com.android.application")
             apply("org.jetbrains.kotlin.android")
         }
 
-        extensions.configure<LibraryExtension> {
+
+        extensions.configure<ApplicationExtension> {
             configureKotlinAndroid(this)
+            configureCompose(this)
             buildTypes {
                 release {
                     isMinifyEnabled = false

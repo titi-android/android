@@ -31,5 +31,13 @@ gradlePlugin {
             id = "busSchedule.android.compose"
             implementationClass = "AndroidComposePlugin"
         }
+        register("AndroidFeaturePlugin") {
+            id = "busSchedule.android.feature"
+            implementationClass = "AndroidFeaturePlugin"
+        }
+        register("ApplicationPlugin") {
+            id = "busSchedule.android.application"
+            implementationClass = "ApplicationPlugin"
+        }
     }
 }
