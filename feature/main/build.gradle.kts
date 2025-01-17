@@ -1,11 +1,11 @@
-import com.example.build_logic.configureCompose
-
 plugins {
     id("busSchedule.android.application")
     id("busSchedule.android.hilt")
     id("busSchedule.android.compose")
 }
-
+kotlin {
+    jvmToolchain(17)
+}
 android {
     namespace = "com.example.feature.main"
 
@@ -27,8 +27,12 @@ android {
 
 dependencies {
     implementation(projects.core.designsystem)
-//    implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.lifecycle.runtime.ktx)
-//    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.navigation.common.ktx)
+    implementation(libs.androidx.navigation.compose)
+    implementation(projects.core.util)
+//    implementation(project(":core:util"))
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.ui.graphics)
 //    testImplementation(libs.junit4)
 }
