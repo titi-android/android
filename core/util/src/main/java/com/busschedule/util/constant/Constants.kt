@@ -5,6 +5,7 @@ object Constants {
     /** navigation id */
     const val HOME_ROUTE = "nav-home"
     const val LOGIN_ROUTE = "nav-login"
+    const val SIGNUP_ROUTE = "nav-signup"
 
     /** Graph Id */
     const val HOME_GRAPH = "home-graph"

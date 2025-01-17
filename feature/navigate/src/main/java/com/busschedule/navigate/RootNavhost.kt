@@ -14,16 +14,16 @@ import com.busschedule.util.remember.rememberApplicationState
 @Composable
 fun RootNavHost() {
     val appState = rememberApplicationState()
-    val navBackStackEntry by appState.getNavController().currentBackStackEntryAsState()
+//    val navBackStackEntry by appState.getNavController().currentBackStackEntryAsState()
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         NavHost(
             navController = appState.getNavController(),
-            startDestination = Constants.LOGIN_ROUTE,
+            startDestination = Constants.LOGIN_GRAPH,
             modifier = Modifier
                 .fillMaxSize().padding(innerPadding)
         ) {
-            loginComposable(appState)
+            loginGraph(appState)
         }
     }
 }

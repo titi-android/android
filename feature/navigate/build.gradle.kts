@@ -12,6 +12,8 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.feature.login)
 
+    // hiltViewModel 사용
+    implementation(libs.androidx.hilt.compose)
     implementation(libs.androidx.navigation.common.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)

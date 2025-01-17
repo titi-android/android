@@ -26,10 +26,27 @@ class LoginViewModel @Inject constructor(): ViewModel() {
         LoginUiState(inputId = inputId, inputPw = inputPw)
     }
 
+    private val _inputSignupId = MutableStateFlow("")
+    val inputSignupId: StateFlow<String> = _inputSignupId.asStateFlow()
+
+    private val _inputSignupPw = MutableStateFlow("")
+    val inputSignupPw: StateFlow<String> = _inputSignupPw.asStateFlow()
+
+    val signupUiState = combine(inputSignupId, inputSignupPw) { inputId, inputPw ->
+        LoginUiState(inputId = inputId, inputPw = inputPw)
+    }
+
     fun updateInputId(input: String) {
         _inputId.update { input }
     }
     fun updateInputPw(input: String) {
         _inputPw.update { input }
+    }
+
+    fun updateSignupInputId(input: String) {
+        _inputSignupId.update { input }
+    }
+    fun updateSignupInputPw(input: String) {
+        _inputSignupPw.update { input }
     }
 }

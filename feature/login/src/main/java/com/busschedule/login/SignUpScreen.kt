@@ -18,9 +18,9 @@ import com.busschedule.util.constant.Constants
 import com.example.connex.ui.domain.ApplicationState
 
 @Composable
-fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hiltViewModel()) {
+fun SignUpScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hiltViewModel()) {
 
-    val loginUiState by loginViewModel.loginUiState.collectAsStateWithLifecycle(LoginUiState())
+    val signupUiState by loginViewModel.signupUiState.collectAsStateWithLifecycle(LoginUiState())
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Column(
@@ -30,25 +30,25 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
             verticalArrangement = Arrangement.Center
         ) {
             TextField(
-                value = loginUiState.inputId,
-                onValueChange = { loginViewModel.updateInputId(it) },
+                value = signupUiState.inputId,
+                onValueChange = { loginViewModel.updateSignupInputId(it) },
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,
                 placeholder = { Text(text = "아이디") }
             )
             TextField(
-                value = loginUiState.inputPw,
-                onValueChange = { loginViewModel.updateInputPw(it) },
+                value = signupUiState.inputPw,
+                onValueChange = { loginViewModel.updateSignupInputPw(it) },
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,
                 placeholder = { Text(text = "비밀번호") }
             )
         }
         Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "로그인")
+            Text(text = "회원가입")
         }
-        Button(onClick = { appState.navigate(Constants.SIGNUP_ROUTE) }, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "회원가입 하러 가기")
+        Button(onClick = { appState.navigate(Constants.LOGIN_ROUTE) }, modifier = Modifier.fillMaxWidth()) {
+            Text(text = "로그인 하러 가기")
         }
 
     }

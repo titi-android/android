@@ -6,11 +6,6 @@ import com.busschedule.login.LoginScreen
 import com.busschedule.util.constant.Constants
 import com.example.connex.ui.domain.ApplicationState
 
-fun NavGraphBuilder.loginComposable(applicationState: ApplicationState) {
+fun NavGraphBuilder.loginComposable(appState: ApplicationState) {
 
-    composable(
-        route = Constants.LOGIN_ROUTE,
-    ) { navBackStackEntry ->
-        LoginScreen()
-    }
 }
