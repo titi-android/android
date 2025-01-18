@@ -44,7 +44,7 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
                 placeholder = { Text(text = "비밀번호") }
             )
         }
-        Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+        Button(onClick = { appState.navigate(Constants.SCHEDULELIST_ROUTE) }, modifier = Modifier.fillMaxWidth()) {
             Text(text = "로그인")
         }
         Button(onClick = { appState.navigate(Constants.SIGNUP_ROUTE) }, modifier = Modifier.fillMaxWidth()) {
