@@ -24,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.busschedule.util.constant.Constants
+import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 
@@ -35,8 +37,7 @@ data class TempSchedule(
 )
 
 @Composable
-@Preview(showSystemUi = true, showBackground = true)
-fun ScheduleListScreen() {
+fun ScheduleListScreen(appState: ApplicationState) {
     val schedules = listOf(
         TempSchedule("스케줄 1", "정류장 1", "버스 1", "버스 2"),
         TempSchedule("스케줄 2", "정류장 2", "버스 3", "버스 4"),
@@ -71,7 +72,7 @@ fun ScheduleListScreen() {
             }
         }
         Row(modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.weight(3f)) {
+            Button(onClick = { appState.navigate(Constants.REGISTER_BUS_SCHEDULE_ROUTE) }, modifier = Modifier.weight(3f)) {
                 Text(text = "스케줄 등록")
             }
             WidthSpacer(width = 8.dp)

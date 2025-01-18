@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.material)
     implementation(project(":core:util"))
     implementation(project(":feature:scheduleList"))
+    implementation(project(":feature:register"))
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
