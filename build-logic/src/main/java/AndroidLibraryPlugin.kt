@@ -15,7 +15,6 @@ internal class AndroidLibraryPlugin : Plugin<Project> {
 
         extensions.configure<LibraryExtension> {
             configureKotlinAndroid(this)
-            configureCompose(this)
             buildTypes {
                 release {
                     isMinifyEnabled = false

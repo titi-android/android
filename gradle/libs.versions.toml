@@ -119,4 +119,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrainsComposeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [bundles]
-retrofit2 = ["retrofit-core", "retrofit-converter-json", "retrofit-json", "retrofit-serialization", "okhttp-logging", "okhttp", "kotlinx-serialization-json"]
+retrofit2 = ["retrofit-core", "retrofit-converter-json", "retrofit-json", "retrofit-serialization", "okhttp-logging", "okhttp"]
