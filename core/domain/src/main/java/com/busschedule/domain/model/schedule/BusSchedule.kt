@@ -1,0 +1,33 @@
+package com.busschedule.domain.model.schedule
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class BusSchedule(
+    val id: Int = 0,
+    val name: String = "",
+    val days: String = "",
+    val startTime: Time = Time(),
+    val endTime: Time = Time(),
+    val busInfos: List<BusInfo> = emptyList()
+)
+
+@Serializable
+data class Time(
+    val hour: Int = 0,
+    val minute: Int = 0,
+    val second: Int = 0,
+    val nano: Int = 0
+)
+
+@Serializable
+data class BusInfo(
+    val arrprevstationcnt: Int = 0,
+    val arrtime: Int = 0,
+    val nodeid: String = "",
+    val nodenm: String = "",
+    val routeid: String = "",
+    val routeno: String = "",
+    val routetp: String = "",
+    val vehicletp: String = ""
+)

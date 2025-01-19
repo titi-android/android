@@ -19,11 +19,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.busschedule.util.constant.Constants
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer
@@ -37,7 +38,7 @@ data class TempSchedule(
 )
 
 @Composable
-fun ScheduleListScreen(appState: ApplicationState) {
+fun ScheduleListScreen(appState: ApplicationState, scheduleListViewModel: ScheduleListViewModel = hiltViewModel()) {
     val schedules = listOf(
         TempSchedule("스케줄 1", "정류장 1", "버스 1", "버스 2"),
         TempSchedule("스케줄 2", "정류장 2", "버스 3", "버스 4"),
@@ -46,6 +47,9 @@ fun ScheduleListScreen(appState: ApplicationState) {
         TempSchedule("스케줄 5", "정류장 5", "버스 9", "버스 10"),
         TempSchedule("스케줄 6", "정류장 6", "버스 11", "버스 12"),
     )
+    LaunchedEffect(Unit) {
+        scheduleListViewModel.fetchReadTodaySchedules()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

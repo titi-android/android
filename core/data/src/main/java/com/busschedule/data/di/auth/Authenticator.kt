@@ -27,21 +27,18 @@ class AuthInterceptor @Inject constructor(
             tokenManager.getAccessToken().first()
         } ?: return errorResponse(chain.request())
 
-        Log.d("daeyoung", "token: $token")
-
-        val request = chain.request().newBuilder().header(AUTHORIZATION, "$token").build()
+        Log.d("daeyoung", "AuthInterceptor AccessToken: $token")
+        val request = chain.request().newBuilder().header(AUTHORIZATION, "Bearer $token").build()
 
         val response = chain.proceed(request)
 
         if (response.code == HTTP_OK) {
             val newAccessToken: String = response.header(AUTHORIZATION, null) ?: return response
-//            Timber.d("new Access Token = ${newAccessToken}")
 
             CoroutineScope(Dispatchers.IO).launch {
                 val existedAccessToken = tokenManager.getAccessToken().first()
                 if (existedAccessToken != newAccessToken) {
                     tokenManager.saveAccessToken(newAccessToken)
-//                    Timber.d("newAccessToken = ${newAccessToken}\nExistedAccessToken = ${existedAccessToken}")
                 }
             }
         } else {
