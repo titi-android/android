@@ -1,6 +1,8 @@
 package com.busschedule.data.di
 
 import com.busschedule.data.BuildConfig
+import com.busschedule.data.di.auth.AuthAuthenticator
+import com.busschedule.data.di.auth.AuthInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -26,17 +28,17 @@ object NetworkModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class BusScheduleOkhttpClient
 
-//    @Qualifier
-//    @Retention(AnnotationRetention.BINARY)
-//    annotation class BusScheduleAuthOkhttpClient
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class BusScheduleAuthOkhttpClient
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class BusScheduleRetrofit
 
-//    @Qualifier
-//    @Retention(AnnotationRetention.BINARY)
-//    annotation class BusScheduleAuthRetrofit
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class BusScheduleAuthRetrofit
 
     @Provides
     fun provideJson(): Json {
@@ -60,19 +62,20 @@ object NetworkModule {
             .build()
     }
 
-//    @BusScheduleAuthOkhttpClient
-//    @Provides
-//    fun provideAuthClient(authenticator: AuthInterceptor, authAuthenticator: AuthAuthenticator): OkHttpClient {
-//        return OkHttpClient.Builder()
-//            .addInterceptor(httpLoggingInterceptor)
-//            .addInterceptor(authenticator)
-////            .authenticator(authAuthenticator)
-//            .connectTimeout(20, TimeUnit.SECONDS)
-//            .readTimeout(20, TimeUnit.SECONDS)
-//            .writeTimeout(20, TimeUnit.SECONDS)
-//            .retryOnConnectionFailure(true)
-//            .build()
-//    }
+    @BusScheduleAuthOkhttpClient
+    @Provides
+    @Singleton
+    fun provideAuthClient(authenticator: AuthInterceptor, authAuthenticator: AuthAuthenticator): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor(authenticator)
+            .authenticator(authAuthenticator)
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .build()
+    }
 
     @BusScheduleRetrofit
     @Provides
@@ -88,16 +91,17 @@ object NetworkModule {
             .build()
     }
 
-//    @BusScheduleAuthRetrofit
-//    @Provides
-//    fun provideAuthRetrofit(
-//        @BusScheduleAuthOkhttpClient okHttpClient: OkHttpClient,
-//        json: Json,
-//    ): Retrofit {
-//        return Retrofit.Builder()
-//            .client(okHttpClient)
-//            .baseUrl(BuildConfig.BASE_URL)
-//            .addConverterFactory(json.asConverterFactory("application/json".toMediaTypeOrNull()!!))
-//            .build()
-//    }
+    @BusScheduleAuthRetrofit
+    @Provides
+    @Singleton
+    fun provideAuthRetrofit(
+        @BusScheduleAuthOkhttpClient okHttpClient: OkHttpClient,
+        json: Json,
+    ): Retrofit {
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(BuildConfig.BASE_URL)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaTypeOrNull()!!))
+            .build()
+    }
 }

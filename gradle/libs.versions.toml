@@ -36,6 +36,8 @@ retrofitKotlinxSerializationJson = "1.0.0"
 okhttp = "4.11.0"
 serializationJson = "1.6.0"
 
+androidxDataStore = "1.0.0"
+encryptedDataStore = "1.7.21-1.0.8-1.1.0-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,7 +55,7 @@ androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "life
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime"}
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-core = { group = "androidx.compose.ui", name = "ui" }
@@ -96,7 +98,15 @@ retrofit-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2
 
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "serializationJson"}
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "serializationJson" }
+
+# datastore
+androidx-dataStore-core = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
+androidx-dataStore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
+encrypted-datastore-preference-ksp = { group = "tech.thdev", name = "useful-encrypted-data-store-preferences-ksp", version.ref = "encryptedDataStore" }
+encrypted-datastore-preference-ksp-annotations = { group = "tech.thdev", name = "useful-encrypted-data-store-preferences-ksp-annotations", version.ref = "encryptedDataStore" }
+encrypted-datastore-preference-security = { group = "tech.thdev", name = "useful-encrypted-data-store-preferences-security", version.ref = "encryptedDataStore" }
+
 
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
@@ -120,3 +130,4 @@ jetbrainsComposeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version
 
 [bundles]
 retrofit2 = ["retrofit-core", "retrofit-converter-json", "retrofit-json", "retrofit-serialization", "okhttp-logging", "okhttp"]
+datastore = ["androidx-dataStore-core", "androidx-dataStore-preferences", "encrypted-datastore-preference-ksp", "encrypted-datastore-preference-ksp-annotations", "encrypted-datastore-preference-security"]
