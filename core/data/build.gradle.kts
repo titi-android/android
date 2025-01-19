@@ -1,16 +1,23 @@
 plugins {
-    id("busSchedule.android.library")
+    id("busSchedule.android.compose.library")
     id("busSchedule.android.hilt")
     alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "com.busschedule.data"
+    buildFeatures {
+        buildConfig = true
+    }
+    defaultConfig {
+        buildConfigField("String", "BASE_URL", "\"http://3.34.0.32:8080\"")
+    }
 }
 
 dependencies {
 
     implementation(libs.bundles.retrofit2)
+    implementation(project(":app"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

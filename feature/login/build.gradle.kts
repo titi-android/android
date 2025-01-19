@@ -1,7 +1,6 @@
 plugins {
-    id("busSchedule.android.library")
+    id("busSchedule.android.compose.library")
     id("busSchedule.android.hilt")
-    id("busSchedule.android.compose")
 }
 
 android {

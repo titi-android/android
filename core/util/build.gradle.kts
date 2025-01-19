@@ -1,8 +1,5 @@
 plugins {
-//    alias(libs.plugins.android.library)
-//    alias(libs.plugins.jetbrains.kotlin.android)
-    id("busSchedule.android.library")
-    id("busSchedule.android.compose")
+    id("busSchedule.android.compose.library")
 }
 
 android {
