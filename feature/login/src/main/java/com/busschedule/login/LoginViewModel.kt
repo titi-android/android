@@ -71,6 +71,7 @@ class LoginViewModel @Inject constructor(
                 ApiState.Loading -> TODO()
                 is ApiState.Success<*> -> result.onSuccess { onSuccess() }
                 is ApiState.NotResponse -> {
+                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
                     if (result.exception is ConnectException) { }
                 }
             }

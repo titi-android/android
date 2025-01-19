@@ -7,9 +7,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Named
 
 class TokenManager @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    @Named("token") private val dataStore: DataStore<Preferences>
 ) {
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")

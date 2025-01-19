@@ -1,5 +1,6 @@
 package com.busschedule.login
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,12 +50,12 @@ fun SignUpScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hi
             )
         }
         Button(onClick = {
-//            loginViewModel.fetchSignup(
-//                signupUiState.inputId,
-//                signupUiState.inputPw
-//            ) {
-//                Toast.makeText(context, "회원가입에 성공하셨습니다.", Toast.LENGTH_SHORT).show()
-//            }
+            loginViewModel.fetchSignup(
+                signupUiState.inputId,
+                signupUiState.inputPw
+            ) {
+                Toast.makeText(context, "회원가입에 성공하셨습니다.", Toast.LENGTH_SHORT).show()
+            }
         }, modifier = Modifier.fillMaxWidth()) {
             Text(text = "회원가입")
         }

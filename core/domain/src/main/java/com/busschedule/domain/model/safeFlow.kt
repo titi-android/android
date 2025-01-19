@@ -40,3 +40,18 @@ fun safeFlowAndSaveToken(
             emit(ApiState.NotResponse(message = e.message ?: "", exception = e))
         }
     }.flowOn(Dispatchers.IO)
+
+fun <T : Any> safeFlowUnit(apiFunc: suspend () -> Response<ApiResponse<T>>): Flow<ApiState<Unit>> =
+    flow {
+        try {
+            val res = apiFunc.invoke()
+            if (res.isSuccessful) {
+                emit(ApiState.Success(Unit))
+            } else {
+                val errorBody = res.errorBody() ?: throw NullPointerException()
+                emit(ApiState.Error(errorBody.string()))
+            }
+        } catch (e: Exception) {
+            emit(ApiState.NotResponse(message = e.message ?: "", exception = e))
+        }
+    }.flowOn(Dispatchers.IO)
