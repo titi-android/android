@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
     implementation(projects.core.datastore)
+    implementation(project(":feature:lock"))
 //    implementation(libs.androidx.core.ktx)
 //    implementation(libs.androidx.lifecycle.runtime.ktx)
 //    implementation(libs.androidx.ui.graphics)
