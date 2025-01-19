@@ -9,6 +9,7 @@ data class BusSchedule(
     val days: String = "",
     val startTime: Time = Time(),
     val endTime: Time = Time(),
+    val busStopName: String = "",
     val busInfos: List<BusInfo> = emptyList()
 )
 

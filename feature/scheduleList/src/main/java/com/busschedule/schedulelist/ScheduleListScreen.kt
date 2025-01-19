@@ -20,33 +20,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.domain.model.schedule.BusSchedule
 import com.busschedule.util.constant.Constants
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 
-data class TempSchedule(
-    val name: String,
-    val busStop: String,
-    val firstBus: String,
-    val secondBus: String,
-)
-
 @Composable
 fun ScheduleListScreen(appState: ApplicationState, scheduleListViewModel: ScheduleListViewModel = hiltViewModel()) {
-    val schedules = listOf(
-        TempSchedule("스케줄 1", "정류장 1", "버스 1", "버스 2"),
-        TempSchedule("스케줄 2", "정류장 2", "버스 3", "버스 4"),
-        TempSchedule("스케줄 3", "정류장 3", "버스 5", "버스 6"),
-        TempSchedule("스케줄 4", "정류장 4", "버스 7", "버스 8"),
-        TempSchedule("스케줄 5", "정류장 5", "버스 9", "버스 10"),
-        TempSchedule("스케줄 6", "정류장 6", "버스 11", "버스 12"),
-    )
+
+    val scheduleListUiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         scheduleListViewModel.fetchReadTodaySchedules()
     }
@@ -71,7 +62,7 @@ fun ScheduleListScreen(appState: ApplicationState, scheduleListViewModel: Schedu
             contentPadding = PaddingValues(top = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(items = schedules, key = { it.name }) {
+            items(items = scheduleListUiState, key = { it.id }) {
                 TempScheduleCard(backgroundColor = Color.White, schedule = it)
             }
         }
@@ -91,7 +82,7 @@ fun ScheduleListScreen(appState: ApplicationState, scheduleListViewModel: Schedu
 
 
 @Composable
-fun TempScheduleCard(backgroundColor: Color, schedule: TempSchedule) {
+fun TempScheduleCard(backgroundColor: Color, schedule: BusSchedule) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
@@ -106,8 +97,9 @@ fun TempScheduleCard(backgroundColor: Color, schedule: TempSchedule) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = "ic_delete")
         }
         HeightSpacer(height = 4.dp)
-        Text(text = schedule.busStop)
+        // TODO: 백엔드가 데이터 수정하면 변경
+        Text(text = schedule.busStopName)
         HeightSpacer(height = 4.dp)
-        Text(text = "${schedule.firstBus}, ${schedule.secondBus}")
+        Text(text = "${schedule.busInfos[0].routeno}, ${schedule.busInfos[1].routeno}")
     }
 }
