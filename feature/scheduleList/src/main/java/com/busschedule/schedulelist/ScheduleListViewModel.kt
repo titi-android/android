@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.busschedule.domain.model.ApiState
-import com.busschedule.domain.model.schedule.BusSchedule
+import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

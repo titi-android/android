@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.domain.model.schedule.BusSchedule
+import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.util.constant.Constants
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer

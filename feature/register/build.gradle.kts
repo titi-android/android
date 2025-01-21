@@ -9,6 +9,8 @@ android {
 
 dependencies {
 
+    implementation(projects.core.domain)
+
     // hiltViewModel 사용
     implementation(libs.androidx.hilt.compose)
 

@@ -40,8 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -51,9 +49,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.domain.model.request.ScheduleRegister
+import com.busschedule.domain.model.response.schedule.Time
 import com.busschedule.register.constant.TimePickerType
-import com.busschedule.register.entity.ScheduleRangeTime
-import com.busschedule.register.entity.ScheduleRegister
+import com.busschedule.register.entity.convertTimePickerToUiTime
 import core.designsystem.component.WidthSpacer
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -85,12 +84,13 @@ fun RegisterBusScheduleScreen(registerBusScheduleViewModel: RegisterBusScheduleV
         )
         DatePickerFieldToModal()
         SelectRangeTimeArea(
-            time = registerBusScheduleUiState.time,
+            startTime = registerBusScheduleUiState.startTime,
+            endTime = registerBusScheduleUiState.endTime,
             updateStartTime = { registerBusScheduleViewModel.setStartTime(convertTimePickerToTime(it)) }) {
             registerBusScheduleViewModel.setEndTime(convertTimePickerToTime(it))
         }
         TextField(
-            value = registerBusScheduleUiState.city,
+            value = registerBusScheduleUiState.regionName,
             onValueChange = { registerBusScheduleViewModel.setCity(it) },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
@@ -103,7 +103,7 @@ fun RegisterBusScheduleScreen(registerBusScheduleViewModel: RegisterBusScheduleV
             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }),
             placeholder = { Text(text = "도시(지역) 이름") })
         TextField(
-            value = registerBusScheduleUiState.busStop,
+            value = registerBusScheduleUiState.busStopName,
             onValueChange = { registerBusScheduleViewModel.setBusStop(it) },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
@@ -116,8 +116,8 @@ fun RegisterBusScheduleScreen(registerBusScheduleViewModel: RegisterBusScheduleV
             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }),
             placeholder = { Text(text = "버스정류장 명") })
         TextField(
-            value = registerBusScheduleUiState.bus,
-            onValueChange = { registerBusScheduleViewModel.setBus(it) },
+            value = ""/*TODO*/,
+            onValueChange = { /*TODO*/ },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
             trailingIcon = {
@@ -128,7 +128,7 @@ fun RegisterBusScheduleScreen(registerBusScheduleViewModel: RegisterBusScheduleV
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
             placeholder = { Text(text = "버스 목록") })
-        TextButton(onClick = { }, modifier = Modifier.fillMaxWidth()) {
+        TextButton(onClick = { registerBusScheduleViewModel.fetchPostBusSchedule(registerBusScheduleUiState)}, modifier = Modifier.fillMaxWidth()) {
             Text(text = "완료")
         }
     }
@@ -139,16 +139,19 @@ fun convertMillisToDate(millis: Long): String {
     return formatter.format(Date(millis))
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-fun convertTimePickerToTime(timePickerState: TimePickerState): String {
-    val cal = Calendar.getInstance()
-    cal.set(Calendar.HOUR_OF_DAY, timePickerState.hour)
-    cal.set(Calendar.MINUTE, timePickerState.minute)
-    cal.isLenient = false
-    val formatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
-    return formatter.format(cal.time)
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//fun convertTimePickerToTime(timePickerState: TimePickerState): String {
+//    val cal = Calendar.getInstance()
+//    cal.set(Calendar.HOUR_OF_DAY, timePickerState.hour)
+//    cal.set(Calendar.MINUTE, timePickerState.minute)
+//    cal.isLenient = false
+//    val formatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
+//    return formatter.format(cal.time)
+//}
 
+@OptIn(ExperimentalMaterial3Api::class)
+fun convertTimePickerToTime(timePickerState: TimePickerState): Time =
+    Time(hour = timePickerState.hour, minute = timePickerState.minute)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -207,7 +210,8 @@ fun DatePickerFieldToModal() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColumnScope.SelectRangeTimeArea(
-    time: ScheduleRangeTime,
+    startTime: Time,
+    endTime: Time,
     updateStartTime: (TimePickerState) -> Unit,
     updateEndTime: (TimePickerState) -> Unit,
 ) {
@@ -217,13 +221,13 @@ fun ColumnScope.SelectRangeTimeArea(
         Text(text = "시작 시간")
         WidthSpacer(width = 8.dp)
         Button(onClick = { isShowTimePickerDialog = TimePickerType.START_TIME }) {
-            Text(text = time.start)
+            Text(text = startTime.convertTimePickerToUiTime())
         }
         WidthSpacer(weight = 1f)
         Text(text = "종료 시간")
         WidthSpacer(width = 8.dp)
         Button(onClick = { isShowTimePickerDialog = TimePickerType.END_TIME }) {
-            Text(text = time.end)
+            Text(text = endTime.convertTimePickerToUiTime())
         }
     }
     when (isShowTimePickerDialog) {
