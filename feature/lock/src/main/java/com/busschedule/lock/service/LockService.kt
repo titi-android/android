@@ -1,10 +1,15 @@
 package com.busschedule.lock.service
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.busschedule.lock.receiver.LockReceiver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -16,15 +21,13 @@ class LockService : Service() {
     lateinit var lockServiceManager: LockServiceManager
 
     override fun onBind(p0: Intent?): IBinder? {
-        Log.d("daeyoung", "LockService onBind")
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        /* 푸쉬 알림
-        createNotificationChannel()
-        startForeground(SERVICE_ID, createNotificationBuilder())
-         */
+        val notification = createNotificationBuilder()
+        // startForeground() 해야지 앱이 죽어도 서비스가 죽지 않음
+        startForeground(SERVICE_ID, notification)
         Log.d("daeyoung", "LockService onStartCommand")
         startLockReceiver()
         return super.onStartCommand(intent, flags, startId)
@@ -33,6 +36,7 @@ class LockService : Service() {
     override fun onDestroy() {
         stopLockReceiver()
         lockServiceManager.stop()
+        Log.d("daeyoung", "LockService onDestroy")
         super.onDestroy()
     }
 
@@ -48,38 +52,32 @@ class LockService : Service() {
         unregisterReceiver(LockReceiver)
     }
 
-//    private fun createNotificationChannel() {
-//        val notificationChannel = SimpleNotificationBuilder.createChannel(
-//            LOCK_CHANNEL,
-//            getStringWithContext(R.string.app_name),
-//            NotificationManager.IMPORTANCE_HIGH,
-//            getStringWithContext(R.string.lock_screen_description)
-//        )
-//
-//        val notificationManager =
-//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//        notificationManager.createNotificationChannel(notificationChannel)
-//    }
+    private fun createNotificationChannel() {
+        val notificationChannel = NotificationChannel(
+            LOCK_CHANNEL_ID,
+            LOCK_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_MIN
+        )
 
-//    private fun getStringWithContext(
-//        @StringRes stringRes: Int
-//    ): String {
-//        return applicationContext.getString(stringRes)
-//    }
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-//    private fun createNotificationBuilder(): Notification {
-//        return SimpleNotificationBuilder.createBuilder(
-//            context = this,
-//            channelId = LOCK_CHANNEL,
-//            title = getStringWithContext(R.string.app_name),
-//            text = getStringWithContext(R.string.lock_screen_description),
-//            icon = R.drawable.ic_launcher_foreground,
-//        )
-//    }
+        notificationManager.createNotificationChannel(notificationChannel)
+    }
+
+    private fun createNotificationBuilder(): Notification {
+        createNotificationChannel()
+        val builder =
+            NotificationCompat.Builder(this, LOCK_CHANNEL_ID).apply {
+                setContentTitle("")
+                setContentText("")
+            }
+        return builder.build()
+    }
 
     private companion object {
-        const val LOCK_CHANNEL = "LOCK_CHANNEL"
+        const val LOCK_CHANNEL_ID = "LOCK_CHANNEL_ID"
+        const val LOCK_CHANNEL_NAME = "LOCK_CHANNEL_NAME"
         const val SERVICE_ID: Int = 1
     }
 }

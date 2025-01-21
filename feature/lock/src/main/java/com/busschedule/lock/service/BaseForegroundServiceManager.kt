@@ -15,8 +15,8 @@ abstract class BaseForegroundServiceManager<T : Service>(
 
         if (!context.isServiceRunning(targetClass)) {
             Log.d("daeyoung", "BaseForegroundServiceManager start")
-//            context.startForegroundService(intent)
-            context.startService(intent)
+            context.startForegroundService(intent)
+//            context.startService(intent)
         }
     }
 
