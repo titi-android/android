@@ -13,6 +13,7 @@
             android:label="@string/title_activity_locked"
             android:theme="@style/Theme.BusSchedule" />
         <service android:name=".service.LockService"
+            android:foregroundServiceType="shortService"
             android:enabled="true"
             android:exported="true"
             />
