@@ -1,5 +1,5 @@
 plugins {
-    id("busSchedule.android.compose.library")
+    id("busSchedule.android.library")
     id("busSchedule.android.hilt")
 }
 
@@ -9,6 +9,7 @@ android {
 
 dependencies {
 
+    implementation(projects.feature.lock)
 
 //    implementation(platform(libs.firebase.bom))
 //    implementation(libs.firebase.analytics)

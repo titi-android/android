@@ -1,6 +1,7 @@
 package com.busschedule.notification.service
 
 import android.util.Log
+import com.busschedule.lock.model.TempLockUiState
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -21,8 +22,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        Log.d(TAG, "From: $message")
-
+        Log.d(TAG, "From: ${message.notification?.body}")
+        TempLockUiState.updateMsg(message.notification?.body ?: "메시지 없음")
 //        // Notification 메시지를 수신할 경우는
 //        // remoteMessage.notification?.body!! 여기에 내용이 저장되어있다.
 //        // Log.d(TAG, "Notification Message Body: " + remoteMessage.notification?.body!!)
