@@ -7,24 +7,32 @@ import com.busschedule.register.constant.City
 import com.busschedule.register.constant.Region
 
 class CityOfRegion(
-    regions: List<Region>
+    regions: List<Region>,
 ) {
     val regionUiStates = regions.map { RegionUiState(it) }
-    private val selectedRegionUiState = regionUiStates.find { it.isSelected }
-    val citiesUiState = if (selectedRegionUiState != null) {
-        selectedRegionUiState.region.cities.map { CityUiState(it) }
-    } else {
-        Region.METROPOLITAN.cities.map { CityUiState(it) }
-    }
-    val selectedCityUiState = citiesUiState.find { it.isSelected }
+
+    var citiesUiState: List<CityUiState> by mutableStateOf(Region.METROPOLITAN.cities.map { CityUiState(it) })
+
+    val selectedCityUiState: CityUiState?
+        get() = citiesUiState.find { it.isSelected }
 
     fun selectRegion(selectRegion: Region) {
         regionUiStates.forEach { it.isSelected = (it.region == selectRegion) }
+        val region = getSelectedRegion() ?: Region.METROPOLITAN
+        updateCitiesUiState(region)
     }
 
     fun selectCity(selectCity: City) {
         citiesUiState.forEach { it.isSelected = (it.city == selectCity) }
     }
+
+    private fun getSelectedRegion() = regionUiStates.find { it.isSelected }?.region
+
+    private fun updateCitiesUiState(region: Region) {
+        citiesUiState = region.cities.map { CityUiState(it) }
+    }
+
+    fun getSelectedCityName() = selectedCityUiState?.city?.value ?: ""
 }
 
 data class RegionUiState(
