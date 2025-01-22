@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application>
         <activity
@@ -13,7 +14,7 @@
             android:label="@string/title_activity_locked"
             android:theme="@style/Theme.BusSchedule" />
         <service android:name=".service.LockService"
-            android:foregroundServiceType="shortService"
+            android:foregroundServiceType="dataSync"
             android:enabled="true"
             android:exported="true"
             />

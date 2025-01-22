@@ -7,7 +7,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -79,6 +79,6 @@ class LockService : Service() {
     private companion object {
         const val LOCK_CHANNEL_ID = "LOCK_CHANNEL_ID"
         const val LOCK_CHANNEL_NAME = "LOCK_CHANNEL_NAME"
-        const val SERVICE_ID: Int = FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
+        const val SERVICE_ID: Int = FOREGROUND_SERVICE_TYPE_DATA_SYNC
     }
 }
