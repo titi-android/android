@@ -12,6 +12,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.busschedule.lock.service.LockServiceManager
 import com.busschedule.navigate.RootNavHost
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import core.designsystem.theme.BusScheduleTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -29,6 +31,13 @@ class MainActivity : ComponentActivity() {
         }
 
         startLockService()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener {
+            if (!it.isSuccessful) {
+                Log.d("FirebaseService", "exception: ${it.exception}")
+                return@OnCompleteListener
+            }
+            Log.d("FirebaseService", "firebaseToken: ${it.result}")
+        })
 
         enableEdgeToEdge()
         setContent {

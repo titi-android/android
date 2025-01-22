@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "801361955771",
+    "project_id": "busschedule-5370c",
+    "storage_bucket": "busschedule-5370c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801361955771:android:be166537fc7a53f926929e",
+        "android_client_info": {
+          "package_name": "com.example.busschedule.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACHRlp43ulNIYLgnHKpSqQxXziNnBWE9I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

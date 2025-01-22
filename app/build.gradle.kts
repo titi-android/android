@@ -2,6 +2,7 @@ plugins {
     id("busSchedule.android.application")
     id("busSchedule.android.compose")
     id("busSchedule.android.hilt")
+    alias(libs.plugins.google.service)
 }
 
 android {
@@ -28,9 +29,15 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
     implementation(projects.core.datastore)
+    implementation(projects.core.notification)
     implementation(project(":feature:lock"))
-//    implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.lifecycle.runtime.ktx)
-//    implementation(libs.androidx.ui.graphics)
-//    testImplementation(libs.junit4)
+    implementation(libs.firebase.messaging.ktx)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    testImplementation(libs.junit4)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
 }
