@@ -7,18 +7,10 @@ data class BusSchedule(
     val id: Int = 0,
     val name: String = "",
     val days: String = "",
-    val startTime: Time = Time(),
-    val endTime: Time = Time(),
+    val startTime: String = "",
+    val endTime: String = "",
     val busStopName: String = "",
     val busInfos: List<BusInfo> = emptyList()
-)
-
-@Serializable
-data class Time(
-    val hour: Int = 0,
-    val minute: Int = 0,
-    val second: Int = 0,
-    val nano: Int = 0
 )
 
 @Serializable

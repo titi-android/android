@@ -11,6 +11,7 @@ import androidx.navigation.navigation
 import com.busschedule.login.LoginScreen
 import com.busschedule.login.SignUpScreen
 import com.busschedule.register.ui.RegisterBusScheduleScreen
+import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
 import com.busschedule.util.constant.Constants
 import com.example.connex.ui.domain.ApplicationState
@@ -54,6 +55,14 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
                 graph = Constants.SCHEDULELIST_GRAPH
             )
             SelectRegionScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
+        }
+        composable(route = Constants.SELECT_BUS_ROUTE) { entry ->
+            val backStackEntry = rememberNavControllerBackEntry(
+                entry = entry,
+                navController = appState.getNavController(),
+                graph = Constants.SCHEDULELIST_GRAPH
+            )
+            SelectBusScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
         }
     }
 }

@@ -10,4 +10,6 @@ interface BusStopApi {
         @Query("cityName") cityName: String,
         @Query("name") busName: String,
     ): DefaultResponse<String>
+
+
 }

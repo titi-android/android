@@ -1,5 +1,6 @@
 package com.busschedule.data.di
 
+import com.busschedule.data.network.BusApi
 import com.busschedule.data.network.BusStopApi
 import com.busschedule.data.network.LoginApi
 import com.busschedule.data.network.ScheduleApi
@@ -25,5 +26,10 @@ object ApiModule {
     @Provides
     fun provideBusStopApi(@NetworkModule.BusScheduleAuthRetrofit retrofit: Retrofit): BusStopApi {
         return retrofit.create(BusStopApi::class.java)
+    }
+
+    @Provides
+    fun provideBusApi(@NetworkModule.BusScheduleAuthRetrofit retrofit: Retrofit): BusApi {
+        return retrofit.create(BusApi::class.java)
     }
 }

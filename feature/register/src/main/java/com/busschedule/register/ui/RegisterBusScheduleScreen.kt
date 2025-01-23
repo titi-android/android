@@ -49,7 +49,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.domain.model.response.schedule.Time
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.constant.TimePickerType
 import com.busschedule.register.entity.ScheduleRegister
@@ -92,8 +91,8 @@ fun RegisterBusScheduleScreen(
         SelectRangeTimeArea(
             startTime = registerBusScheduleUiState.startTime,
             endTime = registerBusScheduleUiState.endTime,
-            updateStartTime = { registerBusScheduleViewModel.setStartTime(convertTimePickerToTime(it)) }) {
-            registerBusScheduleViewModel.setEndTime(convertTimePickerToTime(it))
+            updateStartTime = { registerBusScheduleViewModel.setStartTime(it.convertTimePickerToUiTime()) }) {
+            registerBusScheduleViewModel.setEndTime(it.convertTimePickerToUiTime())
         }
         TextField(
             value = registerBusScheduleUiState.regionName,
@@ -136,7 +135,7 @@ fun RegisterBusScheduleScreen(
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
             trailingIcon = {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { appState.navigate(Constants.SELECT_BUS_ROUTE) }) {
                     Text(text = "조회")
                 }
             },
@@ -144,9 +143,7 @@ fun RegisterBusScheduleScreen(
             keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
             placeholder = { Text(text = "버스 목록") })
         TextButton(onClick = {
-//            registerBusScheduleViewModel.fetchPostBusSchedule(
-//                registerBusScheduleUiState
-//            )
+            registerBusScheduleViewModel.fetchPostBusSchedule(registerBusScheduleUiState)
         }, modifier = Modifier.fillMaxWidth()) {
             Text(text = "완료")
         }
@@ -157,20 +154,6 @@ fun convertMillisToDate(millis: Long): String {
     val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
     return formatter.format(Date(millis))
 }
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//fun convertTimePickerToTime(timePickerState: TimePickerState): String {
-//    val cal = Calendar.getInstance()
-//    cal.set(Calendar.HOUR_OF_DAY, timePickerState.hour)
-//    cal.set(Calendar.MINUTE, timePickerState.minute)
-//    cal.isLenient = false
-//    val formatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
-//    return formatter.format(cal.time)
-//}
-
-@OptIn(ExperimentalMaterial3Api::class)
-fun convertTimePickerToTime(timePickerState: TimePickerState): Time =
-    Time(hour = timePickerState.hour, minute = timePickerState.minute)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -201,9 +184,6 @@ fun DatePickerFieldToModal() {
                     }
                 }
             }
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(64.dp)
     )
     if (isShowDatePickerDialog) {
         DatePickerDialog(
@@ -229,8 +209,8 @@ fun DatePickerFieldToModal() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColumnScope.SelectRangeTimeArea(
-    startTime: Time,
-    endTime: Time,
+    startTime: String,
+    endTime: String,
     updateStartTime: (TimePickerState) -> Unit,
     updateEndTime: (TimePickerState) -> Unit,
 ) {
@@ -240,13 +220,13 @@ fun ColumnScope.SelectRangeTimeArea(
         Text(text = "시작 시간")
         WidthSpacer(width = 8.dp)
         Button(onClick = { isShowTimePickerDialog = TimePickerType.START_TIME }) {
-            Text(text = startTime.convertTimePickerToUiTime())
+            Text(text = startTime)
         }
         WidthSpacer(weight = 1f)
         Text(text = "종료 시간")
         WidthSpacer(width = 8.dp)
         Button(onClick = { isShowTimePickerDialog = TimePickerType.END_TIME }) {
-            Text(text = endTime.convertTimePickerToUiTime())
+            Text(text = endTime)
         }
     }
     when (isShowTimePickerDialog) {

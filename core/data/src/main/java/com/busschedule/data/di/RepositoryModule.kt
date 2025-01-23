@@ -1,8 +1,10 @@
 package com.busschedule.data.di
 
+import com.busschedule.data.repository.BusRepositoryImpl
 import com.busschedule.data.repository.BusStopRepositoryImpl
 import com.busschedule.data.repository.LoginRepositoryImpl
 import com.busschedule.data.repository.ScheduleRepositoryImpl
+import com.busschedule.domain.repository.BusRepository
 import com.busschedule.domain.repository.BusStopRepository
 import com.busschedule.domain.repository.LoginRepository
 import com.busschedule.domain.repository.ScheduleRepository
@@ -33,4 +35,10 @@ abstract class RepositoryModule {
     abstract fun bindBusStopRepository(
         busStopRepositoryImpl: BusStopRepositoryImpl
     ): BusStopRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBusRepository(
+        busRepositoryImpl: BusRepositoryImpl
+    ): BusRepository
 }

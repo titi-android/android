@@ -1,21 +1,18 @@
 package com.busschedule.register.util
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import com.busschedule.domain.model.response.schedule.Time
+import androidx.compose.material3.TimePickerState
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-fun Time.toHourAndMinute() =
-    "${this.hour}:${this.minute}"
-
-
 @OptIn(ExperimentalMaterial3Api::class)
-fun Time.convertTimePickerToUiTime(): String {
+fun TimePickerState.convertTimePickerToUiTime(): String {
     val cal = Calendar.getInstance()
     cal.set(Calendar.HOUR_OF_DAY, this.hour)
     cal.set(Calendar.MINUTE, this.minute)
     cal.isLenient = false
-    val formatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
+//    val formatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
+    val formatter = SimpleDateFormat("hh:mm", Locale.getDefault())
     return formatter.format(cal.time)
 }
