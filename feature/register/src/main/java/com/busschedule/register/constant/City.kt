@@ -100,5 +100,5 @@ enum class City(val value: String) {
     MOKPO("목포시"),
     YEOSU("여수시"),
     NAKSAN("나주시"),
-    GWANGYANG("광양시")
+    GWANGYANG("광양시"),
 }

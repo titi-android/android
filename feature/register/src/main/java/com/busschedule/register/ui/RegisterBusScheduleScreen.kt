@@ -1,4 +1,4 @@
-package com.busschedule.register
+package com.busschedule.register.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -49,10 +49,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.domain.model.request.ScheduleRegister
 import com.busschedule.domain.model.response.schedule.Time
+import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.constant.TimePickerType
-import com.busschedule.register.entity.convertTimePickerToUiTime
+import com.busschedule.register.entity.ScheduleRegister
+import com.busschedule.register.util.convertTimePickerToUiTime
+import com.busschedule.util.constant.Constants
+import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.WidthSpacer
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -61,7 +64,10 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterBusScheduleScreen(registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel()) {
+fun RegisterBusScheduleScreen(
+    appState: ApplicationState,
+    registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+) {
 
     val registerBusScheduleUiState by
     registerBusScheduleViewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(
@@ -91,11 +97,12 @@ fun RegisterBusScheduleScreen(registerBusScheduleViewModel: RegisterBusScheduleV
         }
         TextField(
             value = registerBusScheduleUiState.regionName,
-            onValueChange = { registerBusScheduleViewModel.setCity(it) },
+            onValueChange = { },
             modifier = Modifier.fillMaxWidth(),
+            readOnly = true,
             maxLines = 1,
             trailingIcon = {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { appState.navigate(Constants.SELECT_REGION_ROUTE) }) {
                     Text(text = "조회")
                 }
             },
@@ -108,10 +115,18 @@ fun RegisterBusScheduleScreen(registerBusScheduleViewModel: RegisterBusScheduleV
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
             trailingIcon = {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = {
+                    registerBusScheduleViewModel.fetchCheckBusStop(
+                        registerBusScheduleUiState.regionName,
+                        registerBusScheduleUiState.busStopName
+                    )
+                }) {
                     Text(text = "조회")
                 }
             },
+            supportingText = {
+                val supText = registerBusScheduleUiState.busStopSupportingName
+                Text(text = supText.resultMsg, color = supText.color)},
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }),
             placeholder = { Text(text = "버스정류장 명") })
@@ -128,7 +143,11 @@ fun RegisterBusScheduleScreen(registerBusScheduleViewModel: RegisterBusScheduleV
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
             placeholder = { Text(text = "버스 목록") })
-        TextButton(onClick = { registerBusScheduleViewModel.fetchPostBusSchedule(registerBusScheduleUiState)}, modifier = Modifier.fillMaxWidth()) {
+        TextButton(onClick = {
+//            registerBusScheduleViewModel.fetchPostBusSchedule(
+//                registerBusScheduleUiState
+//            )
+        }, modifier = Modifier.fillMaxWidth()) {
             Text(text = "완료")
         }
     }

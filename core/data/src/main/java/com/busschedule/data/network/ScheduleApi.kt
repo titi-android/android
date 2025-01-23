@@ -1,7 +1,7 @@
 package com.busschedule.data.network
 
 import com.busschedule.data.model.DefaultResponse
-import com.busschedule.domain.model.request.ScheduleRegister
+import com.busschedule.domain.model.request.ScheduleRegisterRequest
 import com.busschedule.domain.model.response.schedule.BusSchedule
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -19,5 +19,5 @@ interface ScheduleApi {
 
     // 스케줄 등록
     @POST("/api/v1/schedules")
-    suspend fun postSchedule(@Body schedule: ScheduleRegister): DefaultResponse<Unit>
+    suspend fun postSchedule(@Body schedule: ScheduleRegisterRequest): DefaultResponse<Unit>
 }

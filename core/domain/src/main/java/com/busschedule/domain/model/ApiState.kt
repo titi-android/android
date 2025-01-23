@@ -1,7 +1,7 @@
 package com.busschedule.domain.model
 
 sealed class ApiState<out T : Any> {
-    data class Success<T : Any>(val data: T) : ApiState<T>()
+    data class Success<T : Any>(val data: T, val msg: String = "") : ApiState<T>()
     data class Error(val errMsg: String) : ApiState<Nothing>()
     data class NotResponse(val message: String?, val exception: Throwable? = null) : ApiState<Nothing>()
     object Loading : ApiState<Nothing>()

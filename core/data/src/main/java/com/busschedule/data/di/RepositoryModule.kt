@@ -1,7 +1,9 @@
 package com.busschedule.data.di
 
+import com.busschedule.data.repository.BusStopRepositoryImpl
 import com.busschedule.data.repository.LoginRepositoryImpl
 import com.busschedule.data.repository.ScheduleRepositoryImpl
+import com.busschedule.domain.repository.BusStopRepository
 import com.busschedule.domain.repository.LoginRepository
 import com.busschedule.domain.repository.ScheduleRepository
 import dagger.Binds
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindScheduleRepository(
         scheduleRepositoryImpl: ScheduleRepositoryImpl
     ): ScheduleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBusStopRepository(
+        busStopRepositoryImpl: BusStopRepositoryImpl
+    ): BusStopRepository
 }

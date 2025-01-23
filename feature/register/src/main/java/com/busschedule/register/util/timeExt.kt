@@ -1,4 +1,4 @@
-package com.busschedule.register.entity
+package com.busschedule.register.util
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.busschedule.domain.model.response.schedule.Time

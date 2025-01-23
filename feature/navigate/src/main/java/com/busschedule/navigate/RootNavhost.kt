@@ -23,7 +23,7 @@ fun RootNavHost() {
         ) {
             loginGraph(appState)
             scheduleListComposable(appState)
-            registerBusScheduleComposable(appState)
+            registerBusScheduleGraph(appState)
         }
     }
 }

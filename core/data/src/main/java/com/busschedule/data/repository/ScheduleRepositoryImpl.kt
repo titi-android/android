@@ -2,7 +2,7 @@ package com.busschedule.data.repository
 
 import com.busschedule.data.network.ScheduleApi
 import com.busschedule.domain.model.ApiState
-import com.busschedule.domain.model.request.ScheduleRegister
+import com.busschedule.domain.model.request.ScheduleRegisterRequest
 import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.model.safeFlow
 import com.busschedule.domain.model.safeFlowUnit
@@ -20,7 +20,7 @@ class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: Schedu
         scheduleApi.readDaySchedules(day)
     }
 
-    override fun postSchedule(scheduleRegister: ScheduleRegister): Flow<ApiState<Unit>> =
-        safeFlowUnit { scheduleApi.postSchedule(scheduleRegister) }
+    override fun postSchedule(scheduleRegisterRequest: ScheduleRegisterRequest): Flow<ApiState<Unit>> =
+        safeFlowUnit { scheduleApi.postSchedule(scheduleRegisterRequest) }
 
 }
