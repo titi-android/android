@@ -10,10 +10,11 @@ fun <T : Any> safeFlow(apiFunc: suspend () -> Response<ApiResponse<T>>): Flow<Ap
     flow {
         try {
             val res = apiFunc.invoke()
-            if (res.isSuccessful && res.body()?.status == 200) {
-                emit(ApiState.Success(res.body()?.data ?: throw NullPointerException()))
+            val apiResult = res.body()!!
+            if (res.isSuccessful && apiResult.status == 200) {
+                emit(ApiState.Success(data = apiResult.data ?: throw NullPointerException(), msg = apiResult.message))
             } else {
-                val errorBody = res.body()!!.message
+                val errorBody = apiResult.message
                 emit(ApiState.Error(errorBody))
             }
         } catch (e: Exception) {
