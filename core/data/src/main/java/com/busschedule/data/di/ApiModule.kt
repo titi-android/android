@@ -2,6 +2,7 @@ package com.busschedule.data.di
 
 import com.busschedule.data.network.BusApi
 import com.busschedule.data.network.BusStopApi
+import com.busschedule.data.network.FCMApi
 import com.busschedule.data.network.LoginApi
 import com.busschedule.data.network.ScheduleApi
 import dagger.Module
@@ -31,5 +32,10 @@ object ApiModule {
     @Provides
     fun provideBusApi(@NetworkModule.BusScheduleAuthRetrofit retrofit: Retrofit): BusApi {
         return retrofit.create(BusApi::class.java)
+    }
+
+    @Provides
+    fun provideFCMApi(@NetworkModule.BusScheduleAuthRetrofit retrofit: Retrofit): FCMApi {
+        return retrofit.create(FCMApi::class.java)
     }
 }

@@ -32,14 +32,22 @@ import com.busschedule.util.constant.Constants
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 
 @Composable
-fun ScheduleListScreen(appState: ApplicationState, scheduleListViewModel: ScheduleListViewModel = hiltViewModel()) {
+fun ScheduleListScreen(
+    appState: ApplicationState,
+    scheduleListViewModel: ScheduleListViewModel = hiltViewModel(),
+) {
 
     val scheduleListUiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        scheduleListViewModel.fetchReadTodaySchedules()
+        listOf(
+            async { scheduleListViewModel.fetchPostFCMToken() },
+            async { scheduleListViewModel.fetchReadTodaySchedules() }
+        ).awaitAll()
     }
     Column(
         modifier = Modifier
@@ -67,7 +75,10 @@ fun ScheduleListScreen(appState: ApplicationState, scheduleListViewModel: Schedu
             }
         }
         Row(modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = { appState.navigate(Constants.REGISTER_BUS_SCHEDULE_ROUTE) }, modifier = Modifier.weight(3f)) {
+            Button(
+                onClick = { appState.navigate(Constants.REGISTER_BUS_SCHEDULE_ROUTE) },
+                modifier = Modifier.weight(3f)
+            ) {
                 Text(text = "스케줄 등록")
             }
             WidthSpacer(width = 8.dp)

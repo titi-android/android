@@ -1,10 +1,12 @@
 package com.busschedule.datastore
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Named
@@ -40,6 +42,7 @@ class TokenManager @Inject constructor(
         dataStore.edit { prefs ->
             prefs[ACCESS_TOKEN_KEY] = token
         }
+        Log.d("daeyoung", "AccessToken: $token")
     }
 
     suspend fun saveRefreshToken(token: String) {
@@ -52,6 +55,19 @@ class TokenManager @Inject constructor(
         dataStore.edit { prefs ->
             prefs[FCM_TOKEN_KEY] = token
         }
+        Log.d("daeyoung", "FCMToken: $token")
+    }
+
+    suspend fun isExistAccessToken(): Boolean {
+        return dataStore.data.map { prefs ->
+            prefs[ACCESS_TOKEN_KEY] != null
+        }.first()
+    }
+
+    suspend fun isExistFCMToken(): Boolean {
+        return dataStore.data.map { prefs ->
+            prefs[FCM_TOKEN_KEY] != null
+        }.first()
     }
 
     suspend fun deleteAccessToken(){

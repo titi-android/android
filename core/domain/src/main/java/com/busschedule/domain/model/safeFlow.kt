@@ -46,11 +46,12 @@ fun <T : Any> safeFlowUnit(apiFunc: suspend () -> Response<ApiResponse<T>>): Flo
     flow {
         try {
             val res = apiFunc.invoke()
-            if (res.isSuccessful) {
-                emit(ApiState.Success(Unit))
+            val apiResult = res.body()!!
+            if (res.isSuccessful && apiResult.status == 200) {
+                emit(ApiState.Success(data = Unit, msg = apiResult.message))
             } else {
-                val errorBody = res.errorBody() ?: throw NullPointerException()
-                emit(ApiState.Error(errorBody.string()))
+                val errorBody = apiResult.message
+                emit(ApiState.Error(errorBody))
             }
         } catch (e: Exception) {
             emit(ApiState.NotResponse(message = e.message ?: "", exception = e))

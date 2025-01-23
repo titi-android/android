@@ -19,6 +19,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(project(":core:datastore"))
+    implementation(libs.firebase.messaging.ktx)
 
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.junit)

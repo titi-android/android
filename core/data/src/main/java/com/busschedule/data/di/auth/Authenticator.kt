@@ -1,6 +1,5 @@
 package com.busschedule.data.di.auth
 
-import android.util.Log
 import com.busschedule.datastore.TokenManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +26,6 @@ class AuthInterceptor @Inject constructor(
             tokenManager.getAccessToken().first()
         } ?: return errorResponse(chain.request())
 
-        Log.d("daeyoung", "AuthInterceptor AccessToken: $token")
         val request = chain.request().newBuilder().header(AUTHORIZATION, "Bearer $token").build()
 
         val response = chain.proceed(request)

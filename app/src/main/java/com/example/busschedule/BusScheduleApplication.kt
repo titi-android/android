@@ -6,6 +6,7 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class BusScheduleApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
         // FCM SDK 초기화

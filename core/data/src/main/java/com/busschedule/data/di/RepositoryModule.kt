@@ -2,10 +2,12 @@ package com.busschedule.data.di
 
 import com.busschedule.data.repository.BusRepositoryImpl
 import com.busschedule.data.repository.BusStopRepositoryImpl
+import com.busschedule.data.repository.FCMRepositoryImpl
 import com.busschedule.data.repository.LoginRepositoryImpl
 import com.busschedule.data.repository.ScheduleRepositoryImpl
 import com.busschedule.domain.repository.BusRepository
 import com.busschedule.domain.repository.BusStopRepository
+import com.busschedule.domain.repository.FCMRepository
 import com.busschedule.domain.repository.LoginRepository
 import com.busschedule.domain.repository.ScheduleRepository
 import dagger.Binds
@@ -41,4 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindBusRepository(
         busRepositoryImpl: BusRepositoryImpl
     ): BusRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFCMRepository(
+        fcmRepositoryImpl: FCMRepositoryImpl
+    ): FCMRepository
 }
