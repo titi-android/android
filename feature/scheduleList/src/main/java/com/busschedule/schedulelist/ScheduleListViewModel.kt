@@ -8,6 +8,7 @@ import com.busschedule.domain.model.ApiState
 import com.busschedule.domain.model.request.FCMTokenRequest
 import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
+import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class ScheduleListViewModel @Inject constructor(
     private val readTodaySchedulesUseCase: ReadTodaySchedulesUseCase,
     private val readDaysSchedulesUseCase: ReadDaysSchedulesUseCase,
+    private val deleteScheduleUseCase: DeleteScheduleUseCase,
     private val postFCMTokenUseCase: PostFCMTokenUseCase,
     private val tokenManager: TokenManager,
 ) : ViewModel() {
@@ -67,6 +69,21 @@ class ScheduleListViewModel @Inject constructor(
                     Log.d("daeyoung", "fetchReadDayOfWeekSchedules: $result")
                     scheduleListUiState.update { result.data as List<BusSchedule> } }
                 is ApiState.NotResponse -> {
+                }
+            }
+        }
+    }
+
+    fun fetchDeleteSchedules(scheduleId: Int) {
+        viewModelScope.launch {
+            when (val result = deleteScheduleUseCase(scheduleId).first()) {
+                is ApiState.Error -> Log.d("daeyoung", "api 통신 에러: ${result.errMsg}")
+                ApiState.Loading -> TODO()
+                is ApiState.Success<*> -> result.onSuccess {
+                    scheduleListUiState.update { schedule -> schedule.filter { it.id != scheduleId } }
+                    Log.d("daeyoung", "fetchDeleteSchedules: $result")}
+                is ApiState.NotResponse -> {
+                    Log.d("daeyoung", "api NotResponse: ${result.exception}, ${result.message}")
                 }
             }
         }

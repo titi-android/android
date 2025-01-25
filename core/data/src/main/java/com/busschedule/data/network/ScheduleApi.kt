@@ -4,8 +4,10 @@ import com.busschedule.data.model.DefaultResponse
 import com.busschedule.domain.model.request.ScheduleRegisterRequest
 import com.busschedule.domain.model.response.schedule.BusSchedule
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ScheduleApi {
@@ -20,4 +22,9 @@ interface ScheduleApi {
     // 스케줄 등록
     @POST("/api/v1/schedules")
     suspend fun postSchedule(@Body schedule: ScheduleRegisterRequest): DefaultResponse<Unit>
+
+    // 스케줄 삭제
+    @DELETE("/api/v1/schedules/{scheduleId}")
+    suspend fun deleteSchedule(@Path("scheduleId") scheduleId: Int): DefaultResponse<Unit>
+
 }

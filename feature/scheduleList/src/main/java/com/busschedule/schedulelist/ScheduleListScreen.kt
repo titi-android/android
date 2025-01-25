@@ -1,6 +1,7 @@
 package com.busschedule.schedulelist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -84,7 +85,9 @@ fun ScheduleListScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(items = scheduleListUiState, key = { it.id }) {
-                TempScheduleCard(backgroundColor = Color.White, schedule = it)
+                TempScheduleCard(backgroundColor = Color.White, schedule = it) {
+                    scheduleListViewModel.fetchDeleteSchedules(it.id)
+                }
             }
         }
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -106,7 +109,7 @@ fun ScheduleListScreen(
 
 
 @Composable
-fun TempScheduleCard(backgroundColor: Color, schedule: BusSchedule) {
+fun TempScheduleCard(backgroundColor: Color, schedule: BusSchedule, onDelete: () -> Unit) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
@@ -118,7 +121,7 @@ fun TempScheduleCard(backgroundColor: Color, schedule: BusSchedule) {
             Text(text = schedule.name, modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Default.Edit, contentDescription = "ic_edit")
             WidthSpacer(width = 4.dp)
-            Icon(imageVector = Icons.Default.Delete, contentDescription = "ic_delete")
+            Icon(imageVector = Icons.Default.Delete, contentDescription = "ic_delete", modifier = Modifier.clickable { onDelete() })
         }
         HeightSpacer(height = 4.dp)
         // TODO: 백엔드가 데이터 수정하면 변경

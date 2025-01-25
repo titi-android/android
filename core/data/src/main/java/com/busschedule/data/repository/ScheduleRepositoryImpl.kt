@@ -23,4 +23,8 @@ class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: Schedu
     override fun postSchedule(scheduleRegisterRequest: ScheduleRegisterRequest): Flow<ApiState<Unit>> =
         safeFlowUnit { scheduleApi.postSchedule(scheduleRegisterRequest) }
 
+    override fun deleteSchedule(scheduleId: Int): Flow<ApiState<Unit>> = safeFlowUnit {
+        scheduleApi.deleteSchedule(scheduleId)
+    }
+
 }
