@@ -87,7 +87,14 @@ fun RegisterBusScheduleScreen(
             placeholder = { Text(text = "스케줄 이름") },
             maxLines = 1
         )
-        DatePickerFieldToModal()
+        TextField(
+            value = registerBusScheduleUiState.days,
+            onValueChange = { registerBusScheduleViewModel.setDate(it) },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(text = "ex) 월요일") },
+            maxLines = 1
+        )
+//        DatePickerFieldToModal()
         SelectRangeTimeArea(
             startTime = registerBusScheduleUiState.startTime,
             endTime = registerBusScheduleUiState.endTime,
@@ -130,8 +137,8 @@ fun RegisterBusScheduleScreen(
             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }),
             placeholder = { Text(text = "버스정류장 명") })
         TextField(
-            value = ""/*TODO*/,
-            onValueChange = { /*TODO*/ },
+            value = registerBusScheduleUiState.bus,
+            onValueChange = { registerBusScheduleViewModel.updateBusInput(it) },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
             trailingIcon = {

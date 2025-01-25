@@ -10,7 +10,8 @@ data class ScheduleRegister (
     val regionName: String = "",
     val busStopName: String = "",
     val busStopSupportingName: SupportingBusStopText = SupportingBusStopText(),
-    val busList: List<String> = emptyList()
+    val bus: String = "",
+//    val busList: List<String> = emptyList()
 )
 
 fun ScheduleRegister.asDomain() = ScheduleRegisterRequest(
@@ -20,5 +21,6 @@ fun ScheduleRegister.asDomain() = ScheduleRegisterRequest(
     endTime = endTime,
     regionName = regionName,
     busStopName = busStopName,
-    busList = busList
+    busList = listOf(bus)
+//    busList = busList
 )

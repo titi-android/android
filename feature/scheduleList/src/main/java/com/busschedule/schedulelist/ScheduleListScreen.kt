@@ -18,9 +18,13 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -42,10 +46,11 @@ fun ScheduleListScreen(
 ) {
 
     val scheduleListUiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle()
+    var input by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         listOf(
-            async { scheduleListViewModel.fetchPostFCMToken() },
+            async { scheduleListViewModel.initFCMToken() },
             async { scheduleListViewModel.fetchReadTodaySchedules() }
         ).awaitAll()
     }
@@ -56,9 +61,17 @@ fun ScheduleListScreen(
             .padding(16.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "요일 선택(기본값 현재 요일)")
-            }
+            TextField(
+                value = input,
+                onValueChange = { input = it },
+                modifier = Modifier.fillMaxWidth(),
+                maxLines = 1,
+                trailingIcon = {
+                    Button(onClick = { scheduleListViewModel.fetchReadDayOfWeekSchedules(input) }) {
+                        Text(text = "조회")
+                    }
+                },
+                placeholder = { Text(text = "요일 선택(기본값 현재 요일)") })
         }
         val lazyListState = rememberLazyListState()
         LazyColumn(
@@ -111,6 +124,6 @@ fun TempScheduleCard(backgroundColor: Color, schedule: BusSchedule) {
         // TODO: 백엔드가 데이터 수정하면 변경
         Text(text = schedule.busStopName)
         HeightSpacer(height = 4.dp)
-        Text(text = "${schedule.busInfos[0].routeno}, ${schedule.busInfos[1].routeno}")
+//        Text(text = "${schedule.busInfos[0].routeno}, ${schedule.busInfos[1].routeno}")
     }
 }

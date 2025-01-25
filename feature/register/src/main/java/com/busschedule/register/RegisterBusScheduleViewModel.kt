@@ -1,6 +1,8 @@
 package com.busschedule.register
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +19,7 @@ import com.busschedule.register.entity.SelectBusUiState
 import com.busschedule.register.entity.SupportingBusStopText
 import com.busschedule.register.entity.asDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,6 +31,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterBusScheduleViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val postScheduleUseCase: PostScheduleUseCase,
     private val checkBusStopUseCase: CheckBusStopUseCase,
     private val readAllBusUseCase: ReadAllBusUseCase,
@@ -68,7 +72,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
             cityOfRegion,
             busStop,
             busStopSupporting,
-            bus
+            busInput,
+//            bus
         ) {
             ScheduleRegister(
                 name = scheduleName.value,
@@ -78,8 +83,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 regionName = cityOfRegion.value.getSelectedCityName(),
                 busStopName = busStop.value,
                 busStopSupportingName = busStopSupporting.value,
+                bus = busInput.value
                 // TODO: 버스 여러개 등록하는 ui로 변경
-                busList = emptyList()
+//                busList = emptyList()
             )
         }
 
@@ -131,7 +137,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                     "not response: ${result.message}, ${result.exception}"
                 )
 
-                is ApiState.Success -> {}
+                is ApiState.Success -> { Toast.makeText(context, "스케줄이 등록되었습니다.", Toast.LENGTH_SHORT).show() }
             }
         }
     }

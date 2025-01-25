@@ -7,8 +7,8 @@ data class BusSchedule(
     val id: Int = 0,
     val name: String = "",
     val days: String = "",
-    val startTime: String = "",
-    val endTime: String = "",
+    val startTime: List<Int> = emptyList(),
+    val endTime: List<Int> = emptyList(),
     val busStopName: String = "",
     val busInfos: List<BusInfo> = emptyList()
 )
@@ -23,4 +23,10 @@ data class BusInfo(
     val routeno: String = "",
     val routetp: String = "",
     val vehicletp: String = ""
+)
+
+@Serializable
+data class Time(
+    val hour: Int = 0,
+    val minute: Int = 0
 )
