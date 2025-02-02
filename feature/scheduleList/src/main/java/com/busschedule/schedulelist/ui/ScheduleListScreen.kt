@@ -3,6 +3,8 @@ package com.busschedule.schedulelist.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,8 +22,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -39,11 +44,13 @@ import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.entity.DayOfWeek
 import com.busschedule.schedulelist.entity.DayOfWeekUi
-import com.busschedule.util.constant.Constants
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
+import core.designsystem.component.MainButton
 import core.designsystem.component.WidthSpacer
+import core.designsystem.theme.BackgroundColor
+import core.designsystem.theme.MainColor
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
@@ -64,7 +71,7 @@ fun ScheduleListScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF525252))
+            .background(BackgroundColor)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp)
@@ -73,28 +80,26 @@ fun ScheduleListScreen(
         ScheduleListAppBar {}
         HeightSpacer(height = 16.dp)
         DayOfWeekSelectArea { scheduleListViewModel.fetchReadDayOfWeekSchedules(it) }
-        val lazyListState = rememberLazyListState()
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(vertical = 8.dp),
-            state = lazyListState,
-            contentPadding = PaddingValues(top = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(items = scheduleListUiState, key = { it.id }) {
-                TempScheduleCard(backgroundColor = Color.White, schedule = it) {
-                    scheduleListViewModel.fetchDeleteSchedules(it.id)
+        Box(modifier = Modifier.weight(1f)) {
+            RefreshIcon {}
+            val lazyListState = rememberLazyListState()
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp),
+                state = lazyListState,
+                contentPadding = PaddingValues(top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(items = scheduleListUiState, key = { it.id }) {
+                    TempScheduleCard(backgroundColor = Color.White, schedule = it) {
+                        scheduleListViewModel.fetchDeleteSchedules(it.id)
+                    }
                 }
             }
         }
-        Button(
-            onClick = { appState.navigate(Constants.REGISTER_BUS_SCHEDULE_ROUTE) },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "스케줄 등록")
-        }
+
+        MainButton(text = "스케줄 등록")
     }
 }
 
@@ -168,5 +173,21 @@ fun DayOfWeekSelectArea(requestDaySchedule: (String) -> Unit) {
                 requestDaySchedule(day.getDayOfWeeks())
             }
         }
+    }
+}
+
+@Composable
+fun BoxScope.RefreshIcon(onClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 22.dp),
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = MainColor,
+            contentColor = Color.White
+        ), onClick = { onClick() }) {
+        Icon(
+            imageVector = Icons.Rounded.Refresh,
+            contentDescription = "ic_refresh",
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
