@@ -14,16 +14,26 @@ fun RootNavHost() {
     val appState = rememberApplicationState()
 //    val navBackStackEntry by appState.getNavController().currentBackStackEntryAsState()
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        NavHost(
-            navController = appState.getNavController(),
-            startDestination = Constants.LOGIN_GRAPH,
-            modifier = Modifier
-                .fillMaxSize().padding(innerPadding)
-        ) {
-            loginGraph(appState)
-            scheduleListComposable(appState)
-            registerBusScheduleGraph(appState)
-        }
+//    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//        NavHost(
+//            navController = appState.getNavController(),
+//            startDestination = Constants.LOGIN_GRAPH,
+//            modifier = Modifier
+//                .fillMaxSize().padding(innerPadding)
+//        ) {
+//            loginGraph(appState)
+//            scheduleListComposable(appState)
+//            registerBusScheduleGraph(appState)
+//        }
+//    }
+    NavHost(
+        navController = appState.getNavController(),
+        startDestination = Constants.LOGIN_GRAPH,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        loginGraph(appState)
+        scheduleListComposable(appState)
+        registerBusScheduleGraph(appState)
     }
 }
