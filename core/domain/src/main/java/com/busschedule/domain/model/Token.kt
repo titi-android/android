@@ -1,6 +1,9 @@
 package com.busschedule.domain.model
 
-@JvmInline
-value class Token(
-    val access: String
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Token(
+    val accessToken: String,
+    val refreshToken: String
 )

@@ -23,14 +23,14 @@ fun <T : Any> safeFlow(apiFunc: suspend () -> Response<ApiResponse<T>>): Flow<Ap
     }.flowOn(Dispatchers.IO)
 
 fun safeFlowAndSaveToken(
-    apiFunc: suspend () -> Response<ApiResponse<String>>,
+    apiFunc: suspend () -> Response<ApiResponse<Token>>,
     saveToken: suspend (String) -> Unit,
-): Flow<ApiState<String>> =
+): Flow<ApiState<Token>> =
     flow {
         try {
             val res = apiFunc.invoke()
             if (res.isSuccessful) {
-                val data = res.body()?.data
+                val data = res.body()?.data?.accessToken
                 saveToken(data ?: "")
                 emit(ApiState.Success(res.body()?.data ?: throw NullPointerException()))
             } else {
