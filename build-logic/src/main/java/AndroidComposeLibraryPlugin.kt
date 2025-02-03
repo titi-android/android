@@ -33,6 +33,7 @@ class AndroidComposeLibraryPlugin : Plugin<Project> {
 
         dependencies {
             add("implementation", libs.findLibrary("androidx-material3").get())
+            add("implementation", libs.findLibrary("androidx-compose-material-icon").get())
             add("implementation", libs.findLibrary("androidx-ui").get())
             add("implementation", libs.findLibrary("androidx-activity-compose").get())
             add("implementation", libs.findLibrary("androidx-ui-tooling-preview").get())

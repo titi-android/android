@@ -53,6 +53,7 @@ import core.designsystem.theme.BackgroundColor
 import core.designsystem.theme.MainColor
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import java.time.LocalDate
 
 @Composable
 fun ScheduleListScreen(
@@ -152,11 +153,16 @@ fun DayOfWeekSelectArea(requestDaySchedule: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 1.dp),
+            .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(7.dp)
     ) {
         var dayOfWeeks by remember {
-            mutableStateOf(DayOfWeek.entries.map { DayOfWeekUi(dayOfWeek = it) })
+            mutableStateOf(DayOfWeek.entries.map {
+                DayOfWeekUi(
+                    dayOfWeek = it,
+                    init = LocalDate.now().dayOfWeek.name == it.enName
+                )
+            })
         }
         dayOfWeeks.forEach { day ->
             DayOfWeekCard(
@@ -179,7 +185,9 @@ fun DayOfWeekSelectArea(requestDaySchedule: (String) -> Unit) {
 @Composable
 fun BoxScope.RefreshIcon(onClick: () -> Unit) {
     IconButton(
-        modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 22.dp),
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(bottom = 22.dp),
         colors = IconButtonDefaults.iconButtonColors(
             containerColor = MainColor,
             contentColor = Color.White
