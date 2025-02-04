@@ -1,4 +1,4 @@
-package com.busschedule.schedulelist.entity
+package com.busschedule.util.entity
 
 enum class DayOfWeek(val value: String, val enName: String) {
     MONDAY("월", "MONDAY"),

@@ -17,10 +17,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
@@ -35,20 +32,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.schedulelist.ScheduleListViewModel
-import com.busschedule.schedulelist.entity.DayOfWeek
-import com.busschedule.schedulelist.entity.DayOfWeekUi
+import com.busschedule.schedulelist.component.ScheduleTicket
+import com.busschedule.util.constant.Constants
+import com.busschedule.util.entity.DayOfWeek
+import com.busschedule.util.entity.DayOfWeekUi
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.MainButton
-import core.designsystem.component.WidthSpacer
 import core.designsystem.theme.BackgroundColor
 import core.designsystem.theme.MainColor
 import kotlinx.coroutines.async
@@ -93,43 +89,17 @@ fun ScheduleListScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(items = scheduleListUiState, key = { it.id }) {
-                    TempScheduleCard(backgroundColor = Color.White, schedule = it) {
+                    ScheduleTicket(ticketColor = Color(0xFF0060E7), holeColor = BackgroundColor, onEdit = {}) {
                         scheduleListViewModel.fetchDeleteSchedules(it.id)
                     }
                 }
             }
         }
 
-        MainButton(text = "스케줄 등록")
+        MainButton(text = "스케줄 등록") { appState.navigate(Constants.REGISTER_BUS_SCHEDULE_ROUTE) }
     }
 }
 
-
-@Composable
-fun TempScheduleCard(backgroundColor: Color, schedule: BusSchedule, onDelete: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(backgroundColor)
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Row {
-            Text(text = schedule.name, modifier = Modifier.weight(1f))
-            Icon(imageVector = Icons.Default.Edit, contentDescription = "ic_edit")
-            WidthSpacer(width = 4.dp)
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "ic_delete",
-                modifier = Modifier.clickable { onDelete() })
-        }
-        HeightSpacer(height = 4.dp)
-        // TODO: 백엔드가 데이터 수정하면 변경
-        Text(text = schedule.busStopName)
-        HeightSpacer(height = 4.dp)
-//        Text(text = "${schedule.busInfos[0].routeno}, ${schedule.busInfos[1].routeno}")
-    }
-}
 
 @Composable
 fun ScheduleListAppBar(onClickSetting: () -> Unit) {

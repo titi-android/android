@@ -4,7 +4,7 @@ import com.busschedule.domain.model.request.ScheduleRegisterRequest
 
 data class ScheduleRegister (
     val name: String = "",
-    val days: String = "",
+    val days: List<String> = emptyList(),
     val startTime: String = "",
     val endTime: String = "",
     val regionName: String = "",

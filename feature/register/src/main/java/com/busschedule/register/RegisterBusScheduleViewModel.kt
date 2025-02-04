@@ -39,8 +39,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _scheduleName = MutableStateFlow("")
     val scheduleName: StateFlow<String> = _scheduleName.asStateFlow()
 
-    private val _date = MutableStateFlow("")
-    val date: StateFlow<String> = _date.asStateFlow()
+    private val _date = MutableStateFlow(emptyList<String>())
+    val date: StateFlow<List<String>> = _date.asStateFlow()
 
     private val _startTime = MutableStateFlow("00:00")
     val startTime: StateFlow<String> = _startTime.asStateFlow()
@@ -109,12 +109,15 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     var busStopNodeId = BusStop()
 
-    fun setScheduleName(name: String) {
+    fun updateScheduleName(name: String) {
         _scheduleName.update { name }
     }
 
-    fun setDate(date: String) {
-        _date.update { date }
+    fun addDayOfWeek(date: String) {
+        _date.update { it + date }
+    }
+    fun removeDayOfWeek(date: String) {
+        _date.update { date. }
     }
 
     fun setStartTime(time: String) {

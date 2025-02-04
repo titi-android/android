@@ -1,6 +1,8 @@
 package com.example.connex.ui.domain
 
+import android.content.Context
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
@@ -16,6 +18,7 @@ import java.nio.charset.StandardCharsets
 class ApplicationState(
     private val bottomBarState: MutableState<Boolean>,
     private val navController: NavHostController,
+    private val context: Context,
 //    val scaffoldState: ScaffoldState,
     private val snackbarHostState: SnackbarHostState,
 //    val cameraPositionState: CameraPositionState,
@@ -36,6 +39,10 @@ class ApplicationState(
 //            Log.d("daeYoung", "showSnackbar(), snackbarHostState: ${snackbarHostState}")
             snackbarHostState.showSnackbar(message = message, duration = SnackbarDuration.Short)
         }
+    }
+
+    fun showToastMsg(msg: String) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
     fun popBackStack() {

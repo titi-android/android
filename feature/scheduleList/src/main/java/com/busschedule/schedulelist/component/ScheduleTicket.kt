@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import core.designsystem.component.WidthSpacer
 
 @Composable
-fun ScheduleTicket(ticketColor: Color, holeColor: Color) {
+fun ScheduleTicket(ticketColor: Color, holeColor: Color, onEdit: () -> Unit, onDelete: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

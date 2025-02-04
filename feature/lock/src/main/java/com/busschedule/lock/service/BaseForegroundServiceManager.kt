@@ -3,7 +3,6 @@ package com.busschedule.lock.service
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import com.busschedule.util.ext.isServiceRunning
 
 abstract class BaseForegroundServiceManager<T : Service>(
@@ -14,7 +13,7 @@ abstract class BaseForegroundServiceManager<T : Service>(
         val intent = Intent(context, targetClass)
 
         if (!context.isServiceRunning(targetClass)) {
-            Log.d("daeyoung", "BaseForegroundServiceManager start")
+//            Log.d("daeyoung", "BaseForegroundServiceManager start")
             context.startForegroundService(intent)
 //            context.startService(intent)
         }

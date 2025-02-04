@@ -1,9 +1,12 @@
 package com.busschedule.register.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -11,12 +14,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.NotificationsOff
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -28,6 +39,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
@@ -39,11 +51,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -51,11 +66,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.constant.TimePickerType
+import com.busschedule.register.entity.NotifyInfo
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.util.constant.Constants
+import com.busschedule.util.entity.DayOfWeek
+import com.busschedule.util.entity.DayOfWeekUi
 import com.example.connex.ui.domain.ApplicationState
+import core.designsystem.component.DayOfWeekCard
+import core.designsystem.component.HeightSpacer
+import core.designsystem.component.MainButton
 import core.designsystem.component.WidthSpacer
+import core.designsystem.component.appbar.BackArrowAppBar
+import core.designsystem.theme.BackgroundColor
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -78,82 +101,111 @@ fun RegisterBusScheduleScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(BackgroundColor)
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
-        TextField(
-            value = registerBusScheduleUiState.name,
-            onValueChange = { registerBusScheduleViewModel.setScheduleName(it) },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "스케줄 이름") },
-            maxLines = 1
-        )
-        TextField(
-            value = registerBusScheduleUiState.days,
-            onValueChange = { registerBusScheduleViewModel.setDate(it) },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "ex) 월요일") },
-            maxLines = 1
-        )
-//        DatePickerFieldToModal()
-        SelectRangeTimeArea(
-            startTime = registerBusScheduleUiState.startTime,
-            endTime = registerBusScheduleUiState.endTime,
-            updateStartTime = { registerBusScheduleViewModel.setStartTime(it.convertTimePickerToUiTime()) }) {
-            registerBusScheduleViewModel.setEndTime(it.convertTimePickerToUiTime())
+        BackArrowAppBar(title = "스케줄 등록하기") {
+
         }
-        TextField(
-            value = registerBusScheduleUiState.regionName,
-            onValueChange = { },
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true,
-            maxLines = 1,
-            trailingIcon = {
-                Button(onClick = { appState.navigate(Constants.SELECT_REGION_ROUTE) }) {
-                    Text(text = "조회")
-                }
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }),
-            placeholder = { Text(text = "도시(지역) 이름") })
-        TextField(
-            value = registerBusScheduleUiState.busStopName,
-            onValueChange = { registerBusScheduleViewModel.setBusStop(it) },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 1,
-            trailingIcon = {
-                Button(onClick = {
-                    registerBusScheduleViewModel.fetchCheckBusStop(
-                        registerBusScheduleUiState.regionName,
-                        registerBusScheduleUiState.busStopName
-                    )
-                }) {
-                    Text(text = "조회")
-                }
-            },
-            supportingText = {
-                val supText = registerBusScheduleUiState.busStopSupportingName
-                Text(text = supText.resultMsg, color = supText.color)},
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }),
-            placeholder = { Text(text = "버스정류장 명") })
-        TextField(
-            value = registerBusScheduleUiState.bus,
-            onValueChange = { registerBusScheduleViewModel.updateBusInput(it) },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 1,
-            trailingIcon = {
-                Button(onClick = { appState.navigate(Constants.SELECT_BUS_ROUTE) }) {
-                    Text(text = "조회")
-                }
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
-            placeholder = { Text(text = "버스 목록") })
-        TextButton(onClick = {
-            registerBusScheduleViewModel.fetchPostBusSchedule(registerBusScheduleUiState)
-        }, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "완료")
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 32.dp)
+        ) {
+            HeightSpacer(height = 32.dp)
+            ScheduleNameTextField(
+                value = registerBusScheduleUiState.name,
+                onValueChange = { registerBusScheduleViewModel.updateScheduleName(it) },
+                placeholder = "스케줄"
+            )
+            HeightSpacer(height = 32.dp)
+            NotifyArea(
+                selectDayOfWeek = ,
+                unSelectDayOfWeek = ,
+                startTime = ,
+                endTime = ,
+                updateStartTime = ,
+                updateEndTime =
+            ) {
+
+            }
+            HeightSpacer(height = 32.dp)
+            RegionArea()
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            MainButton(text = "완료") {}
+        }
+    }
+}
+
+@Composable
+fun ScheduleNameTextField(value: String, onValueChange: (String) -> Unit, placeholder: String) {
+    val focusManager = LocalFocusManager.current
+    TextField(
+        value = value,
+        onValueChange = { onValueChange(it) },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        placeholder = { Text(text = placeholder, color = Color(0xFF808991)) },
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        ),
+        maxLines = 1,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions { focusManager.clearFocus() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NotifyArea(
+    selectDayOfWeek: (DayOfWeek) -> Unit,
+    unSelectDayOfWeek: (DayOfWeek) -> Unit,
+    startTime: String,
+    endTime: String,
+    updateStartTime: (TimePickerState) -> Unit,
+    updateEndTime: (TimePickerState) -> Unit,
+    isNotify: Boolean = false,
+    onNotifyClick: (Boolean) -> Unit,
+) {
+    Column {
+        Text(text = "알림")
+        HeightSpacer(height = 12.dp)
+        MultiSelectDayOfWeek(selectDayOfWeek = {selectDayOfWeek(it)}) {
+            unSelectDayOfWeek(it)
+        }
+        HeightSpacer(height = 16.dp)
+        SelectRangeTimeArea(startTime = startTime, endTime = endTime, updateStartTime = {updateStartTime(it)}) {
+            updateEndTime(it)
+        }
+        HeightSpacer(height = 16.dp)
+        NotifyIcon(isCheck = isNotify) {
+            onNotifyClick(it)
+        }
+
+    }
+}
+
+@Composable
+fun RegionArea() {
+    Column {
+        Text(text = "춟발")
+        HeightSpacer(height = 14.dp)
+        SearchBox(text = "도시(지역)") {}
+        HeightSpacer(height = 14.dp)
+        SearchBox(text = "도시(지역)") {}
+        HeightSpacer(height = 14.dp)
+        SearchBox(text = "도시(지역)") {}
     }
 }
 
@@ -224,15 +276,27 @@ fun ColumnScope.SelectRangeTimeArea(
     var isShowTimePickerDialog by remember { mutableStateOf(TimePickerType.NONE) }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = "시작 시간")
-        WidthSpacer(width = 8.dp)
-        Button(onClick = { isShowTimePickerDialog = TimePickerType.START_TIME }) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.White)
+                .clickable { isShowTimePickerDialog = TimePickerType.START_TIME }
+                .padding(start = 16.dp, top = 14.dp, bottom = 14.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(text = startTime)
         }
-        WidthSpacer(weight = 1f)
-        Text(text = "종료 시간")
-        WidthSpacer(width = 8.dp)
-        Button(onClick = { isShowTimePickerDialog = TimePickerType.END_TIME }) {
+        WidthSpacer(width = 12.dp)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.White)
+                .clickable { isShowTimePickerDialog = TimePickerType.END_TIME }
+                .padding(start = 16.dp, top = 14.dp, bottom = 14.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(text = endTime)
         }
     }
@@ -306,6 +370,101 @@ fun TimePickerFieldToModal(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun NotifyIcon(isCheck: Boolean = false, onCheck: (Boolean) -> Unit) {
+    val notifyInfo = if (isCheck) {
+        NotifyInfo(
+            icon = Icons.Outlined.NotificationsOff,
+            containerColor = Color(0xFF2E2E34),
+            iconColor = Color.White,
+            content = "알림 ON"
+        )
+    } else {
+        NotifyInfo(
+            icon = Icons.Outlined.Notifications,
+            containerColor = Color.White,
+            iconColor = Color(0xFF2E2E34),
+            content = "알림 OFF"
+        )
+    }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(modifier = Modifier
+            .clip(CircleShape)
+            .size(44.dp)
+            .background(notifyInfo.containerColor)
+            .clickable { onCheck(!isCheck) }) {
+            Icon(
+                imageVector = notifyInfo.icon,
+                contentDescription = "ic_notify",
+                tint = notifyInfo.iconColor,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxSize(0.6f)
+            )
+        }
+        WidthSpacer(width = 8.dp)
+        Text(text = notifyInfo.content)
+    }
+}
+
+
+@Composable
+fun MultiSelectDayOfWeek(
+    selectDayOfWeek: (DayOfWeek) -> Unit,
+    unSelectDayOfWeek: (DayOfWeek) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        var dayOfWeeks by remember {
+            mutableStateOf(DayOfWeek.entries.map {
+                DayOfWeekUi(
+                    dayOfWeek = it,
+                    init = false
+                )
+            })
+        }
+        dayOfWeeks.forEach { day ->
+            DayOfWeekCard(
+                text = day.dayOfWeek.value,
+                isSelected = day.isSelected,
+                isShadow = false
+            ) {
+                if (day.isSelected) {
+                    unSelectDayOfWeek(day.dayOfWeek)
+                } else {
+                    selectDayOfWeek(day.dayOfWeek)
+                }
+                day.updateSelected(!day.isSelected)
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchBox(text: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.White)
+            .clickable { onClick() }
+            .padding(start = 16.dp, end = 18.5.dp, top = 14.dp, bottom = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = text)
+        Icon(
+            imageVector = Icons.Outlined.Search,
+            contentDescription = "ic_search",
+            tint = Color(0xFF808991),
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
 
