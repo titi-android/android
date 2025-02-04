@@ -11,11 +11,11 @@ import com.busschedule.domain.model.response.busstop.BusStop
 import com.busschedule.domain.usecase.bus.ReadAllBusUseCase
 import com.busschedule.domain.usecase.busstop.CheckBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
-import com.busschedule.register.constant.Region
 import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.CityOfRegion
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.entity.SelectBusUiState
+import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.SupportingBusStopText
 import com.busschedule.register.entity.asDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,8 +60,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _busInput = MutableStateFlow("")
     val busInput: StateFlow<String> = _busInput.asStateFlow()
 
-    private val _cityOfRegion = MutableStateFlow(CityOfRegion(Region.entries))
+    private val _cityOfRegion = MutableStateFlow(CityOfRegion())
     val cityOfRegion: StateFlow<CityOfRegion> = _cityOfRegion.asStateFlow()
+
+    private val _regionInput = MutableStateFlow("")
+    val regionInput: StateFlow<String> = _regionInput.asStateFlow()
 
     val registerBusScheduleUiState =
         combine(
@@ -88,6 +91,14 @@ class RegisterBusScheduleViewModel @Inject constructor(
 //                busList = emptyList()
             )
         }
+
+
+    val selectRegionUiState = combine(regionInput, cityOfRegion) { input, cityOfRegion ->
+        SelectRegionUiState(
+            input = input,
+            region = cityOfRegion
+        )
+    }
 
     val selectBusUiState = combine(busInput, bus) { input, busList ->
         SelectBusUiState(
@@ -125,6 +136,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
 //    fun setBus(bus: String) {
 //        _bus.update { bus }
 //    }
+
+    fun updateRegionInput(input: String) {
+        _regionInput.update { input }
+    }
 
     fun fetchPostBusSchedule(scheduleRegister: ScheduleRegister) {
 

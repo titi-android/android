@@ -7,7 +7,7 @@ import com.busschedule.register.constant.City
 import com.busschedule.register.constant.Region
 
 class CityOfRegion(
-    regions: List<Region>,
+    private val regions: List<Region> = Region.entries,
 ) {
     val regionUiStates = regions.map { RegionUiState(it) }
 
@@ -31,6 +31,26 @@ class CityOfRegion(
     private fun updateCitiesUiState(region: Region) {
         citiesUiState = region.cities.map { CityUiState(it) }
     }
+    private fun isExistCity(input: String): Pair<Region, City>? {
+        regions.forEach { region ->
+            val result = region.cities.find { city -> city.value == input }
+            if (result != null) {
+                return region to result
+            }
+        }
+        return null
+    }
+    fun searchCity(input: String): Boolean {
+        val result = isExistCity(input)
+        if (result != null) {
+            selectRegion(result.first)
+            selectCity(result.second)
+            return true
+        }
+        return false
+    }
+
+
 
     fun getSelectedCityName() = selectedCityUiState?.city?.value ?: ""
 }

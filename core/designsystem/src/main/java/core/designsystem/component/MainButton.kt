@@ -12,15 +12,16 @@ import androidx.compose.ui.unit.dp
 import core.designsystem.theme.MainColor
 
 @Composable
-fun MainButton(text: String) {
+fun MainButton(modifier: Modifier = Modifier, text: String, enabled: Boolean = true, onClick: () -> Unit) {
     TextButton(
         modifier = Modifier.fillMaxWidth(),
+        enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.textButtonColors(
             containerColor = MainColor,
             contentColor = Color.White
         ),
-        onClick = { /*TODO*/ }) {
+        onClick = { onClick() }) {
         Text(text = text)
     }
 }
