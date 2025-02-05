@@ -14,24 +14,18 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.register.RegisterBusScheduleViewModel
+import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.constant.City
 import com.busschedule.register.constant.Region
 import com.busschedule.register.entity.CityUiState
@@ -73,7 +67,7 @@ fun SelectRegionScreen(
                 appState.showToastMsg("일치하는 지역이 없습니다.")
             }
         }
-        HeightSpacer(height = 8.dp)
+        HeightSpacer(height = 16.dp)
         Row(modifier = Modifier.weight(1f)) {
             RegionArea(selectedRegionUiState.region.regionUiStates) {
                 selectedRegionUiState.region.selectRegion(it)
@@ -132,33 +126,4 @@ fun RowScope.CityArea(cities: List<CityUiState>, select: (City) -> Unit) {
             ) { select(it.city) }
         }
     }
-}
-
-@Composable
-fun SearchTextField(value: String, onValueChange: (String) -> Unit, onSearch: (String) -> Unit) {
-    val focusManager = LocalFocusManager.current
-    TextField(
-        value = value,
-        onValueChange = { onValueChange(it) },
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth(),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedPlaceholderColor = Color(0xFF8991B3),
-            unfocusedPlaceholderColor = Color(0xFF8991B3),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-        ),
-        maxLines = 1,
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        placeholder = { Text(text = "도시(지역) 이름 검색") },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions {
-            onSearch(value)
-            focusManager.clearFocus()
-        }
-    )
 }
