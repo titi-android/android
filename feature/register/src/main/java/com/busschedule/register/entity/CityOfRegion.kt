@@ -52,7 +52,7 @@ class CityOfRegion(
 
 
 
-    fun getSelectedCityName() = selectedCityUiState?.city?.value ?: ""
+    fun getSelectedCityName() = selectedCityUiState?.city?.value ?: "도시(지역)"
 }
 
 data class RegionUiState(

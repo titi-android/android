@@ -32,10 +32,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.domain.model.response.schedule.BusInfo
+import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.SearchTextField
+import com.busschedule.register.entity.SelectBusUiState
+import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.MainButton
 import core.designsystem.component.WidthSpacer
@@ -43,14 +47,13 @@ import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.theme.BackgroundColor
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true, backgroundColor = 0xFFFFFFFF)
 fun SelectBusScreen(
-//    appState: ApplicationState,
-//    registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    appState: ApplicationState,
+    registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
 ) {
-//    val uiState by registerBusScheduleViewModel.selectBusUiState.collectAsStateWithLifecycle(
-//        SelectBusUiState()
-//    )
+    val uiState by registerBusScheduleViewModel.selectBusUiState.collectAsStateWithLifecycle(
+        SelectBusUiState()
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,14 +61,12 @@ fun SelectBusScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-        BackArrowAppBar(title = "도시 이름 검색") {}
+        BackArrowAppBar(title = "버스 정류장 검색") { appState.popBackStack() }
         SearchTextField(
-//            value = uiState.input,
-//            onValueChange = { registerBusScheduleViewModel.updateBusStopInput(it) }) {
-//            // TODO: 일치하는 지역 없을 때 로직
-//            appState.showToastMsg("일치하는 지역이 없습니다.")
-            value = "",
-            onValueChange = { }) {
+            value = uiState.input,
+            onValueChange = { registerBusScheduleViewModel.updateBusStopInput(it) },
+            placeholder = "버스 정류장 검색") {
+            registerBusScheduleViewModel.fetchReadAllBusStop(uiState.input) { appState.showToastMsg(it) }
         }
         HeightSpacer(height = 16.dp)
         val lazyListState = rememberLazyListState()
@@ -76,11 +77,11 @@ fun SelectBusScreen(
                 .fillMaxWidth(),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            items(items = listOf(1, 2), key = { it }) {
+            items(items = uiState.busStop, key = { it.busStop.nodeId }) {
                 BusStopCard(
-                    busStopName = "버스정류장 1",
-                    latitude = 0.0,
-                    longitude = 0.0,
+                    busStopName = it.busStop.name,
+                    latitude = it.busStop.tmX,
+                    longitude = it.busStop.tmY,
                     busInfoList = emptyList()
                 )
             }
@@ -96,7 +97,7 @@ fun SelectBusScreen(
                 text = "완료",
                 enabled = true
             ) {
-//                appState.popBackStack()
+                appState.popBackStack()
             }
         }
     }

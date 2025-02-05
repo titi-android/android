@@ -62,7 +62,8 @@ fun SelectRegionScreen(
         BackArrowAppBar(title = "도시 이름 검색") {}
         SearchTextField(
             value = selectedRegionUiState.input,
-            onValueChange = { registerBusScheduleViewModel.updateRegionInput(it) }) {
+            onValueChange = { registerBusScheduleViewModel.updateRegionInput(it) },
+            placeholder = "도시(지역) 이름 검색") {
             if (selectedRegionUiState.region.searchCity(it).not()) {
                 appState.showToastMsg("일치하는 지역이 없습니다.")
             }

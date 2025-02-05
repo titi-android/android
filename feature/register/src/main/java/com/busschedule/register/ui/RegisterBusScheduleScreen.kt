@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,13 +51,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -70,7 +67,6 @@ import com.busschedule.register.entity.NotifyInfo
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.util.constant.Constants
-import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
@@ -121,17 +117,23 @@ fun RegisterBusScheduleScreen(
             )
             HeightSpacer(height = 32.dp)
             NotifyArea(
-                selectDayOfWeek = ,
-                unSelectDayOfWeek = ,
-                startTime = ,
-                endTime = ,
-                updateStartTime = ,
-                updateEndTime =
+                dayOfWeeks = registerBusScheduleUiState.dayOfWeeks,
+                startTime = registerBusScheduleUiState.startTime,
+                endTime = registerBusScheduleUiState.endTime,
+                updateStartTime = { registerBusScheduleViewModel.updateStartTime(it.convertTimePickerToUiTime()) },
+                updateEndTime = { registerBusScheduleViewModel.updateEndTime(it.convertTimePickerToUiTime()) },
+                isNotify = registerBusScheduleUiState.isNotify
             ) {
-
+                registerBusScheduleViewModel.updateIsNotify()
             }
             HeightSpacer(height = 32.dp)
-            RegionArea()
+            RegionArea(
+                region = registerBusScheduleUiState.regionName,
+                goRegionScreen = { appState.navigate(Constants.SELECT_REGION_ROUTE) },
+                busStop = registerBusScheduleUiState.busStopName,
+                bus = registerBusScheduleUiState.bus) {
+                appState.navigate(Constants.SELECT_BUS_ROUTE)
+            }
         }
 
         Box(
@@ -169,8 +171,7 @@ fun ScheduleNameTextField(value: String, onValueChange: (String) -> Unit, placeh
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotifyArea(
-    selectDayOfWeek: (DayOfWeek) -> Unit,
-    unSelectDayOfWeek: (DayOfWeek) -> Unit,
+    dayOfWeeks: List<DayOfWeekUi> = emptyList(),
     startTime: String,
     endTime: String,
     updateStartTime: (TimePickerState) -> Unit,
@@ -181,11 +182,12 @@ fun NotifyArea(
     Column {
         Text(text = "알림")
         HeightSpacer(height = 12.dp)
-        MultiSelectDayOfWeek(selectDayOfWeek = {selectDayOfWeek(it)}) {
-            unSelectDayOfWeek(it)
-        }
+        MultiSelectDayOfWeek(dayOfWeeks = dayOfWeeks)
         HeightSpacer(height = 16.dp)
-        SelectRangeTimeArea(startTime = startTime, endTime = endTime, updateStartTime = {updateStartTime(it)}) {
+        SelectRangeTimeArea(
+            startTime = startTime,
+            endTime = endTime,
+            updateStartTime = { updateStartTime(it) }) {
             updateEndTime(it)
         }
         HeightSpacer(height = 16.dp)
@@ -197,15 +199,21 @@ fun NotifyArea(
 }
 
 @Composable
-fun RegionArea() {
+fun RegionArea(
+    region: String,
+    goRegionScreen: () -> Unit,
+    busStop: String,
+    bus: String,
+    goBusStopScreen: () -> Unit,
+) {
     Column {
         Text(text = "춟발")
         HeightSpacer(height = 14.dp)
-        SearchBox(text = "도시(지역)") {}
+        SearchBox(text = region) { goRegionScreen() }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = "도시(지역)") {}
+        SearchBox(text = busStop) { goBusStopScreen() }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = "도시(지역)") {}
+        SearchBox(text = bus) {}
     }
 }
 
@@ -274,6 +282,7 @@ fun ColumnScope.SelectRangeTimeArea(
     updateEndTime: (TimePickerState) -> Unit,
 ) {
     var isShowTimePickerDialog by remember { mutableStateOf(TimePickerType.NONE) }
+    val color = Color(0xFF808991)
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Column(
@@ -285,7 +294,7 @@ fun ColumnScope.SelectRangeTimeArea(
                 .padding(start = 16.dp, top = 14.dp, bottom = 14.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = startTime)
+            Text(text = startTime, color = color)
         }
         WidthSpacer(width = 12.dp)
         Column(
@@ -297,7 +306,7 @@ fun ColumnScope.SelectRangeTimeArea(
                 .padding(start = 16.dp, top = 14.dp, bottom = 14.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = endTime)
+            Text(text = endTime, color = color)
         }
     }
     when (isShowTimePickerDialog) {
@@ -377,14 +386,14 @@ fun TimePickerFieldToModal(
 fun NotifyIcon(isCheck: Boolean = false, onCheck: (Boolean) -> Unit) {
     val notifyInfo = if (isCheck) {
         NotifyInfo(
-            icon = Icons.Outlined.NotificationsOff,
+            icon = Icons.Outlined.Notifications,
             containerColor = Color(0xFF2E2E34),
             iconColor = Color.White,
             content = "알림 ON"
         )
     } else {
         NotifyInfo(
-            icon = Icons.Outlined.Notifications,
+            icon = Icons.Outlined.NotificationsOff,
             containerColor = Color.White,
             iconColor = Color(0xFF2E2E34),
             content = "알림 OFF"
@@ -413,33 +422,19 @@ fun NotifyIcon(isCheck: Boolean = false, onCheck: (Boolean) -> Unit) {
 
 @Composable
 fun MultiSelectDayOfWeek(
-    selectDayOfWeek: (DayOfWeek) -> Unit,
-    unSelectDayOfWeek: (DayOfWeek) -> Unit,
+    dayOfWeeks: List<DayOfWeekUi> = emptyList(),
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        var dayOfWeeks by remember {
-            mutableStateOf(DayOfWeek.entries.map {
-                DayOfWeekUi(
-                    dayOfWeek = it,
-                    init = false
-                )
-            })
-        }
         dayOfWeeks.forEach { day ->
             DayOfWeekCard(
                 text = day.dayOfWeek.value,
                 isSelected = day.isSelected,
                 isShadow = false
             ) {
-                if (day.isSelected) {
-                    unSelectDayOfWeek(day.dayOfWeek)
-                } else {
-                    selectDayOfWeek(day.dayOfWeek)
-                }
                 day.updateSelected(!day.isSelected)
             }
         }

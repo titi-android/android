@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SearchTextField(value: String, onValueChange: (String) -> Unit, onSearch: (String) -> Unit) {
+fun SearchTextField(value: String, onValueChange: (String) -> Unit, placeholder: String, onSearch: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     TextField(
         value = value,
@@ -35,7 +35,7 @@ fun SearchTextField(value: String, onValueChange: (String) -> Unit, onSearch: (S
         maxLines = 1,
         singleLine = true,
         shape = RoundedCornerShape(12.dp),
-        placeholder = { Text(text = "도시(지역) 이름 검색") },
+        placeholder = { Text(text = placeholder) },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions {
             onSearch(value)

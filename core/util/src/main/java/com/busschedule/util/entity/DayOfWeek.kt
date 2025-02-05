@@ -7,5 +7,6 @@ enum class DayOfWeek(val value: String, val enName: String) {
     THURSDAY("목", "THURSDAY"),
     FRIDAY("금", "FRIDAY"),
     SATURDAY("토", "SATURDAY"),
-    SUNDAY("일", "SUNDAY")
+    SUNDAY("일", "SUNDAY");
+
 }
