@@ -1,5 +1,6 @@
 package core.designsystem.component.appbar
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,9 +26,8 @@ fun BackArrowAppBar(title: String, onClick: () -> Unit) {
             contentDescription = "ic_back_arrow",
             modifier = Modifier
                 .size(24.dp)
-                .align(
-                    Alignment.CenterStart
-                )
+                .align(Alignment.CenterStart)
+                .clickable { onClick() }
         )
         Text(text = title, modifier = Modifier.align(Alignment.Center))
 

@@ -44,7 +44,7 @@ import com.busschedule.util.entity.DayOfWeekUi
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
-import core.designsystem.component.MainButton
+import core.designsystem.component.button.MainButton
 import core.designsystem.theme.BackgroundColor
 import core.designsystem.theme.MainColor
 import kotlinx.coroutines.async
@@ -89,7 +89,11 @@ fun ScheduleListScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(items = scheduleListUiState, key = { it.id }) {
-                    ScheduleTicket(ticketColor = Color(0xFF0060E7), holeColor = BackgroundColor, onEdit = {}) {
+                    ScheduleTicket(
+                        ticketColor = Color(0xFF0060E7),
+                        holeColor = BackgroundColor,
+                        changeNotifyState = {},
+                        onEdit = {}) {
                         scheduleListViewModel.fetchDeleteSchedules(it.id)
                     }
                 }
