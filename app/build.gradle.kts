@@ -1,8 +1,15 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("busSchedule.android.application")
     id("busSchedule.android.compose")
     id("busSchedule.android.hilt")
     alias(libs.plugins.google.service)
+}
+
+val localProperties = Properties().apply {
+    load(FileInputStream(rootProject.file("local.properties")))
 }
 
 android {
@@ -13,11 +20,20 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        manifestPlaceholders
     }
 
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    buildTypes {
+        debug {
+//            manifestPlaceholders["KAKAO_MAP_KEY"] = localProperties.getProperty("KAKAO_MAP_KEY")
+            buildConfigField("String", "KAKAO_MAP_KEY", "\"" + localProperties.getProperty("KAKAO_MAP_KEY") + "\"")
+
         }
     }
 }
@@ -40,4 +56,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(libs.kakao.maps)
 }

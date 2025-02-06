@@ -43,6 +43,8 @@ googleService = "4.4.2"
 firebaseBom = "33.8.0"
 firebaseMessagingKtx = "24.1.0"
 
+kakaoMaps = "2.12.8"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 #androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -123,7 +125,8 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics"}
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 
-# material 3
+# kakao map
+kakao-maps = { group = "com.kakao.maps.open", name = "android", version.ref = "kakaoMaps" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
