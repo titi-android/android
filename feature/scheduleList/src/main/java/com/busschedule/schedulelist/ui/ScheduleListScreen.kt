@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -31,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,9 +42,12 @@ import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.button.MainButton
 import core.designsystem.svg.IconPack
+import core.designsystem.svg.myiconpack.IcRefresh
 import core.designsystem.svg.myiconpack.IcSetting
-import core.designsystem.theme.BackgroundColor
-import core.designsystem.theme.MainColor
+import core.designsystem.theme.Background
+import core.designsystem.theme.BusBlue
+import core.designsystem.theme.Primary
+import core.designsystem.theme.TextWColor
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import java.time.LocalDate
@@ -69,7 +69,7 @@ fun ScheduleListScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(Background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp)
@@ -89,13 +89,13 @@ fun ScheduleListScreen(
                 contentPadding = PaddingValues(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(items = scheduleListUiState, key = { it.id }) {
+                items(items = scheduleListUiState, key = { it.id }) {schedule ->
                     ScheduleTicket(
-                        ticketColor = Color(0xFF0060E7),
-                        holeColor = BackgroundColor,
-                        changeNotifyState = {},
+                        ticketColor = BusBlue,
+                        holeColor = Background,
+                        changeNotifyState = { scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id){} },
                         onEdit = {}) {
-                        scheduleListViewModel.fetchDeleteSchedules(it.id)
+                        scheduleListViewModel.fetchDeleteSchedules(schedule.id)
                     }
                 }
             }
@@ -116,6 +116,7 @@ fun ScheduleListAppBar(onClickSetting: () -> Unit) {
         Text(text = "버스링")
         Icon(imageVector = IconPack.IcSetting,
             contentDescription = "ic_setting",
+            tint = Primary,
             modifier = Modifier
                 .size(24.dp)
                 .clickable { onClickSetting() })
@@ -150,7 +151,6 @@ fun DayOfWeekSelectArea(requestDaySchedule: (String) -> Unit) {
                         updateSelected(true)
                     } else cur.apply { updateSelected(false) }
                 }
-                // TODO: 해당 요일 스케줄 api 요청
                 requestDaySchedule(day.getDayOfWeeks())
             }
         }
@@ -164,11 +164,11 @@ fun BoxScope.RefreshIcon(onClick: () -> Unit) {
             .align(Alignment.BottomEnd)
             .padding(bottom = 22.dp),
         colors = IconButtonDefaults.iconButtonColors(
-            containerColor = MainColor,
-            contentColor = Color.White
+            containerColor = Primary,
+            contentColor = TextWColor
         ), onClick = { onClick() }) {
         Icon(
-            imageVector = Icons.Rounded.Refresh,
+            imageVector = IconPack.IcRefresh,
             contentDescription = "ic_refresh",
             modifier = Modifier.size(24.dp)
         )
