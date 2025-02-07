@@ -48,7 +48,7 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.theme.BackgroundColor
+import core.designsystem.theme.Background
 
 @Composable
 fun SelectBusScreen(
@@ -63,7 +63,7 @@ fun SelectBusScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(Background)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {

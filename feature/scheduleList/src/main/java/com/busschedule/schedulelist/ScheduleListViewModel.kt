@@ -9,11 +9,16 @@ import com.busschedule.domain.model.request.FCMTokenRequest
 import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
+import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
+import com.busschedule.schedulelist.model.BusScheduleUi
+import com.busschedule.schedulelist.model.asDomain
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,10 +31,12 @@ class ScheduleListViewModel @Inject constructor(
     private val readDaysSchedulesUseCase: ReadDaysSchedulesUseCase,
     private val deleteScheduleUseCase: DeleteScheduleUseCase,
     private val postFCMTokenUseCase: PostFCMTokenUseCase,
+    private val putScheduleAlarmUseCase: PutScheduleAlarmUseCase,
     private val tokenManager: TokenManager,
 ) : ViewModel() {
 
-    val scheduleListUiState = MutableStateFlow(emptyList<BusSchedule>())
+    private val _scheduleListUiState = MutableStateFlow(emptyList<BusScheduleUi>())
+    val scheduleListUiState: StateFlow<List<BusScheduleUi>> = _scheduleListUiState.asStateFlow()
 
     suspend fun initFCMToken() {
         try {
@@ -51,8 +58,9 @@ class ScheduleListViewModel @Inject constructor(
                 is ApiState.Error -> Log.d("daeyoung", "api 통신 에러: ${result.errMsg}")
                 ApiState.Loading -> TODO()
                 is ApiState.Success<*> -> result.onSuccess {
-                    Log.d("daeyoung", "fetchReadTodaySchedules: $result")
-                    scheduleListUiState.update { result.data as List<BusSchedule> } }
+                    _scheduleListUiState.update { (result.data as List<BusSchedule>).map { it.asDomain() } }
+                }
+
                 is ApiState.NotResponse -> {
                     Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
                 }
@@ -67,7 +75,9 @@ class ScheduleListViewModel @Inject constructor(
                 ApiState.Loading -> TODO()
                 is ApiState.Success<*> -> result.onSuccess {
                     Log.d("daeyoung", "fetchReadDayOfWeekSchedules: $result")
-                    scheduleListUiState.update { result.data as List<BusSchedule> } }
+                    _scheduleListUiState.update { (result.data as List<BusSchedule>).map { it.asDomain() } }
+                }
+
                 is ApiState.NotResponse -> {
                 }
             }
@@ -80,8 +90,10 @@ class ScheduleListViewModel @Inject constructor(
                 is ApiState.Error -> Log.d("daeyoung", "api 통신 에러: ${result.errMsg}")
                 ApiState.Loading -> TODO()
                 is ApiState.Success<*> -> result.onSuccess {
-                    scheduleListUiState.update { schedule -> schedule.filter { it.id != scheduleId } }
-                    Log.d("daeyoung", "fetchDeleteSchedules: $result")}
+                    _scheduleListUiState.update { schedule -> schedule.filter { it.id != scheduleId } }
+                    Log.d("daeyoung", "fetchDeleteSchedules: $result")
+                }
+
                 is ApiState.NotResponse -> {
                     Log.d("daeyoung", "api NotResponse: ${result.exception}, ${result.message}")
                 }
@@ -95,7 +107,24 @@ class ScheduleListViewModel @Inject constructor(
             when (val result = postFCMTokenUseCase(fcmToken).first()) {
                 is ApiState.Error -> Log.d("daeyoung", "error: ${result.errMsg}")
                 ApiState.Loading -> TODO()
-                is ApiState.Success<*> -> result.onSuccess {}
+                is ApiState.Success<*> -> {}
+                is ApiState.NotResponse -> {
+                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
+                }
+            }
+        }
+    }
+
+    fun fetchPutScheduleAlarm(scheduleId: Int, onFail: () -> Unit) {
+        viewModelScope.launch {
+            when (val result = putScheduleAlarmUseCase(scheduleId).first()) {
+                is ApiState.Error -> {
+                    Log.d("daeyoung", "error: ${result.errMsg}")
+                    onFail()
+                }
+
+                ApiState.Loading -> TODO()
+                is ApiState.Success<*> -> {}
                 is ApiState.NotResponse -> {
                     Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
                 }

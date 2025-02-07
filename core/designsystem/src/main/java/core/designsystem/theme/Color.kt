@@ -11,9 +11,6 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 
-val MainColor = Color(0xFF2E2E34)
-val BackgroundColor = Color(0xFFF1F2F6)
-
 val Primary = Color(0xFF2E2E34)
 val BusBlue = Color(0xFF3C89F5)
 val BusBlueM1 = Color(0xFF004099)

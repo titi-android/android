@@ -58,7 +58,7 @@ fun ScheduleListScreen(
     scheduleListViewModel: ScheduleListViewModel = hiltViewModel(),
 ) {
 
-    val scheduleListUiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle()
+    val uiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         listOf(
@@ -79,7 +79,6 @@ fun ScheduleListScreen(
         HeightSpacer(height = 16.dp)
         DayOfWeekSelectArea { scheduleListViewModel.fetchReadDayOfWeekSchedules(it) }
         Box(modifier = Modifier.weight(1f)) {
-            RefreshIcon {}
             val lazyListState = rememberLazyListState()
             LazyColumn(
                 modifier = Modifier
@@ -89,16 +88,22 @@ fun ScheduleListScreen(
                 contentPadding = PaddingValues(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(items = scheduleListUiState, key = { it.id }) {schedule ->
+                items(items = uiState, key = { it.id }) {schedule ->
                     ScheduleTicket(
                         ticketColor = BusBlue,
                         holeColor = Background,
-                        changeNotifyState = { scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id){} },
+                        schedule = schedule,
+                        changeNotifyState = {
+                            schedule.updateAlarm()
+                            scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id){
+                                schedule.updateAlarm()
+                            } },
                         onEdit = {}) {
                         scheduleListViewModel.fetchDeleteSchedules(schedule.id)
                     }
                 }
             }
+            RefreshIcon {}
         }
 
         MainButton(text = "스케줄 등록") { appState.navigate(Constants.REGISTER_BUS_SCHEDULE_ROUTE) }

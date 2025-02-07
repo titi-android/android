@@ -6,11 +6,12 @@ import kotlinx.serialization.Serializable
 data class BusSchedule(
     val id: Int = 0,
     val name: String = "",
-    val days: String = "",
+    val days: List<String> = emptyList(),
     val startTime: List<Int> = emptyList(),
     val endTime: List<Int> = emptyList(),
     val busStopName: String = "",
-    val busInfos: List<BusInfo> = emptyList()
+    val busInfos: List<BusInfo> = emptyList(),
+    val isAlarmOn: Boolean
 )
 
 @Serializable
@@ -23,10 +24,4 @@ data class BusInfo(
     val routeno: String = "",
     val routetp: String = "",
     val vehicletp: String = ""
-)
-
-@Serializable
-data class Time(
-    val hour: Int = 0,
-    val minute: Int = 0
 )

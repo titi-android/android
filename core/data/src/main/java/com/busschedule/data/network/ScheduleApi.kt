@@ -7,6 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -26,5 +27,10 @@ interface ScheduleApi {
     // 스케줄 삭제
     @DELETE("/api/v1/schedules/{scheduleId}")
     suspend fun deleteSchedule(@Path("scheduleId") scheduleId: Int): DefaultResponse<Unit>
+
+    // 스케줄 알림 수정
+    @PUT("/api/v1/schedules/alarm/{scheduleId}")
+    suspend fun putScheduleAlarm(@Path("scheduleId") scheduleId: Int): DefaultResponse<Unit>
+
 
 }

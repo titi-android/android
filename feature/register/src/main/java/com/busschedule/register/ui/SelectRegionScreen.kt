@@ -34,9 +34,9 @@ import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.TextBoxColor
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer
-import core.designsystem.component.button.MainButton
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.theme.BackgroundColor
+import core.designsystem.component.button.MainButton
+import core.designsystem.theme.Background
 
 @Composable
 fun SelectRegionScreen(
@@ -55,7 +55,7 @@ fun SelectRegionScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(Background)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {

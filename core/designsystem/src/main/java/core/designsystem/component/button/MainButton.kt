@@ -7,9 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import core.designsystem.theme.MainColor
+import core.designsystem.theme.Primary
+import core.designsystem.theme.TextWColor
+import core.designsystem.theme.mTitle
 
 @Composable
 fun MainButton(modifier: Modifier = Modifier, text: String, enabled: Boolean = true, onClick: () -> Unit) {
@@ -18,10 +19,10 @@ fun MainButton(modifier: Modifier = Modifier, text: String, enabled: Boolean = t
         enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.textButtonColors(
-            containerColor = MainColor,
-            contentColor = Color.White
+            containerColor = Primary,
+            contentColor = TextWColor
         ),
         onClick = { onClick() }) {
-        Text(text = text)
+        Text(text = text, style = mTitle)
     }
 }

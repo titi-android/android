@@ -27,4 +27,8 @@ class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: Schedu
         scheduleApi.deleteSchedule(scheduleId)
     }
 
+    override fun putScheduleAlarm(scheduleId: Int): Flow<ApiState<Unit>> = safeFlowUnit {
+        scheduleApi.putScheduleAlarm(scheduleId)
+    }
+
 }
