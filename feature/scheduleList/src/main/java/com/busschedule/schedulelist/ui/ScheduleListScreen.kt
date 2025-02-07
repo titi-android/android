@@ -24,9 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -34,8 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.component.ScheduleTicket
+import com.busschedule.schedulelist.model.ScheduleListUiState
 import com.busschedule.util.constant.Constants
-import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
@@ -50,7 +47,6 @@ import core.designsystem.theme.Primary
 import core.designsystem.theme.TextWColor
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import java.time.LocalDate
 
 @Composable
 fun ScheduleListScreen(
@@ -58,7 +54,9 @@ fun ScheduleListScreen(
     scheduleListViewModel: ScheduleListViewModel = hiltViewModel(),
 ) {
 
-    val uiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle()
+    val uiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle(
+        ScheduleListUiState()
+    )
 
     LaunchedEffect(Unit) {
         listOf(
@@ -77,7 +75,9 @@ fun ScheduleListScreen(
         HeightSpacer(height = 6.dp)
         ScheduleListAppBar {}
         HeightSpacer(height = 16.dp)
-        DayOfWeekSelectArea { scheduleListViewModel.fetchReadDayOfWeekSchedules(it) }
+        DayOfWeekSelectArea(dayOfWeekUi = uiState.dayOfWeeks) {
+            scheduleListViewModel.fetchReadDayOfWeekSchedules(it)
+        }
         Box(modifier = Modifier.weight(1f)) {
             val lazyListState = rememberLazyListState()
             LazyColumn(
@@ -88,22 +88,23 @@ fun ScheduleListScreen(
                 contentPadding = PaddingValues(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(items = uiState, key = { it.id }) {schedule ->
+                items(items = uiState.schedules, key = { it.id }) { schedule ->
                     ScheduleTicket(
                         ticketColor = BusBlue,
                         holeColor = Background,
                         schedule = schedule,
                         changeNotifyState = {
                             schedule.updateAlarm()
-                            scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id){
+                            scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id) {
                                 schedule.updateAlarm()
-                            } },
+                            }
+                        },
                         onEdit = {}) {
                         scheduleListViewModel.fetchDeleteSchedules(schedule.id)
                     }
                 }
             }
-            RefreshIcon {}
+            RefreshIcon { scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek()) }
         }
 
         MainButton(text = "스케줄 등록") { appState.navigate(Constants.REGISTER_BUS_SCHEDULE_ROUTE) }
@@ -130,31 +131,22 @@ fun ScheduleListAppBar(onClickSetting: () -> Unit) {
 
 
 @Composable
-fun DayOfWeekSelectArea(requestDaySchedule: (String) -> Unit) {
+fun DayOfWeekSelectArea(dayOfWeekUi: List<DayOfWeekUi>, requestDaySchedule: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        var dayOfWeeks by remember {
-            mutableStateOf(DayOfWeek.entries.map {
-                DayOfWeekUi(
-                    dayOfWeek = it,
-                    init = LocalDate.now().dayOfWeek.name == it.enName
-                )
-            })
-        }
-        dayOfWeeks.forEach { day ->
+        dayOfWeekUi.forEach { day ->
             DayOfWeekCard(
                 text = day.dayOfWeek.value,
                 isSelected = day.isSelected,
                 isShadow = true
             ) {
-                dayOfWeeks = dayOfWeeks.map { cur ->
-                    if (day.dayOfWeek == cur.dayOfWeek) cur.apply {
-                        updateSelected(true)
-                    } else cur.apply { updateSelected(false) }
+                dayOfWeekUi.forEach { cur ->
+                    if (day.dayOfWeek == cur.dayOfWeek) cur.updateSelected(true)
+                    else cur.updateSelected(false)
                 }
                 requestDaySchedule(day.getDayOfWeeks())
             }

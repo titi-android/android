@@ -10,7 +10,7 @@ data class DayOfWeekUi(
 ) {
     var isSelected by mutableStateOf(init)
 
-    fun updateSelected(selected: Boolean) {
+    fun updateSelected(selected: Boolean) = apply {
         isSelected = selected
     }
 

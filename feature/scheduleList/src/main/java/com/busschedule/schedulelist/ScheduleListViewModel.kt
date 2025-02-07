@@ -13,16 +13,21 @@ import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
 import com.busschedule.schedulelist.model.BusScheduleUi
+import com.busschedule.schedulelist.model.ScheduleListUiState
 import com.busschedule.schedulelist.model.asDomain
+import com.busschedule.util.entity.DayOfWeek
+import com.busschedule.util.entity.DayOfWeekUi
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,8 +40,20 @@ class ScheduleListViewModel @Inject constructor(
     private val tokenManager: TokenManager,
 ) : ViewModel() {
 
-    private val _scheduleListUiState = MutableStateFlow(emptyList<BusScheduleUi>())
-    val scheduleListUiState: StateFlow<List<BusScheduleUi>> = _scheduleListUiState.asStateFlow()
+    private val _dayOfWeeks = MutableStateFlow(DayOfWeek.entries.map {
+        DayOfWeekUi(
+            dayOfWeek = it,
+            init = LocalDate.now().dayOfWeek.name == it.enName
+        )
+    })
+    val dayOfWeeks: StateFlow<List<DayOfWeekUi>> = _dayOfWeeks.asStateFlow()
+
+    private val _schedules = MutableStateFlow(emptyList<BusScheduleUi>())
+    val schedules: StateFlow<List<BusScheduleUi>> = _schedules.asStateFlow()
+
+    val scheduleListUiState = combine(dayOfWeeks, schedules) { dayOfWeeks, schedules ->
+        ScheduleListUiState(dayOfWeeks, schedules)
+    }
 
     suspend fun initFCMToken() {
         try {
@@ -58,7 +75,7 @@ class ScheduleListViewModel @Inject constructor(
                 is ApiState.Error -> Log.d("daeyoung", "api 통신 에러: ${result.errMsg}")
                 ApiState.Loading -> TODO()
                 is ApiState.Success<*> -> result.onSuccess {
-                    _scheduleListUiState.update { (result.data as List<BusSchedule>).map { it.asDomain() } }
+                    _schedules.update { (result.data as List<BusSchedule>).map { it.asDomain() } }
                 }
 
                 is ApiState.NotResponse -> {
@@ -75,7 +92,7 @@ class ScheduleListViewModel @Inject constructor(
                 ApiState.Loading -> TODO()
                 is ApiState.Success<*> -> result.onSuccess {
                     Log.d("daeyoung", "fetchReadDayOfWeekSchedules: $result")
-                    _scheduleListUiState.update { (result.data as List<BusSchedule>).map { it.asDomain() } }
+                    _schedules.update { (result.data as List<BusSchedule>).map { it.asDomain() } }
                 }
 
                 is ApiState.NotResponse -> {
@@ -90,7 +107,7 @@ class ScheduleListViewModel @Inject constructor(
                 is ApiState.Error -> Log.d("daeyoung", "api 통신 에러: ${result.errMsg}")
                 ApiState.Loading -> TODO()
                 is ApiState.Success<*> -> result.onSuccess {
-                    _scheduleListUiState.update { schedule -> schedule.filter { it.id != scheduleId } }
+                    _schedules.update { schedule -> schedule.filter { it.id != scheduleId } }
                     Log.d("daeyoung", "fetchDeleteSchedules: $result")
                 }
 

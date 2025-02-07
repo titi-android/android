@@ -197,8 +197,9 @@ fun ScheduleTicket(
                             append("${busInfo.arrprevstationcnt}정거장")
                         }
                     }, style = mBody)
+                    WidthSpacer(width = 8.dp)
                 }
-                WidthSpacer(width = 8.dp)
+
             }
         }
     }
