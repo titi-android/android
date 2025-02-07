@@ -71,10 +71,10 @@ import com.busschedule.util.entity.DayOfWeekUi
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
-import core.designsystem.component.button.MainButton
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.theme.BackgroundColor
+import core.designsystem.component.button.MainButton
+import core.designsystem.theme.Background
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -97,7 +97,7 @@ fun RegisterBusScheduleScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(Background)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {

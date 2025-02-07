@@ -11,20 +11,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.button.MainButton
 import core.designsystem.component.button.MainOutlineButton
+import core.designsystem.theme.TextColor
+import core.designsystem.theme.TextMColor
+import core.designsystem.theme.TextWColor
+import core.designsystem.theme.mFooter
+import core.designsystem.theme.sbTitle3
 
 @Composable
 fun CloseDialog(title: String, content: String, onDismissRequest: () -> Unit, onDelete: () -> Unit) {
 
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = TextWColor),
             shape = RoundedCornerShape(12.dp)
         ) {
             Column(
@@ -35,9 +39,9 @@ fun CloseDialog(title: String, content: String, onDismissRequest: () -> Unit, on
                     end = 17.dp
                 ), horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = title)
+                Text(text = title, style = sbTitle3.copy(TextColor))
                 HeightSpacer(height = 8.dp)
-                Text(text = content)
+                Text(text = content, style = mFooter.copy(TextMColor))
                 HeightSpacer(height = 20.dp)
                 Row(modifier = Modifier.padding(top = 10.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
