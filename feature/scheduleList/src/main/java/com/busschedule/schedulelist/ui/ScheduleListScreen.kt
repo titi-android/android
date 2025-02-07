@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,6 +44,8 @@ import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.button.MainButton
+import core.designsystem.svg.IconPack
+import core.designsystem.svg.myiconpack.IcSetting
 import core.designsystem.theme.BackgroundColor
 import core.designsystem.theme.MainColor
 import kotlinx.coroutines.async
@@ -113,7 +114,7 @@ fun ScheduleListAppBar(onClickSetting: () -> Unit) {
     ) {
         /*TODO: 버스링 로고 및 텍스트로 넣을 것 */
         Text(text = "버스링")
-        Icon(imageVector = Icons.Outlined.Settings,
+        Icon(imageVector = IconPack.IcSetting,
             contentDescription = "ic_setting",
             modifier = Modifier
                 .size(24.dp)
@@ -128,7 +129,7 @@ fun DayOfWeekSelectArea(requestDaySchedule: (String) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(7.dp)
+        horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         var dayOfWeeks by remember {
             mutableStateOf(DayOfWeek.entries.map {
