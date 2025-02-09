@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import core.designsystem.theme.Primary
+import core.designsystem.theme.rTopBar
 
 @Composable
 fun BackArrowAppBar(title: String, onClick: () -> Unit) {
@@ -29,7 +31,7 @@ fun BackArrowAppBar(title: String, onClick: () -> Unit) {
                 .align(Alignment.CenterStart)
                 .clickable { onClick() }
         )
-        Text(text = title, modifier = Modifier.align(Alignment.Center))
+        Text(text = title, modifier = Modifier.align(Alignment.Center), style = rTopBar.copy(Primary))
 
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.Search
@@ -62,7 +63,9 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.register.RegisterBusScheduleViewModel
+import com.busschedule.register.component.BusBox
 import com.busschedule.register.constant.TimePickerType
+import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.NotifyInfo
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.util.convertTimePickerToUiTime
@@ -75,6 +78,12 @@ import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainButton
 import core.designsystem.theme.Background
+import core.designsystem.theme.Primary
+import core.designsystem.theme.TextColor
+import core.designsystem.theme.TextMColor
+import core.designsystem.theme.TextWColor
+import core.designsystem.theme.rTextBox
+import core.designsystem.theme.sbTitle2
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -129,8 +138,9 @@ fun RegisterBusScheduleScreen(
             RegionArea(
                 region = registerBusScheduleUiState.regionName,
                 goRegionScreen = { appState.navigate(Constants.SELECT_REGION_ROUTE) },
-                busStop = registerBusScheduleUiState.busStop,
-                bus = "버스 번호") {
+                busStop = registerBusScheduleUiState.busStopInfo?.busStop ?: "버스 정류장",
+                buses = registerBusScheduleUiState.busStopInfo?.getBuses() ?: emptyList(),
+                deleteBus = { registerBusScheduleUiState.busStopInfo?.remove(it) }) {
                 appState.navigate(Constants.SELECT_BUS_ROUTE)
             }
         }
@@ -151,6 +161,7 @@ fun ScheduleNameTextField(value: String, onValueChange: (String) -> Unit, placeh
     TextField(
         value = value,
         onValueChange = { onValueChange(it) },
+        textStyle = rTextBox.copy(TextMColor),
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         placeholder = { Text(text = placeholder, color = Color(0xFF808991)) },
@@ -179,7 +190,7 @@ fun NotifyArea(
     onNotifyClick: (Boolean) -> Unit,
 ) {
     Column {
-        Text(text = "알림")
+        Text(text = "알림", style = sbTitle2.copy(TextColor))
         HeightSpacer(height = 12.dp)
         MultiSelectDayOfWeek(dayOfWeeks = dayOfWeeks)
         HeightSpacer(height = 16.dp)
@@ -202,17 +213,30 @@ fun RegionArea(
     region: String,
     goRegionScreen: () -> Unit,
     busStop: String,
-    bus: String,
+    buses: List<Bus>,
+    deleteBus: (String) -> Unit,
     goBusStopScreen: () -> Unit,
 ) {
     Column {
-        Text(text = "춟발")
+        Text(text = "출발", style = sbTitle2.copy(TextColor))
         HeightSpacer(height = 14.dp)
         SearchBox(text = region) { goRegionScreen() }
         HeightSpacer(height = 14.dp)
         SearchBox(text = busStop) { goBusStopScreen() }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = bus) {}
+        SearchBox(text = "버스 번호") {}
+        Row {
+            buses.forEachIndexed { index, bus ->
+                val modifier =
+                    if (index != buses.lastIndex) Modifier.padding(end = 8.dp) else Modifier
+                BusBox(
+                    modifier = modifier,
+                    icon = Icons.Outlined.DirectionsBus,
+                    name = bus.name
+                ) { deleteBus(bus.name) }
+            }
+        }
+
     }
 }
 
@@ -386,15 +410,15 @@ fun NotifyIcon(isCheck: Boolean = false, onCheck: (Boolean) -> Unit) {
     val notifyInfo = if (isCheck) {
         NotifyInfo(
             icon = Icons.Outlined.Notifications,
-            containerColor = Color(0xFF2E2E34),
-            iconColor = Color.White,
+            containerColor = Primary,
+            iconColor = TextWColor,
             content = "알림 ON"
         )
     } else {
         NotifyInfo(
             icon = Icons.Outlined.NotificationsOff,
-            containerColor = Color.White,
-            iconColor = Color(0xFF2E2E34),
+            containerColor = TextWColor,
+            iconColor = Primary,
             content = "알림 OFF"
         )
     }
@@ -414,7 +438,7 @@ fun NotifyIcon(isCheck: Boolean = false, onCheck: (Boolean) -> Unit) {
             )
         }
         WidthSpacer(width = 8.dp)
-        Text(text = notifyInfo.content)
+        Text(text = notifyInfo.content, style = rTextBox)
     }
 }
 
@@ -452,11 +476,11 @@ fun SearchBox(text: String, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = text)
+        Text(text = text, style = rTextBox.copy(TextMColor))
         Icon(
             imageVector = Icons.Outlined.Search,
             contentDescription = "ic_search",
-            tint = Color(0xFF808991),
+            tint = TextMColor,
             modifier = Modifier.size(24.dp)
         )
     }

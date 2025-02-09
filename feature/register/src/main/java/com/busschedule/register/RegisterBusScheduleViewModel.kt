@@ -87,8 +87,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 endTime = endTime.value,
                 isNotify = isNotify.value,
                 regionName = cityOfRegion.value.getSelectedCityName(),
-                busStop = selectBusStopInfo.value?.busStop ?: "버스 정류장",
-                buses = selectBusStopInfo.value?.buses ?: emptyList()
+                busStopInfo = selectBusStopInfo.value
             )
         }
 
@@ -145,9 +144,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _busStopInput.update { input }
     }
 
-//    fun setBus(bus: String) {
-//        _bus.update { bus }
-//    }
+    fun removeBus(name: String) {
+        _selectBusStopInfo.value = _selectBusStopInfo.value?.let { currentInfo ->
+            currentInfo.copy(busesInit = currentInfo.getBuses().filter { it.name != name })
+        }
+    }
 
     fun updateRegionInput(input: String) {
         _regionInput.update { input }
@@ -230,12 +231,23 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 is ApiState.Success<*> -> {
                     (result.data as ScheduleRegisterResponse).also { res ->
                         _scheduleName.update { res.name }
-                        _dayOfWeeks.update { DayOfWeek.entries.map { DayOfWeekUi(dayOfWeek = it, init = res.days.contains("${it.value}요일")) }}
+                        _dayOfWeeks.update {
+                            DayOfWeek.entries.map {
+                                DayOfWeekUi(
+                                    dayOfWeek = it,
+                                    init = res.days.contains("${it.value}요일")
+                                )
+                            }
+                        }
                         _startTime.update { res.startTime.toFormatTime() }
                         _endTime.update { res.endTime.toFormatTime() }
                         _isNotify.update { res.isAlarmOn }
                         _cityOfRegion.update { CityOfRegion().selectCity(res.regionName) }
-                        _selectBusStopInfo.update { BusStopInfo(busStop = res.busStopName, buses = res.busNames.map { Bus(it) }) }
+                        _selectBusStopInfo.update {
+                            BusStopInfo(
+                                busStop = res.busStopName,
+                                busesInit = res.busNames.map { Bus(it) })
+                        }
                     }
                     Log.d("daeyoung", "success: ${result.data}")
                 }
