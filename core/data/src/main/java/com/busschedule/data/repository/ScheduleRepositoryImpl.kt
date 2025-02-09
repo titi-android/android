@@ -4,6 +4,7 @@ import com.busschedule.data.network.ScheduleApi
 import com.busschedule.domain.model.ApiState
 import com.busschedule.domain.model.request.ScheduleRegisterRequest
 import com.busschedule.domain.model.response.schedule.BusSchedule
+import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import com.busschedule.domain.model.safeFlow
 import com.busschedule.domain.model.safeFlowUnit
 import com.busschedule.domain.repository.ScheduleRepository
@@ -18,6 +19,10 @@ class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: Schedu
 
     override fun raedDaySchedules(day: String): Flow<ApiState<List<BusSchedule>>> = safeFlow {
         scheduleApi.readDaySchedules(day)
+    }
+
+    override fun readSchedule(scheduleId: Int): Flow<ApiState<ScheduleRegisterResponse>> = safeFlow {
+        scheduleApi.readSchedule(scheduleId)
     }
 
     override fun postSchedule(scheduleRegisterRequest: ScheduleRegisterRequest): Flow<ApiState<Unit>> =

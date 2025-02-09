@@ -3,13 +3,18 @@ package com.busschedule.register
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.busschedule.domain.model.ApiState
 import com.busschedule.domain.model.response.busstop.BusStop
+import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import com.busschedule.domain.usecase.bus.ReadAllBusUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
+import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
+import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.BusStopInfo
 import com.busschedule.register.entity.CityOfRegion
 import com.busschedule.register.entity.ScheduleRegister
@@ -18,6 +23,8 @@ import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.asDomain
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.util.entity.navigation.Route
+import com.busschedule.util.ext.toFormatTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +42,12 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val postScheduleUseCase: PostScheduleUseCase,
     private val readAllBusStopUseCase: ReadAllBusStopUseCase,
     private val readAllBusUseCase: ReadAllBusUseCase,
+    private val readScheduleUseCase: ReadScheduleUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val scheduleId = savedStateHandle.toRoute<Route.RegisterSchedule>().id
+
     private val _scheduleName = MutableStateFlow("")
     val scheduleName: StateFlow<String> = _scheduleName.asStateFlow()
 
@@ -52,11 +64,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _isNotify = MutableStateFlow(false)
     val isNotify: StateFlow<Boolean> = _isNotify.asStateFlow()
 
-    private val _busStop = MutableStateFlow("버스 정류장")
-    val busStop: StateFlow<String> = _busStop.asStateFlow()
-
     private val _cityOfRegion = MutableStateFlow(CityOfRegion())
     val cityOfRegion: StateFlow<CityOfRegion> = _cityOfRegion.asStateFlow()
+
+    private val _selectBusStopInfo = MutableStateFlow<BusStopInfo?>(null)
+    val selectBusStopInfo: StateFlow<BusStopInfo?> = _selectBusStopInfo
 
     val registerBusScheduleUiState =
         combine(
@@ -66,8 +78,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
             endTime,
             isNotify,
             cityOfRegion,
-            busStop,
-//            bus
+            selectBusStopInfo
         ) {
             ScheduleRegister(
                 name = scheduleName.value,
@@ -76,9 +87,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 endTime = endTime.value,
                 isNotify = isNotify.value,
                 regionName = cityOfRegion.value.getSelectedCityName(),
-                busStopName = busStop.value,
-                // TODO: 버스 여러개 등록하는 ui로 변경
-//                busList = emptyList()
+                busStop = selectBusStopInfo.value?.busStop ?: "버스 정류장",
+                buses = selectBusStopInfo.value?.buses ?: emptyList()
             )
         }
 
@@ -107,6 +117,14 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     private var busStopNodeId = BusStop()
 
+    init {
+        if (scheduleId != null) {
+            viewModelScope.launch {
+                fetchReadSchedule(scheduleId)
+            }
+        }
+    }
+
     fun updateScheduleName(name: String) {
         _scheduleName.update { name }
     }
@@ -121,10 +139,6 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     fun updateIsNotify() {
         _isNotify.update { !isNotify.value }
-    }
-
-    fun setBusStop(busStop: String) {
-        _busStop.update { busStop }
     }
 
     fun updateBusStopInput(input: String) {
@@ -159,8 +173,14 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     fun fetchReadAllBusStop(busStopName: String, showToastMsg: (String) -> Unit) {
         viewModelScope.launch {
-            when (val result = readAllBusStopUseCase(cityOfRegion.value.getSelectedCityName(), busStopName).first()) {
-                is ApiState.Error -> { showToastMsg(result.errMsg) }
+            when (val result = readAllBusStopUseCase(
+                cityOfRegion.value.getSelectedCityName(),
+                busStopName
+            ).first()) {
+                is ApiState.Error -> {
+                    showToastMsg(result.errMsg)
+                }
+
                 ApiState.Loading -> {}
                 is ApiState.NotResponse -> Log.d(
                     "daeyoung",
@@ -168,7 +188,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 )
 
                 is ApiState.Success -> {
-                    _busStopInfo.update { result.data.busInfosResponse.map { it.asDomain() } }
+//                    _busStopInfo.update { result.data.busInfosResponse.map { it.asDomain() } }
                     Log.d("daeyoung", "success: ${result.data}")
                 }
             }
@@ -196,6 +216,34 @@ class RegisterBusScheduleViewModel @Inject constructor(
 //                    Log.d("daeyoung", "success: ${bus.value}")
 //                }
 //            }
+        }
+    }
+
+    private fun fetchReadSchedule(scheduleId: Int) {
+        viewModelScope.launch {
+            when (val result = readScheduleUseCase(scheduleId).first()) {
+                is ApiState.Error -> {
+                    Log.d("daeyoung", "error: ${result.errMsg}")
+                }
+
+                ApiState.Loading -> TODO()
+                is ApiState.Success<*> -> {
+                    (result.data as ScheduleRegisterResponse).also { res ->
+                        _scheduleName.update { res.name }
+                        _dayOfWeeks.update { DayOfWeek.entries.map { DayOfWeekUi(dayOfWeek = it, init = res.days.contains("${it.value}요일")) }}
+                        _startTime.update { res.startTime.toFormatTime() }
+                        _endTime.update { res.endTime.toFormatTime() }
+                        _isNotify.update { res.isAlarmOn }
+                        _cityOfRegion.update { CityOfRegion().selectCity(res.regionName) }
+                        _selectBusStopInfo.update { BusStopInfo(busStop = res.busStopName, buses = res.busNames.map { Bus(it) }) }
+                    }
+                    Log.d("daeyoung", "success: ${result.data}")
+                }
+
+                is ApiState.NotResponse -> {
+                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
+                }
+            }
         }
     }
 

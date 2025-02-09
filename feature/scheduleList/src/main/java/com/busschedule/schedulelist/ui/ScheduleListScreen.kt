@@ -32,8 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.component.ScheduleTicket
 import com.busschedule.schedulelist.model.ScheduleListUiState
-import com.busschedule.util.constant.Constants
 import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.util.entity.navigation.Route
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
@@ -99,7 +99,7 @@ fun ScheduleListScreen(
                                 schedule.updateAlarm()
                             }
                         },
-                        onEdit = {}) {
+                        onEdit = { appState.navigate(Route.RegisterSchedule(id = schedule.id)) }) {
                         scheduleListViewModel.fetchDeleteSchedules(schedule.id)
                     }
                 }
@@ -107,7 +107,7 @@ fun ScheduleListScreen(
             RefreshIcon { scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek()) }
         }
 
-        MainButton(text = "스케줄 등록") { appState.navigate(Constants.REGISTER_BUS_SCHEDULE_ROUTE) }
+        MainButton(text = "스케줄 등록") { appState.navigate(Route.RegisterSchedule()) }
     }
 }
 

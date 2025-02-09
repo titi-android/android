@@ -86,7 +86,6 @@ fun RegisterBusScheduleScreen(
     appState: ApplicationState,
     registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
 ) {
-
     val registerBusScheduleUiState by
     registerBusScheduleViewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(
         ScheduleRegister()
@@ -130,8 +129,8 @@ fun RegisterBusScheduleScreen(
             RegionArea(
                 region = registerBusScheduleUiState.regionName,
                 goRegionScreen = { appState.navigate(Constants.SELECT_REGION_ROUTE) },
-                busStop = registerBusScheduleUiState.busStopName,
-                bus = registerBusScheduleUiState.bus) {
+                busStop = registerBusScheduleUiState.busStop,
+                bus = "버스 번호") {
                 appState.navigate(Constants.SELECT_BUS_ROUTE)
             }
         }

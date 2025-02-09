@@ -14,6 +14,7 @@ import com.busschedule.register.ui.RegisterBusScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
 import com.busschedule.util.constant.Constants
+import com.busschedule.util.entity.navigation.Route
 import com.example.connex.ui.domain.ApplicationState
 
 fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
@@ -39,12 +40,12 @@ fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
 }
 
 fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
-    navigation(startDestination = Constants.SCHEDULELIST_ROUTE, route = Constants.SCHEDULELIST_GRAPH) {
-        composable(route = Constants.REGISTER_BUS_SCHEDULE_ROUTE) { entry ->
+    navigation(startDestination = Constants.SCHEDULELIST_ROUTE, route = Constants.SCHEDULELREGISTER_GRAPH) {
+        composable<Route.RegisterSchedule> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Constants.SCHEDULELIST_GRAPH
+                graph = Constants.SCHEDULELREGISTER_GRAPH
             )
             RegisterBusScheduleScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
         }
@@ -52,7 +53,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Constants.SCHEDULELIST_GRAPH
+                graph = Constants.SCHEDULELREGISTER_GRAPH
             )
             SelectRegionScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
         }
@@ -60,7 +61,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Constants.SCHEDULELIST_GRAPH
+                graph = Constants.SCHEDULELREGISTER_GRAPH
             )
             SelectBusScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
         }

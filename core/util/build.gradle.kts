@@ -1,5 +1,6 @@
 plugins {
     id("busSchedule.android.compose.library")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -25,4 +26,6 @@ dependencies {
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.kotlinx.serialization.json)
 }

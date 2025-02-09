@@ -9,6 +9,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
 import com.busschedule.util.constant.Constants
+import com.busschedule.util.entity.navigation.Route
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -64,6 +65,10 @@ class ApplicationState(
 
     fun navigate(uri: Uri) {
         navController.navigate(uri)
+    }
+
+    fun navigate(route: Route) {
+        navController.navigate(route)
     }
 
     fun navigateEncodingUrl(prefixUrl: String, encodeUrl: String, param: String) {

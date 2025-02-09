@@ -26,6 +26,10 @@ class CityOfRegion(
         citiesUiState.forEach { it.isSelected = (it.city == selectCity) }
     }
 
+    fun selectCity(selectCity: String) = apply{
+        this.citiesUiState.forEach { it.isSelected = (it.city.value == selectCity) }
+    }
+
     private fun getSelectedRegion() = regionUiStates.find { it.isSelected }?.region
 
     private fun updateCitiesUiState(region: Region) {

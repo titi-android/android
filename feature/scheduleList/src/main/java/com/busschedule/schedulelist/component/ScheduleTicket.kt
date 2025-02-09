@@ -146,7 +146,7 @@ fun ScheduleTicket(
                             imageVector = IconPack.IcEdit,
                             contentDescription = "ic_edit",
                             tint = TextWColor,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp).clickable { onEdit() }
                         )
                         WidthSpacer(width = 20.dp)
                         Icon(

@@ -26,7 +26,7 @@ junitVersion = "1.2.1"
 navigationCommonKtx = "2.8.5"
 navigationCompose = "2.8.5"
 navigationRuntimeKtx = "2.8.5"
-dagger-hilt-navigation-compose = "1.0.0"
+dagger-hilt-navigation-compose = "1.2.0"
 
 retrofit = "2.9.0"
 retrofitSerialication = "1.0.0"

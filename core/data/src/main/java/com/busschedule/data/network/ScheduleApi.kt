@@ -3,6 +3,7 @@ package com.busschedule.data.network
 import com.busschedule.data.model.DefaultResponse
 import com.busschedule.domain.model.request.ScheduleRegisterRequest
 import com.busschedule.domain.model.response.schedule.BusSchedule
+import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -19,6 +20,10 @@ interface ScheduleApi {
     // 해당 요일 스케줄 목록 조회
     @GET("/api/v2/schedules/days")
     suspend fun readDaySchedules(@Query("days") days: String): DefaultResponse<List<BusSchedule>>
+
+    // 스케줄 ID로 스케줄 조회
+    @GET("/api/v1/schedules/{scheduleId}")
+    suspend fun readSchedule(@Path("scheduleId") scheduleId: Int): DefaultResponse<ScheduleRegisterResponse>
 
     // 스케줄 등록
     @POST("/api/v1/schedules")
