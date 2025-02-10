@@ -69,7 +69,6 @@ import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.NotifyInfo
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.util.convertTimePickerToUiTime
-import com.busschedule.util.constant.Constants
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.util.entity.navigation.Route
 import com.example.connex.ui.domain.ApplicationState
@@ -142,7 +141,7 @@ fun RegisterBusScheduleScreen(
                 busStop = registerBusScheduleUiState.busStopInfo?.busStop ?: "버스 정류장",
                 buses = registerBusScheduleUiState.busStopInfo?.getBuses() ?: emptyList(),
                 deleteBus = { registerBusScheduleUiState.busStopInfo?.remove(it) }) {
-                appState.navigate(Constants.SELECT_BUS_ROUTE)
+                appState.navigate(Route.RegisterGraph.SelectBusStop(busStop = registerBusScheduleUiState.busStopInfo!!.busStop))
             }
         }
 

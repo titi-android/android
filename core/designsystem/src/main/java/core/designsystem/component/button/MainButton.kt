@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import core.designsystem.theme.Primary
+import core.designsystem.theme.TextBoxDis
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mTitle
 
@@ -20,7 +21,9 @@ fun MainButton(modifier: Modifier = Modifier, text: String, enabled: Boolean = t
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.textButtonColors(
             containerColor = Primary,
-            contentColor = TextWColor
+            contentColor = TextWColor,
+            disabledContainerColor = TextBoxDis,
+            disabledContentColor = TextWColor
         ),
         onClick = { onClick() }) {
         Text(text = text, style = mTitle)

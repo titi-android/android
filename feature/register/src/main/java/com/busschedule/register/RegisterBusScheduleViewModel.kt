@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.busschedule.domain.model.ApiState
+import com.busschedule.domain.model.response.busstop.BusStopInfoResponse
 import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import com.busschedule.domain.usecase.bus.ReadAllBusUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
@@ -92,7 +93,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
             )
         }
 
-    private val _regionInput = MutableStateFlow("")
+    private val _regionInput = MutableStateFlow(savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStop)
     val regionInput: StateFlow<String> = _regionInput.asStateFlow()
 
     val selectRegionUiState = combine(regionInput, cityOfRegion) { input, cityOfRegion ->
@@ -105,8 +106,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _busStopInput = MutableStateFlow("")
     private val busStopInput: StateFlow<String> = _busStopInput.asStateFlow()
 
-    private val _busStopInfo = MutableStateFlow(emptyList<BusStopInfo>())
-    private val busStopInfo: StateFlow<List<BusStopInfo>> = _busStopInfo.asStateFlow()
+    private val _busStopInfo = MutableStateFlow(emptyList<BusStopInfoResponse>())
+    private val busStopInfo: StateFlow<List<BusStopInfoResponse>> = _busStopInfo.asStateFlow()
 
     val selectBusUiState = combine(busStopInput, busStopInfo) { input, busStop ->
         SelectBusUiState(
@@ -167,6 +168,30 @@ class RegisterBusScheduleViewModel @Inject constructor(
         }
     }
 
+    // 이미 지역이 정해져 있을 때 지도 화면 출력 시 한번 호출하는 함수
+    fun fetchFirstReadAllBusStop(onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            when (val result = readAllBusStopUseCase(
+                cityOfRegion.value.getSelectedCityName(),
+                selectBusStopInfo.value!!.busStop
+            ).first()) {
+                is ApiState.Error -> {}
+
+                ApiState.Loading -> {}
+                is ApiState.NotResponse -> Log.d(
+                    "daeyoung",
+                    "not response: ${result.message}, ${result.exception}"
+                )
+
+                is ApiState.Success -> {
+                    _busStopInfo.update { result.data.busInfosResponse }
+//                    onSuccess(busStopInfo.value.first().tmX, busStopInfo.value.first().tmX)
+                    Log.d("daeyoung", "success: ${busStopInfo.value}")
+                }
+            }
+        }
+    }
+
     fun fetchReadAllBusStop(busStopName: String, showToastMsg: (String) -> Unit) {
         viewModelScope.launch {
             when (val result = readAllBusStopUseCase(
@@ -184,8 +209,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 )
 
                 is ApiState.Success -> {
-//                    _busStopInfo.update { result.data.busInfosResponse.map { it.asDomain() } }
-                    Log.d("daeyoung", "success: ${result.data}")
+                    _busStopInfo.update { result.data.busInfosResponse }
+                    Log.d("daeyoung", "success: ${busStopInfo.value}")
                 }
             }
         }
@@ -245,7 +270,6 @@ class RegisterBusScheduleViewModel @Inject constructor(
                                 busesInit = res.busNames.map { Bus(it) })
                         }
                     }
-                    Log.d("daeyoung", "success: ${result.data}")
                 }
 
                 is ApiState.NotResponse -> {

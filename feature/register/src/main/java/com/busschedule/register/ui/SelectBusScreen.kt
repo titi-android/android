@@ -19,9 +19,11 @@ import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,21 +47,36 @@ import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
+import com.kakao.vectormap.label.LabelTextBuilder
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.theme.Background
 
+
 @Composable
 fun SelectBusScreen(
     appState: ApplicationState,
     registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    busStopInput: String = "",
 ) {
     val uiState by registerBusScheduleViewModel.selectBusUiState.collectAsStateWithLifecycle(
-        SelectBusUiState()
+        SelectBusUiState(busStopInput)
     )
+//    var curLatLng by remember { mutableStateOf(LatLng.from(37.5666805, 126.9784147)) }
+
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
+
+    LaunchedEffect(Unit) {
+        if (busStopInput.isNotEmpty()) {
+            registerBusScheduleViewModel.fetchFirstReadAllBusStop { }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,53 +88,76 @@ fun SelectBusScreen(
         SearchTextField(
             value = uiState.input,
             onValueChange = { registerBusScheduleViewModel.updateBusStopInput(it) },
-            placeholder = "버스 정류장 검색") {
-            registerBusScheduleViewModel.fetchReadAllBusStop(uiState.input) { appState.showToastMsg(it) }
+            placeholder = "버스 정류장 검색"
+        ) {
+            registerBusScheduleViewModel.fetchReadAllBusStop(uiState.input) {
+                appState.showToastMsg(it)
+            }
         }
         HeightSpacer(height = 16.dp)
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = {context ->
-                mapView.apply { ->
-                    mapView.start(
-                        object : MapLifeCycleCallback() {
-                            override fun onMapDestroy() {
-                                appState.showToastMsg("지도를 불러오는데 실패했습니다.")
-                            }
+        if (uiState.busStop.isEmpty()) {
+            CircularProgressIndicator()
+        } else {
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { context ->
+                    mapView.apply { ->
+                        mapView.start(
+                            object : MapLifeCycleCallback() {
+                                override fun onMapDestroy() {
+                                    appState.showToastMsg("지도를 불러오는데 실패했습니다.")
+                                }
 
-                            override fun onMapError(e: Exception?) {
-                                appState.showToastMsg("지도를 불러오는 중 알 수 없는 에러가 발생했습니다.\n onMapError: $e")
-                                Log.d("kakao", "error: $e")
-                            }
+                                override fun onMapError(e: Exception?) {
+                                    appState.showToastMsg("지도를 불러오는 중 알 수 없는 에러가 발생했습니다.\n onMapError: $e")
+                                    Log.d("kakao", "error: $e")
+                                }
 
-                        },
-                        object : KakaoMapReadyCallback() {
-                            override fun onMapReady(kakaoMap: KakaoMap) {
-                                val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(37.5665, 126.9780))
-//                                // 지도에 표시할 라벨의 스타일 설정
-//                                val style = kakaoMap.labelManager?.addLabelStyles(LabelStyles.from(
-//                                    LabelStyle.from(원하는 라벨 drawble파일을 적용)))
-//
-//                                // 라벨 옵션을 설정하고 위치와 스타일을 적용
-//                                val options = LabelOptions.from(LatLng.from(locationY, locationX)).setStyles(style)
-//
-//                                // KakaoMap의 labelManager에서 레이어를 가져옴
-//                                val layer = kakaoMap.labelManager?.layer
-//
-                                // 카메라를 지정된 위치로 이동
-                                kakaoMap.moveCamera(cameraUpdate)
-//
-//                                // 지도에 라벨을 추가
-//                                layer?.addLabel(options)
-                            }
+                            },
+                            object : KakaoMapReadyCallback() {
+                                override fun onMapReady(kakaoMap: KakaoMap) {
+
+                                    val cameraUpdate = CameraUpdateFactory.newCenterPosition(
+                                        LatLng.from(
+                                            uiState.busStop.first().tmX,
+                                            uiState.busStop.first().tmY
+                                        )
+                                    )
+                                    // 카메라를 지정된 위치로 이동
+                                    kakaoMap.moveCamera(cameraUpdate)
+
+                                    uiState.busStop.forEach {
+                                        addLabel(
+                                            kakaoMap = kakaoMap,
+                                            icon = core.designsystem.R.drawable.image_busstop_label,
+                                            text = it.name,
+                                            it.tmX,
+                                            it.tmY
+                                        )
+                                    }
+                                    kakaoMap.setOnLabelClickListener { kakaoMap, labelLayer, label ->
+                                        val t = uiState.findBusStop(
+                                            name = label.texts.first(),
+                                            lat = label.position.latitude,
+                                            lng = label.position.longitude
+                                        )
+                                        false
+                                    }
+
+                                }
+
 //                            override fun getPosition(): LatLng {
 //                                // 현재 위치를 반환
 //                                return LatLng.from(locationY, locationX)
 //                            }
-                        }
-                    )
-                }
-            })
+                            }
+                        )
+                    }
+                }) {
+            }
+        }
+
+
 //        val lazyListState = rememberLazyListState()
 //        LazyColumn(
 //            state = lazyListState,
@@ -219,4 +259,20 @@ fun BusCard() {
             modifier = Modifier.size(24.dp)
         )
     }
+}
+
+
+fun addLabel(kakaoMap: KakaoMap, icon: Int, text: String, lat: Double, lng: Double) {
+    val styles = kakaoMap.labelManager?.addLabelStyles(
+        LabelStyles.from(
+            LabelStyle.from(icon).setTextStyles(20, 0x2E2E34, 20, 0xFFFFFF)
+        )
+    )
+    val options = LabelOptions.from(LatLng.from(lat, lng))
+        .setStyles(styles).setTexts(
+            LabelTextBuilder().setTexts(text)
+        )
+    val layer = kakaoMap.labelManager?.layer
+    layer?.addLabel(options)
+
 }

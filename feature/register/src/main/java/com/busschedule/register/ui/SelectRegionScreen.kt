@@ -32,6 +32,7 @@ import com.busschedule.register.entity.CityUiState
 import com.busschedule.register.entity.RegionUiState
 import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.TextBoxColor
+import com.busschedule.util.entity.navigation.Route
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
@@ -59,7 +60,7 @@ fun SelectRegionScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-        BackArrowAppBar(title = "도시 이름 검색") {}
+        BackArrowAppBar(title = "도시 이름 검색") { appState.popBackStack() }
         SearchTextField(
             value = selectedRegionUiState.input,
             onValueChange = { registerBusScheduleViewModel.updateRegionInput(it) },
@@ -77,8 +78,8 @@ fun SelectRegionScreen(
         }
         HeightSpacer(height = 16.dp)
         Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-            MainButton(modifier = Modifier.padding(horizontal = 16.dp), text = "완료", enabled = btnEnable) {
-                appState.popBackStack()
+            MainButton(modifier = Modifier.padding(horizontal = 16.dp), text = "다음", enabled = btnEnable) {
+                appState.navigate(Route.RegisterGraph.SelectBusStop())
             }
         }
     }

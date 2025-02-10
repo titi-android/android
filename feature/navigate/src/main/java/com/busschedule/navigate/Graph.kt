@@ -46,7 +46,10 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
                 navController = appState.getNavController(),
                 graph = Route.RegisterGraph
             )
-            RegisterBusScheduleScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
+            RegisterBusScheduleScreen(
+                appState = appState,
+                registerBusScheduleViewModel = hiltViewModel(backStackEntry)
+            )
         }
         composable<Route.RegisterGraph.SelectRegion> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
@@ -54,7 +57,10 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
                 navController = appState.getNavController(),
                 graph = Route.RegisterGraph
             )
-            SelectRegionScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
+            SelectRegionScreen(
+                appState = appState,
+                registerBusScheduleViewModel = hiltViewModel(backStackEntry)
+            )
         }
         composable<Route.RegisterGraph.SelectBusStop> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
@@ -62,7 +68,11 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
                 navController = appState.getNavController(),
                 graph = Route.RegisterGraph
             )
-            SelectBusScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
+            SelectBusScreen(
+                appState = appState,
+                registerBusScheduleViewModel = hiltViewModel(backStackEntry),
+                busStopInput =entry.arguments?.getString("busStop") ?: ""
+            )
         }
     }
 }

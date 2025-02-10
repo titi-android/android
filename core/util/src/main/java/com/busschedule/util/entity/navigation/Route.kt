@@ -23,7 +23,9 @@ sealed interface Route {
         @Serializable
         data object SelectRegion : Route
         @Serializable
-        data object SelectBusStop: Route
+        data class SelectBusStop(
+            val busStop: String = ""
+        ): Route
     }
 }
 
