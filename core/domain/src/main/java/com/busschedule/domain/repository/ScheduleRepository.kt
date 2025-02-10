@@ -14,6 +14,8 @@ interface ScheduleRepository {
     fun postSchedule(scheduleRegisterRequest: ScheduleRegisterRequest): Flow<ApiState<Unit>>
 
     fun deleteSchedule(scheduleId: Int): Flow<ApiState<Unit>>
+
+    fun putSchedule(scheduleId: Int, schedule: ScheduleRegisterRequest): Flow<ApiState<Unit>>
     fun putScheduleAlarm(scheduleId: Int): Flow<ApiState<Unit>>
 
 }

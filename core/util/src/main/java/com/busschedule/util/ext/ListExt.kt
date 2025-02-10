@@ -4,5 +4,5 @@ package com.busschedule.util.ext
 fun List<Int>.toFormatTime(): String {
     val hour = this[0]
     val minute = if (this[1] == 0) "00" else "${this[1]}"
-    return "$hour $minute"
+    return "${hour}:$minute"
 }

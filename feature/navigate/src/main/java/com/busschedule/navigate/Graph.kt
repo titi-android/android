@@ -13,25 +13,24 @@ import com.busschedule.login.SignUpScreen
 import com.busschedule.register.ui.RegisterBusScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
-import com.busschedule.util.constant.Constants
 import com.busschedule.util.entity.navigation.Route
 import com.example.connex.ui.domain.ApplicationState
 
 fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
-    navigation(startDestination = Constants.LOGIN_ROUTE, route = Constants.LOGIN_GRAPH) {
-        composable(route = Constants.LOGIN_ROUTE) { entry ->
+    navigation<Route.LoginGraph>(startDestination = Route.LoginGraph.Login) {
+        composable<Route.LoginGraph.Login> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Constants.LOGIN_GRAPH
+                graph = Route.LoginGraph
             )
             LoginScreen(appState, loginViewModel = hiltViewModel(backStackEntry))
         }
-        composable(route = Constants.SIGNUP_ROUTE) { entry ->
+        composable<Route.LoginGraph.Signup> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Constants.LOGIN_GRAPH
+                graph = Route.LoginGraph
             )
             SignUpScreen(appState = appState, loginViewModel = hiltViewModel(backStackEntry))
         }
@@ -40,28 +39,28 @@ fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
 }
 
 fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
-    navigation(startDestination = Constants.SCHEDULELIST_ROUTE, route = Constants.SCHEDULELREGISTER_GRAPH) {
-        composable<Route.RegisterSchedule> { entry ->
+    navigation<Route.RegisterGraph>(startDestination = Route.RegisterGraph.RegisterSchedule()) {
+        composable<Route.RegisterGraph.RegisterSchedule> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Constants.SCHEDULELREGISTER_GRAPH
+                graph = Route.RegisterGraph
             )
             RegisterBusScheduleScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
         }
-        composable(route = Constants.SELECT_REGION_ROUTE) { entry ->
+        composable<Route.RegisterGraph.SelectRegion> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Constants.SCHEDULELREGISTER_GRAPH
+                graph = Route.RegisterGraph
             )
             SelectRegionScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
         }
-        composable(route = Constants.SELECT_BUS_ROUTE) { entry ->
+        composable<Route.RegisterGraph.SelectBusStop> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Constants.SCHEDULELREGISTER_GRAPH
+                graph = Route.RegisterGraph
             )
             SelectBusScreen(appState = appState, registerBusScheduleViewModel = hiltViewModel(backStackEntry))
         }
@@ -72,7 +71,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
 fun rememberNavControllerBackEntry(
     entry: NavBackStackEntry,
     navController: NavController,
-    graph: String,
+    graph: Route,
 ) = remember(entry) {
     navController.getBackStackEntry(graph)
 }

@@ -71,6 +71,7 @@ import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.util.constant.Constants
 import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.util.entity.navigation.Route
 import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
@@ -137,7 +138,7 @@ fun RegisterBusScheduleScreen(
             HeightSpacer(height = 32.dp)
             RegionArea(
                 region = registerBusScheduleUiState.regionName,
-                goRegionScreen = { appState.navigate(Constants.SELECT_REGION_ROUTE) },
+                goRegionScreen = { appState.navigate(Route.RegisterGraph.SelectRegion) },
                 busStop = registerBusScheduleUiState.busStopInfo?.busStop ?: "버스 정류장",
                 buses = registerBusScheduleUiState.busStopInfo?.getBuses() ?: emptyList(),
                 deleteBus = { registerBusScheduleUiState.busStopInfo?.remove(it) }) {
@@ -150,7 +151,10 @@ fun RegisterBusScheduleScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            MainButton(text = "완료") {}
+            MainButton(text = "완료") { registerBusScheduleViewModel.fetchPutSchedule {
+                appState.showToastMsg("스케줄을 수정했습니다.")
+                appState.navigate(Route.ScheduleList)
+            } }
         }
     }
 }

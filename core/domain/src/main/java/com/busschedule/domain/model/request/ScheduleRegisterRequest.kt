@@ -5,10 +5,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ScheduleRegisterRequest(
     val name: String = "",
-    val days: List<String> = emptyList(),
+    val daysList: List<String> = emptyList(),
     val startTime: String = "",
     val endTime: String = "",
     val regionName: String = "",
     val busStopName: String = "",
-    val busList: List<String> = emptyList()
+    val nodeId: String = "",
+    val busList: List<String> = emptyList(),
+    val isAlarmOn: Boolean
 )

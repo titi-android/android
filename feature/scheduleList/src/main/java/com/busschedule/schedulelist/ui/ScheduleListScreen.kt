@@ -99,7 +99,7 @@ fun ScheduleListScreen(
                                 schedule.updateAlarm()
                             }
                         },
-                        onEdit = { appState.navigate(Route.RegisterSchedule(id = schedule.id)) }) {
+                        onEdit = { appState.navigate(Route.RegisterGraph.RegisterSchedule(id = schedule.id)) }) {
                         scheduleListViewModel.fetchDeleteSchedules(schedule.id)
                     }
                 }
@@ -107,7 +107,7 @@ fun ScheduleListScreen(
             RefreshIcon { scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek()) }
         }
 
-        MainButton(text = "스케줄 등록") { appState.navigate(Route.RegisterSchedule()) }
+        MainButton(text = "스케줄 등록") { appState.navigate(Route.RegisterGraph.RegisterSchedule()) }
     }
 }
 

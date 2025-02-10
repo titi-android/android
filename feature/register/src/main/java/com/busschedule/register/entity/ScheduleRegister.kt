@@ -15,10 +15,14 @@ data class ScheduleRegister (
 
 fun ScheduleRegister.asDomain() = ScheduleRegisterRequest(
     name = name,
-    days = dayOfWeeks.filter { it.isSelected }.map { "${it.dayOfWeek.value}요일" },
+    daysList = dayOfWeeks.filter { it.isSelected }.map { "${it.dayOfWeek.value}요일" },
     startTime = startTime,
     endTime = endTime,
     regionName = regionName,
+    busStopName = busStopInfo?.busStop ?: "",
+    nodeId = busStopInfo?.nodeId ?: "",
+    busList = busStopInfo?.getBuses()?.map { it.name } ?: emptyList(),
+    isAlarmOn = isNotify
 //    busStopName = busStop,
 //    busList = buses.map { it.name },
 )

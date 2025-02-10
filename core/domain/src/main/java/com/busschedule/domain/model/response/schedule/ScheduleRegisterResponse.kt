@@ -11,6 +11,7 @@ data class ScheduleRegisterResponse(
     val endTime: List<Int> = emptyList(),
     val regionName: String = "",
     val busStopName: String = "",
+    val nodeId: String = "",
     val busNames: List<String> = emptyList(),
     val isAlarmOn: Boolean
 )

@@ -8,11 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.busschedule.domain.model.ApiState
-import com.busschedule.domain.model.response.busstop.BusStop
 import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import com.busschedule.domain.usecase.bus.ReadAllBusUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
+import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
 import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.BusStopInfo
@@ -43,10 +43,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val readAllBusStopUseCase: ReadAllBusStopUseCase,
     private val readAllBusUseCase: ReadAllBusUseCase,
     private val readScheduleUseCase: ReadScheduleUseCase,
+    private val putScheduleUseCase: PutScheduleUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val scheduleId = savedStateHandle.toRoute<Route.RegisterSchedule>().id
+    private val scheduleId = savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().id
 
     private val _scheduleName = MutableStateFlow("")
     val scheduleName: StateFlow<String> = _scheduleName.asStateFlow()
@@ -114,14 +115,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
         )
     }
 
-    private var busStopNodeId = BusStop()
-
     init {
-        if (scheduleId != null) {
-            viewModelScope.launch {
-                fetchReadSchedule(scheduleId)
-            }
-        }
+        if (scheduleId != null) viewModelScope.launch { fetchReadSchedule(scheduleId) }
     }
 
     fun updateScheduleName(name: String) {
@@ -242,14 +237,35 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         _startTime.update { res.startTime.toFormatTime() }
                         _endTime.update { res.endTime.toFormatTime() }
                         _isNotify.update { res.isAlarmOn }
-                        _cityOfRegion.update { CityOfRegion().selectCity(res.regionName) }
+                        _cityOfRegion.update { CityOfRegion(initCity = res.regionName) }
                         _selectBusStopInfo.update {
                             BusStopInfo(
                                 busStop = res.busStopName,
+                                nodeId = res.nodeId,
                                 busesInit = res.busNames.map { Bus(it) })
                         }
                     }
                     Log.d("daeyoung", "success: ${result.data}")
+                }
+
+                is ApiState.NotResponse -> {
+                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
+                }
+            }
+        }
+    }
+
+    fun fetchPutSchedule(onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            val scheduleReq = registerBusScheduleUiState.first().asDomain()
+            when (val result = putScheduleUseCase(scheduleId!!, scheduleReq).first()) {
+                is ApiState.Error -> {
+                    Log.d("daeyoung", "error: ${result.errMsg}")
+                }
+
+                ApiState.Loading -> TODO()
+                is ApiState.Success<*> -> {
+                    onSuccess()
                 }
 
                 is ApiState.NotResponse -> {

@@ -33,6 +33,10 @@ interface ScheduleApi {
     @DELETE("/api/v1/schedules/{scheduleId}")
     suspend fun deleteSchedule(@Path("scheduleId") scheduleId: Int): DefaultResponse<Unit>
 
+    // 스케줄 수정
+    @PUT("/api/v2/schedules/{scheduleId}")
+    suspend fun putSchedule(@Path("scheduleId") scheduleId: Int, @Body schedule: ScheduleRegisterRequest): DefaultResponse<Unit>
+
     // 스케줄 알림 수정
     @PUT("/api/v1/schedules/alarm/{scheduleId}")
     suspend fun putScheduleAlarm(@Path("scheduleId") scheduleId: Int): DefaultResponse<Unit>

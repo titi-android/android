@@ -8,6 +8,7 @@ import com.busschedule.register.constant.Region
 
 class CityOfRegion(
     private val regions: List<Region> = Region.entries,
+    private val initCity: String = "도시(지역)"
 ) {
     val regionUiStates = regions.map { RegionUiState(it) }
 
@@ -56,7 +57,7 @@ class CityOfRegion(
 
 
 
-    fun getSelectedCityName() = selectedCityUiState?.city?.value ?: "도시(지역)"
+    fun getSelectedCityName() = selectedCityUiState?.city?.value ?: initCity
 }
 
 data class RegionUiState(

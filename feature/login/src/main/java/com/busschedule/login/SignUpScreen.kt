@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.util.constant.Constants
+import com.busschedule.util.entity.navigation.Route
 import com.example.connex.ui.domain.ApplicationState
 
 @Composable
@@ -60,7 +60,7 @@ fun SignUpScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hi
             Text(text = "회원가입")
         }
         Button(
-            onClick = { appState.navigate(Constants.LOGIN_ROUTE) },
+            onClick = { appState.navigate(Route.LoginGraph.Login) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "로그인 하러 가기")

@@ -6,9 +6,8 @@ import androidx.compose.runtime.toMutableStateList
 
 
 @Stable
-data class BusStopInfo (val busStop: String, val busesInit: List<Bus>) {
+data class BusStopInfo (val busStop: String, val nodeId: String, val busesInit: List<Bus>) {
     private val buses = busesInit.toMutableStateList()
-//    private val buses = mutableStateListOf<Bus>().apply { addAll(busesInit) }
 
     fun remove(name: String) {
         Log.d("daeYoung", "buses: $buses")
