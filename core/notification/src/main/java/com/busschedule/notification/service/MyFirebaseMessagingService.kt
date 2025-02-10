@@ -56,7 +56,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notification = notificationBuilder.makeNotification(CHANNEL_ID, CHANNEL_NAME, this, title = title, body = body)
 
         // 알림 생성
-        notificationManager.notify(notificationCode, notification)
+        notificationManager.notify(NotificationBuilder.NOTIFYCODE, notification)
     }
     companion object {
         const val CHANNEL_ID = "channel_id1"
