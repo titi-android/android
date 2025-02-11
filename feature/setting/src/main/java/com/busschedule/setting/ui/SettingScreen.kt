@@ -33,12 +33,9 @@ import core.designsystem.theme.mTitle
 import core.designsystem.theme.rFooter
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true, backgroundColor = 0xFFFFFFFF)
-fun SettingScreen() {
+fun SettingScreen(appState: ApplicationState) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        BackArrowAppBar(title = "설정") {
-
-        }
+        BackArrowAppBar(title = "설정") {}
         HeightSpacer(height = 16.dp)
         ProfileCard(image = "", text = "닉네임") {
 
