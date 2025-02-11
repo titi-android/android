@@ -1,0 +1,55 @@
+package com.busschedule.register.entity
+
+import com.busschedule.domain.model.response.busstop.BusStopInfoResponse
+import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.camera.CameraAnimation
+import com.kakao.vectormap.camera.CameraUpdate
+import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
+import com.kakao.vectormap.label.LabelTextBuilder
+
+class KakaoMapObject(val map: KakaoMap) {
+
+    private fun removeAllLabels() = map.labelManager?.removeAllLabelLayer()
+    private var labels: List<BusStopInfoResponse> = emptyList()
+
+    private fun addLabel(icon: Int, text: String, lat: Double, lng: Double) {
+        val styles = map.labelManager?.addLabelStyles(
+            LabelStyles.from(
+                LabelStyle.from(icon).setTextStyles(20, 0x2E2E34, 20, 0xFFFFFF)
+            )
+        )
+        val options = LabelOptions.from(LatLng.from(lat, lng))
+            .setStyles(styles).setTexts(
+                LabelTextBuilder().setTexts(text)
+            )
+        val layer = map.labelManager?.layer
+        layer?.addLabel(options)
+    }
+
+    fun removeAndAddLabel(icon: Int, labels: List<BusStopInfoResponse>) {
+        removeAllLabels()
+        this.labels = labels
+        this.labels.forEach {
+            addLabel(icon, it.name, it.tmX, it.tmY)
+        }
+        moveCamera(LatLng.from(this.labels.first().tmX, this.labels.first().tmY))
+    }
+    private fun makeCameraUpdate(x: Double, y: Double, zoomLevel: Int = 16): CameraUpdate {
+        return CameraUpdateFactory.newCenterPosition(LatLng.from(x, y), zoomLevel)
+    }
+
+    fun moveCamera(latLng: LatLng) {
+        val cameraUpdate = makeCameraUpdate(latLng.latitude, latLng.longitude, 18)
+        // 카메라를 지정된 위치로 이동
+        map.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
+    }
+
+    fun findBusStop(name: String, lat: Double, lng: Double) =
+        requireNotNull(labels.find { it.name == name && it.tmX == lat && it.tmY == lng }) {
+            "BusStop not found"
+        }
+}

@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.busschedule.domain.model.ApiState
-import com.busschedule.domain.model.response.busstop.BusStopInfoResponse
 import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import com.busschedule.domain.usecase.bus.ReadAllBusUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
@@ -18,14 +17,15 @@ import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
 import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.BusStopInfo
 import com.busschedule.register.entity.CityOfRegion
+import com.busschedule.register.entity.KakaoMapObject
 import com.busschedule.register.entity.ScheduleRegister
-import com.busschedule.register.entity.SelectBusUiState
 import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.asDomain
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.ext.toFormatTime
+import com.kakao.vectormap.KakaoMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,7 +93,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
             )
         }
 
-    private val _regionInput = MutableStateFlow(savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStop)
+    private val _regionInput =
+        MutableStateFlow(savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStop)
     val regionInput: StateFlow<String> = _regionInput.asStateFlow()
 
     val selectRegionUiState = combine(regionInput, cityOfRegion) { input, cityOfRegion ->
@@ -104,17 +105,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
     }
 
     private val _busStopInput = MutableStateFlow("")
-    private val busStopInput: StateFlow<String> = _busStopInput.asStateFlow()
+    val busStopInput: StateFlow<String> = _busStopInput.asStateFlow()
 
-    private val _busStopInfo = MutableStateFlow(emptyList<BusStopInfoResponse>())
-    private val busStopInfo: StateFlow<List<BusStopInfoResponse>> = _busStopInfo.asStateFlow()
-
-    val selectBusUiState = combine(busStopInput, busStopInfo) { input, busStop ->
-        SelectBusUiState(
-            input = input,
-            busStop = busStop
-        )
-    }
+    lateinit var kakaoMap: KakaoMapObject
 
     init {
         if (scheduleId != null) viewModelScope.launch { fetchReadSchedule(scheduleId) }
@@ -150,6 +143,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _regionInput.update { input }
     }
 
+    fun initKakaoMap(map: KakaoMap): KakaoMapObject {
+        kakaoMap = KakaoMapObject(map)
+        return kakaoMap
+    }
+
     fun fetchPostBusSchedule(scheduleRegister: ScheduleRegister) {
 
         viewModelScope.launch {
@@ -169,7 +167,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
     }
 
     // 이미 지역이 정해져 있을 때 지도 화면 출력 시 한번 호출하는 함수
-    fun fetchFirstReadAllBusStop(onSuccess: () -> Unit) {
+    fun fetchFirstReadAllBusStop() {
         viewModelScope.launch {
             when (val result = readAllBusStopUseCase(
                 cityOfRegion.value.getSelectedCityName(),
@@ -184,23 +182,22 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 )
 
                 is ApiState.Success -> {
-                    _busStopInfo.update { result.data.busInfosResponse }
-//                    onSuccess(busStopInfo.value.first().tmX, busStopInfo.value.first().tmX)
-                    Log.d("daeyoung", "success: ${busStopInfo.value}")
+                    kakaoMap.removeAndAddLabel(
+                        icon = core.designsystem.R.drawable.image_busstop_label,
+                        labels = result.data.busInfosResponse
+                    )
                 }
             }
         }
     }
 
-    fun fetchReadAllBusStop(busStopName: String, showToastMsg: (String) -> Unit) {
+    fun fetchReadAllBusStop(busStopName: String) {
         viewModelScope.launch {
             when (val result = readAllBusStopUseCase(
                 cityOfRegion.value.getSelectedCityName(),
                 busStopName
             ).first()) {
-                is ApiState.Error -> {
-                    showToastMsg(result.errMsg)
-                }
+                is ApiState.Error -> {}
 
                 ApiState.Loading -> {}
                 is ApiState.NotResponse -> Log.d(
@@ -209,8 +206,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 )
 
                 is ApiState.Success -> {
-                    _busStopInfo.update { result.data.busInfosResponse }
-                    Log.d("daeyoung", "success: ${busStopInfo.value}")
+                    kakaoMap.removeAndAddLabel(
+                        icon = core.designsystem.R.drawable.image_busstop_label,
+                        labels = result.data.busInfosResponse
+                    )
                 }
             }
         }
@@ -298,6 +297,4 @@ class RegisterBusScheduleViewModel @Inject constructor(
             }
         }
     }
-
-
 }

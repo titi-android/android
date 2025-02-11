@@ -141,7 +141,7 @@ fun RegisterBusScheduleScreen(
                 busStop = registerBusScheduleUiState.busStopInfo?.busStop ?: "버스 정류장",
                 buses = registerBusScheduleUiState.busStopInfo?.getBuses() ?: emptyList(),
                 deleteBus = { registerBusScheduleUiState.busStopInfo?.remove(it) }) {
-                appState.navigate(Route.RegisterGraph.SelectBusStop(busStop = registerBusScheduleUiState.busStopInfo!!.busStop))
+                appState.navigate(Route.RegisterGraph.SelectBusStop(busStop = registerBusScheduleUiState.busStopInfo?.busStop ?: ""))
             }
         }
 
