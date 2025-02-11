@@ -4,9 +4,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
 import core.designsystem.svg.myiconpack.IcNotify
-import core.designsystem.svg.myiconpack.IcOffnotify
+import core.designsystem.svg.myiconpack.IcNotnotify
 import core.designsystem.svg.myiconpack.IcRefresh
 import core.designsystem.svg.myiconpack.IcSetting
+import core.designsystem.svg.myiconpack.IcTalk
 import core.designsystem.svg.myiconpack.ImageBusOfTicket
 import kotlin.collections.List as ____KtList
 
@@ -19,7 +20,7 @@ public val IconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(IcNotify, IcOffnotify, IcClose, IcSetting, IcRefresh, ImageBusOfTicket,
-        IcEdit)
+    __AllIcons= listOf(IcNotify, IcTalk, IcNotnotify, IcClose, IcSetting, IcRefresh,
+        ImageBusOfTicket, IcEdit)
     return __AllIcons!!
   }

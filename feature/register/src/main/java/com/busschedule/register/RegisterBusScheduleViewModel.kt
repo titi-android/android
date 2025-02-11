@@ -107,6 +107,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _busStopInput = MutableStateFlow("")
     val busStopInput: StateFlow<String> = _busStopInput.asStateFlow()
 
+    private val _busStop = MutableStateFlow<BusStopInfo?>(null)
+    val busStop: StateFlow<BusStopInfo?> = _busStop
+
     lateinit var kakaoMap: KakaoMapObject
 
     init {
@@ -133,11 +136,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _busStopInput.update { input }
     }
 
-    fun removeBus(name: String) {
-        _selectBusStopInfo.value = _selectBusStopInfo.value?.let { currentInfo ->
-            currentInfo.copy(busesInit = currentInfo.getBuses().filter { it.name != name })
-        }
-    }
+//    fun removeBus(name: String) {
+//        _selectBusStopInfo.value = _selectBusStopInfo.value?.let { currentInfo ->
+//            currentInfo.copy(busesInit = currentInfo.getBuses().filter { it.name != name })
+//        }
+//    }
 
     fun updateRegionInput(input: String) {
         _regionInput.update { input }

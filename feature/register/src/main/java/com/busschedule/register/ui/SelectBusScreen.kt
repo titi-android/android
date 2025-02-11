@@ -5,14 +5,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.rounded.Add
@@ -45,6 +49,7 @@ import com.kakao.vectormap.MapView
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
+import core.designsystem.component.button.MainButton
 import core.designsystem.theme.Background
 
 
@@ -65,92 +70,94 @@ fun SelectBusScreen(
             registerBusScheduleViewModel.fetchFirstReadAllBusStop()
         }
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Background)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-    ) {
-        BackArrowAppBar(title = "버스 정류장 검색") { appState.popBackStack() }
-        SearchTextField(
-            value = uiState,
-            onValueChange = { registerBusScheduleViewModel.updateBusStopInput(it) },
-            placeholder = "버스 정류장 검색"
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Background)
+                .statusBarsPadding()
+                .navigationBarsPadding()
         ) {
-            registerBusScheduleViewModel.fetchReadAllBusStop(uiState)
-        }
-        HeightSpacer(height = 16.dp)
+            BackArrowAppBar(title = "버스 정류장 검색") { appState.popBackStack() }
+            SearchTextField(
+                value = uiState,
+                onValueChange = { registerBusScheduleViewModel.updateBusStopInput(it) },
+                placeholder = "버스 정류장 검색"
+            ) {
+                registerBusScheduleViewModel.fetchReadAllBusStop(uiState)
+            }
+            HeightSpacer(height = 16.dp)
 
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { context ->
-                mapView.apply { ->
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { context ->
+                    mapView.apply { ->
 
-                    mapView.start(
-                        object : MapLifeCycleCallback() {
-                            override fun onMapDestroy() {
-                                appState.showToastMsg("지도를 불러오는데 실패했습니다.")
-                            }
+                        mapView.start(
+                            object : MapLifeCycleCallback() {
+                                override fun onMapDestroy() {
+                                    appState.showToastMsg("지도를 불러오는데 실패했습니다.")
+                                }
 
-                            override fun onMapError(e: Exception?) {
-                                appState.showToastMsg("지도를 불러오는 중 알 수 없는 에러가 발생했습니다.\n onMapError: $e")
-                            }
+                                override fun onMapError(e: Exception?) {
+                                    appState.showToastMsg("지도를 불러오는 중 알 수 없는 에러가 발생했습니다.\n onMapError: $e")
+                                }
 
-                        },
-                        object : KakaoMapReadyCallback() {
-                            override fun onMapReady(kakaoMap: KakaoMap) {
-                                val kakaoMapObject = registerBusScheduleViewModel.initKakaoMap(kakaoMap)
+                            },
+                            object : KakaoMapReadyCallback() {
+                                override fun onMapReady(kakaoMap: KakaoMap) {
+                                    val kakaoMapObject =
+                                        registerBusScheduleViewModel.initKakaoMap(kakaoMap)
 
-                                kakaoMap.setOnLabelClickListener { kakaoMap, labelLayer, label ->
-                                    val t = kakaoMapObject.findBusStop(
-                                        name = label.texts.first(),
-                                        lat = label.position.latitude,
-                                        lng = label.position.longitude
-                                    )
-                                    kakaoMapObject.moveCamera(label.position)
-                                    false
+                                    kakaoMap.setOnLabelClickListener { kakaoMap, labelLayer, label ->
+                                        val t = kakaoMapObject.findBusStop(
+                                            name = label.texts.first(),
+                                            lat = label.position.latitude,
+                                            lng = label.position.longitude
+                                        )
+                                        kakaoMapObject.moveCamera(label.position)
+                                        false
+                                    }
                                 }
                             }
-                        }
-                    )
-                }
-            })
+                        )
+                    }
+                })
 
-
-//        val lazyListState = rememberLazyListState()
-//        LazyColumn(
-//            state = lazyListState,
-//            modifier = Modifier
-//                .weight(1f)
-//                .fillMaxWidth(),
-//            contentPadding = PaddingValues(vertical = 16.dp)
-//        ) {
-//            items(items = uiState.busStop, key = { it.busStop.nodeId }) {
-//                BusStopCard(
-//                    busStopName = it.busStop.name,
-//                    latitude = it.busStop.tmX,
-//                    longitude = it.busStop.tmY,
-//                    busInfoList = emptyList()
-//                )
-//            }
-//        }
-//        HeightSpacer(height = 16.dp)
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(horizontal = 16.dp)
-//        ) {
-//            MainButton(
-//                modifier = Modifier.padding(horizontal = 16.dp),
-//                text = "완료",
-//                enabled = true
-//            ) {
-//                appState.popBackStack()
-//            }
-//        }
+        }
+        val lazyListState = rememberLazyListState()
+        LazyColumn(
+            state = lazyListState,
+            modifier = Modifier
+                .fillMaxHeight(0.4f)
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ) {
+            items(items = uiState.busStop, key = { it.busStop.nodeId }) {
+                BusStopCard(
+                    busStopName = it.busStop.name,
+                    latitude = it.busStop.tmX,
+                    longitude = it.busStop.tmY,
+                    busInfoList = emptyList()
+                )
+            }
+        }
+        HeightSpacer(height = 16.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            MainButton(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                text = "완료",
+                enabled = true
+            ) {
+                appState.popBackStack()
+            }
+        }
     }
+
 }
 
 @Composable
