@@ -78,7 +78,7 @@ fun BusInputDialog(
                 Row(modifier = Modifier.padding(top = 10.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
                         MainOutlineButton(text = "취소") {
-                            onDismissRequest()
+                            onCancel()
                         }
                     }
                     WidthSpacer(width = 10.dp)

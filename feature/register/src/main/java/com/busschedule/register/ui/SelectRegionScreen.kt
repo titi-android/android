@@ -33,7 +33,7 @@ import com.busschedule.register.entity.RegionUiState
 import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.TextBoxColor
 import com.busschedule.util.entity.navigation.Route
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainButton

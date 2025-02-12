@@ -21,20 +21,6 @@ fun ScheduleRegister.asDomain() = ScheduleRegisterRequest(
     regionName = regionName,
     busStopName = busStopInfo?.busStop ?: "",
     nodeId = busStopInfo?.nodeId ?: "",
-    busList = busStopInfo?.getBuses()?.map { it.name } ?: emptyList(),
+    busInfos = busStopInfo?.getBuses() ?: emptyList(),
     isAlarmOn = isNotify
-//    busStopName = busStop,
-//    busList = buses.map { it.name },
 )
-
-//fun ScheduleRegisterResponse.asEntity() = ScheduleRegister(
-//    id = id,
-//    name = name,
-//    dayOfWeeks = DayOfWeek.entries.map { DayOfWeekUi(dayOfWeek = it, init = days.contains("${it.value}요일")) },
-//    startTime = "${startTime[0]}:${startTime[1]}",
-//    endTime = "${endTime[0]}:${endTime[1]}",
-//    isNotify = isAlarmOn,
-//    regionName = regionName,
-//    busStopName = busStopName,
-//    bus = busNames.map { Bus(it) }
-//)

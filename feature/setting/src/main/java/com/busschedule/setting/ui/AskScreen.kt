@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.busschedule.setting.component.RoundTextField
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainButton

@@ -6,12 +6,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
-import com.busschedule.domain.model.response.busstop.BusResponse
+import com.busschedule.domain.model.response.busstop.BusInfo
 import com.busschedule.util.entity.BusType
 
 
 @Stable
-data class BusStopInfo (val busStop: String = "", val nodeId: String = "", val busesInit: List<BusResponse> = emptyList()) {
+data class BusStopInfo (val busStop: String = "", val nodeId: String = "", val busesInit: List<BusInfo> = emptyList()) {
     private val buses = busesInit.toMutableStateList()
 
     fun remove(name: String) {
@@ -28,7 +28,7 @@ data class SelectedBusUI (val busStop: String = "", val nodeId: String = "", val
 data class Bus(
     val name: String,
     val type: BusType = BusType.지정,
-    val selectedInit: Boolean = false
+    private val selectedInit: Boolean = false
 ) {
     var isSelected by mutableStateOf(selectedInit)
 }

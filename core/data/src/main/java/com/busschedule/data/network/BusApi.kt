@@ -1,6 +1,6 @@
 package com.busschedule.data.network
 
-import com.busschedule.domain.model.response.busstop.BusResponse
+import com.busschedule.domain.model.response.busstop.BusInfo
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -10,6 +10,6 @@ interface BusApi {
         @Query("cityName") cityName: String,
         @Query("nodeId") busStopId: String,
 //    ): DefaultResponse<List<BusResponse>>
-    ): List<BusResponse>
+    ): List<BusInfo>
 
 }

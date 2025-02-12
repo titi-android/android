@@ -17,7 +17,7 @@ import com.busschedule.setting.ui.AskScreen
 import com.busschedule.setting.ui.ProfileEditScreen
 import com.busschedule.setting.ui.SettingScreen
 import com.busschedule.util.entity.navigation.Route
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.state.ApplicationState
 
 fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
     navigation<Route.LoginGraph>(startDestination = Route.LoginGraph.Login) {

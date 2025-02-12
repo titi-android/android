@@ -10,12 +10,12 @@ data class BusSchedule(
     val startTime: List<Int> = emptyList(),
     val endTime: List<Int> = emptyList(),
     val busStopName: String = "",
-    val busInfos: List<BusInfo> = emptyList(),
+    val busInfos: List<ArrivingBus> = emptyList(),
     val isAlarmOn: Boolean
 )
 
 @Serializable
-data class BusInfo(
+data class ArrivingBus(
     val arrprevstationcnt: Int = 0,
     val arrtime: Int = 0,
     val nodeid: String = "",

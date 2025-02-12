@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +47,8 @@ import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.SelectedBusUI
 import com.busschedule.util.entity.BusType
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.entity.navigation.Route
+import com.busschedule.util.state.ApplicationState
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.MapLifeCycleCallback
@@ -146,8 +148,9 @@ fun SelectBusScreen(
             BusesBottomSheet(
                 selectedBusUi = registerBusScheduleViewModel.busStop.collectAsStateWithLifecycle().value,
                 addBus = { isShowDialog = true }) {
-                registerBusScheduleViewModel.addBusStopInSelectBusStopInfo()
-                appState.popBackStack()
+                registerBusScheduleViewModel.addBusStopInSelectBusStopInfo {
+                    appState.navigateSaveState(Route.RegisterGraph.RegisterSchedule(it))
+                }
             }
         }
         if (isShowDialog) {
@@ -230,6 +233,9 @@ fun BoxScope.BusesBottomSheet(
             .background(TextWColor)
             .customNavigationBarPadding(true)
     ) {
+        val btnEnable by remember {
+            derivedStateOf { selectedBusUi.buses.any { it.isSelected } }
+        }
         val lazyListState = rememberLazyListState()
         LazyColumn(
             state = lazyListState,
@@ -250,9 +256,7 @@ fun BoxScope.BusesBottomSheet(
                 BusCard(
                     name = "${it.name}번",
                     type = it.type,
-                    suffixIcon = {
-                        CheckBoxIcon(it.isSelected)
-                    }) { it.isSelected = !it.isSelected }
+                    suffixIcon = { CheckBoxIcon(it.isSelected) }) { it.isSelected = !it.isSelected }
             }
             item {
                 BusCard(
@@ -276,7 +280,7 @@ fun BoxScope.BusesBottomSheet(
             MainButton(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = "완료",
-                enabled = selectedBusUi.buses.any { it.isSelected }
+                enabled = btnEnable
             ) {
                 onCompleted()
             }

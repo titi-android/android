@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.busschedule.setting.component.ProfileCard
 import com.busschedule.util.entity.navigation.Route
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar

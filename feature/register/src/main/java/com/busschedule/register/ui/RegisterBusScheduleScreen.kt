@@ -61,7 +61,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.domain.model.response.busstop.BusResponse
+import com.busschedule.domain.model.response.busstop.BusInfo
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusBox
 import com.busschedule.register.constant.TimePickerType
@@ -70,7 +70,7 @@ import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.util.entity.navigation.Route
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
@@ -217,7 +217,7 @@ fun RegionArea(
     region: String,
     goRegionScreen: () -> Unit,
     busStop: String,
-    buses: List<BusResponse>,
+    buses: List<BusInfo>,
     deleteBus: (String) -> Unit,
     goBusStopScreen: () -> Unit,
 ) {

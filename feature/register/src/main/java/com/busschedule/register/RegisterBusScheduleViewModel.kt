@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.busschedule.domain.model.ApiState
-import com.busschedule.domain.model.response.busstop.BusResponse
+import com.busschedule.domain.model.response.busstop.BusInfo
 import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import com.busschedule.domain.usecase.bus.ReadAllBusOfBusStopUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
@@ -178,15 +178,16 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _addBus.update { emptyList() }
     }
 
-    fun addBusStopInSelectBusStopInfo() {
+    fun addBusStopInSelectBusStopInfo(navigate: (Int?) -> Unit) {
         _selectBusStopInfo.update {
             val bus = busStop.value
             BusStopInfo(
                 busStop = bus.busStop,
                 nodeId = bus.nodeId,
                 busesInit = bus.buses.filter { it.isSelected }
-                    .map { BusResponse(name = it.name, type = it.type.name) })
+                    .map { BusInfo(name = it.name, type = it.type.name) })
         }
+        navigate(scheduleId)
     }
 
     fun initKakaoMap(map: KakaoMap): KakaoMapObject {
@@ -285,7 +286,6 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         })
                     }
                     onSuccess()
-                    Log.d("daeyoung", "success: ${busStop.value}")
                 }
             }
         }
@@ -318,8 +318,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
                             BusStopInfo(
                                 busStop = res.busStopName,
                                 nodeId = res.nodeId,
-                                /* TODO: 서버 api 수정시 코드 수정*/
-                                busesInit = res.busNames.map { BusResponse(it, "일반") })
+                                busesInit = res.busInfos
+                            )
                         }
                     }
                 }

@@ -9,7 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.state.ApplicationState
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -21,7 +21,7 @@ fun rememberApplicationState(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 //    uiController: SystemUiController = rememberSystemUiController(),
 //    cameraPositionState: CameraPositionState = rememberCameraPositionState {},
-):ApplicationState {
+): ApplicationState {
     val context = LocalContext.current
     val appState = remember(Unit) {
         ApplicationState(

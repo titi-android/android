@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.util.entity.navigation.Route
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.state.ApplicationState
 
 @Composable
 fun SignUpScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hiltViewModel()) {

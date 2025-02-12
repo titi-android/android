@@ -34,7 +34,7 @@ import com.busschedule.schedulelist.component.ScheduleTicket
 import com.busschedule.schedulelist.model.ScheduleListUiState
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.util.entity.navigation.Route
-import com.example.connex.ui.domain.ApplicationState
+import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.button.MainButton
