@@ -13,7 +13,7 @@ enum class BusType(val type: String, val color:  Color, val colorT1: Color, val 
     광역("광역", Color(0xFFE83123 ), Color(0xFF7A0000), Color(0xFFFFDDD9 ), Color(0xFFE86F62 )),
     직행("직행", Color(0xFFE83123 ), Color(0xFF7A0000), Color(0xFFFFDDD9 ), Color(0xFFE86F62 )),
     순환("순환", Color(0xFFF4C24F ), Color(0xFF6E5824), Color(0xFFFFEDC4 ), Color(0xFFF5C860 )),
-    폐지("폐지", Color(0xFF7C7C7C ), Color(0xFF434343), Color(0xFFC4C4C4 ), Color(0xFFA2A2A2 ));
+    지정("지정", Color(0xFF7C7C7C ), Color(0xFF434343), Color(0xFFC4C4C4 ), Color(0xFFA2A2A2 ));
 
     companion object {
         fun find(type: String) =

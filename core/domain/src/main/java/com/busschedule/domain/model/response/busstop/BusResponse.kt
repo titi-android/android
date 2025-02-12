@@ -4,8 +4,3 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BusResponse(val name: String, val type: String)
-
-@Serializable
-data class BusResponseList(
-    val bus: List<BusResponse>
-)

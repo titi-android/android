@@ -15,12 +15,16 @@ import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
+import com.busschedule.register.entity.AddBusDialogUiState
+import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.BusStopInfo
 import com.busschedule.register.entity.CityOfRegion
 import com.busschedule.register.entity.KakaoMapObject
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.entity.SelectRegionUiState
+import com.busschedule.register.entity.SelectedBusUI
 import com.busschedule.register.entity.asDomain
+import com.busschedule.util.entity.BusType
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.util.entity.navigation.Route
@@ -107,8 +111,18 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _busStopInput = MutableStateFlow("")
     val busStopInput: StateFlow<String> = _busStopInput.asStateFlow()
 
-    private val _busStop = MutableStateFlow(BusStopInfo())
-    val busStop: StateFlow<BusStopInfo> = _busStop
+    private val _busStop = MutableStateFlow(SelectedBusUI())
+    val busStop: StateFlow<SelectedBusUI> = _busStop.asStateFlow()
+
+    private val _addBusInput = MutableStateFlow("")
+    val addBusInput: StateFlow<String> = _addBusInput.asStateFlow()
+
+    private val _addBus = MutableStateFlow(emptyList<Bus>())
+    val addBus: StateFlow<List<Bus>> = _addBus.asStateFlow()
+
+    val addBusDialogUiState = combine(addBusInput, addBus) { input, addBus ->
+        AddBusDialogUiState(input = input, bus = addBus)
+    }
 
     lateinit var kakaoMap: KakaoMapObject
 
@@ -136,14 +150,43 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _busStopInput.update { input }
     }
 
-//    fun removeBus(name: String) {
-//        _selectBusStopInfo.value = _selectBusStopInfo.value?.let { currentInfo ->
-//            currentInfo.copy(busesInit = currentInfo.getBuses().filter { it.name != name })
-//        }
-//    }
 
     fun updateRegionInput(input: String) {
         _regionInput.update { input }
+    }
+
+    fun updateAddBusInput(input: String) {
+        _addBusInput.update { input }
+    }
+
+    fun addDialogAddBus(showToast: (String) -> Unit) {
+        if (addBus.value.find { it.name == addBusInput.value } != null) {
+            showToast("이미 추가된 버스입니다.")
+            return
+        }
+        _addBus.update { it + Bus(name = addBusInput.value, selectedInit = true) }
+        updateAddBusInput("")
+    }
+
+    fun initDialogAddBus() {
+        _addBus.update { emptyList() }
+        updateAddBusInput("")
+    }
+
+    fun addDialogAddBusInBusStop() {
+        _busStop.update { busStop.value.copy(buses = it.buses + addBus.value.filter { addB -> addB.isSelected }) }
+        _addBus.update { emptyList() }
+    }
+
+    fun addBusStopInSelectBusStopInfo() {
+        _selectBusStopInfo.update {
+            val bus = busStop.value
+            BusStopInfo(
+                busStop = bus.busStop,
+                nodeId = bus.nodeId,
+                busesInit = bus.buses.filter { it.isSelected }
+                    .map { BusResponse(name = it.name, type = it.type.name) })
+        }
     }
 
     fun initKakaoMap(map: KakaoMap): KakaoMapObject {
@@ -236,7 +279,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 )
 
                 is ApiState.Success -> {
-                    _busStop.update { it.copy(busesInit = result.data) }
+                    _busStop.update {
+                        it.copy(buses = result.data.map { bus ->
+                            Bus(bus.name, BusType.find(bus.type))
+                        })
+                    }
                     onSuccess()
                     Log.d("daeyoung", "success: ${busStop.value}")
                 }

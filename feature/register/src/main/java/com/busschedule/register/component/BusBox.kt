@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -15,17 +18,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.busschedule.util.entity.BusType
 import core.designsystem.component.WidthSpacer
 import core.designsystem.svg.IconPack
 import core.designsystem.svg.myiconpack.IcClose
+import core.designsystem.theme.BusIcGreen
+import core.designsystem.theme.Primary
 import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mTitle
@@ -85,77 +87,7 @@ fun BusBox(
 @Preview()
 fun TextTest(modifier: Modifier = Modifier) {
     Column {
-        Text(
-            text = "FirstLineTop1",
-            style = mTitle.copy(
-                lineHeight = 1.em,
-                lineHeightStyle = LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.FirstLineTop
-                )
-            )
-        )
-        Text(
-            text = "FirstLineTop2",
-            style = mTitle.copy(
-                lineHeight = 2.em,
-                lineHeightStyle = LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.FirstLineTop
-                )
-            )
-        )
-        Text(
-            text = "FirstLineTop3",
-            style = mTitle.copy(
-                lineHeight = 3.em,
-                lineHeightStyle = LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.FirstLineTop
-                )
-            )
-        )
-        Text(
-            text = "FirstLineTop3/ sp",
-            style = TextStyle(
-//                fontFamily = FontFamily(Font(R.font.roboto)),
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
-                lineHeight = 19.sp,
-                lineHeightStyle = LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.None
-                )
-            )
-//            style = TextStyle(
-//                fontSize = 16.sp,
-//                lineHeight = 19.sp,
-//                lineHeightStyle = LineHeightStyle(
-//                    alignment = LineHeightStyle.Alignment.Center,
-//                    trim = LineHeightStyle.Trim.FirstLineTop
-//                )
-//            ),
-
-        )
-        Text(
-            text = "test2",
-            style = mTitle.copy(
-                lineHeight = 4.em,
-                lineHeightStyle = LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.LastLineBottom
-                )
-            )
-        )
-        Text(
-            text = "test3",
-            style = mTitle.copy(
-//                lineHeight = 19.sp,
-//                lineHeightStyle = LineHeightStyle(
-//                    alignment = LineHeightStyle.Alignment.Center,
-//                    trim = LineHeightStyle.Trim.None
-//                )
-            )
-        )
+        Icon(imageVector = Icons.Outlined.CheckCircle, contentDescription = "ic_check", tint = Primary)
+        Icon(imageVector = Icons.Default.CheckCircle, contentDescription = "ic_check", tint = BusIcGreen)
     }
 }

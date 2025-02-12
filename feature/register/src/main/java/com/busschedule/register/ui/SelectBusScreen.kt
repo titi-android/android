@@ -2,6 +2,7 @@ package com.busschedule.register.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -39,8 +40,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.register.RegisterBusScheduleViewModel
+import com.busschedule.register.component.BusInputDialog
+import com.busschedule.register.component.CheckBoxIcon
 import com.busschedule.register.component.SearchTextField
-import com.busschedule.register.entity.BusStopInfo
+import com.busschedule.register.entity.AddBusDialogUiState
+import com.busschedule.register.entity.SelectedBusUI
 import com.busschedule.util.entity.BusType
 import com.example.connex.ui.domain.ApplicationState
 import com.kakao.vectormap.KakaoMap
@@ -71,6 +75,7 @@ fun SelectBusScreen(
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
     var isShowBottomSheet by remember { mutableStateOf(false) }
+    var isShowDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (busStopInput.isNotEmpty()) {
@@ -93,6 +98,7 @@ fun SelectBusScreen(
                 placeholder = "버스 정류장 검색"
             ) {
                 registerBusScheduleViewModel.fetchReadAllBusStop(uiState)
+                isShowBottomSheet = false
             }
             HeightSpacer(height = 16.dp)
 
@@ -137,8 +143,29 @@ fun SelectBusScreen(
                 })
         }
         if (isShowBottomSheet) {
-            BusesBottomSheet(busStopInfo = registerBusScheduleViewModel.busStop.collectAsStateWithLifecycle().value) {
+            BusesBottomSheet(
+                selectedBusUi = registerBusScheduleViewModel.busStop.collectAsStateWithLifecycle().value,
+                addBus = { isShowDialog = true }) {
+                registerBusScheduleViewModel.addBusStopInSelectBusStopInfo()
                 appState.popBackStack()
+            }
+        }
+        if (isShowDialog) {
+            val dialogUiState by registerBusScheduleViewModel.addBusDialogUiState.collectAsStateWithLifecycle(
+                initialValue = AddBusDialogUiState()
+            )
+            BusInputDialog(
+                uiState = dialogUiState,
+                updateInput = { registerBusScheduleViewModel.updateAddBusInput(it) },
+                addBus = { registerBusScheduleViewModel.addDialogAddBus { appState.showToastMsg(it) } },
+                onDismissRequest = {
+                    isShowDialog = false
+                    registerBusScheduleViewModel.initDialogAddBus()
+                },
+                onCancel = { isShowDialog = false }) {
+                isShowDialog = false
+                registerBusScheduleViewModel.addDialogAddBusInBusStop()
+                registerBusScheduleViewModel.initDialogAddBus()
             }
         }
     }
@@ -146,11 +173,12 @@ fun SelectBusScreen(
 }
 
 @Composable
-fun BusCard(name: String, type: BusType) {
+fun BusCard(name: String, type: BusType, suffixIcon: @Composable () -> Unit, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
+            .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 22.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -166,17 +194,12 @@ fun BusCard(name: String, type: BusType) {
         BusTypeBox(text = type.name, color = type.color)
         WidthSpacer(width = 8.dp)
         Text(
-            text = "${name}번",
+            text = name,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Start,
             style = mTitle.copy(Primary)
         )
-        Icon(
-            imageVector = Icons.Rounded.Add,
-            contentDescription = "ic_add",
-            tint = Color(0xFF4D4D4D),
-            modifier = Modifier.size(24.dp)
-        )
+        suffixIcon()
     }
 }
 
@@ -194,7 +217,11 @@ fun BusTypeBox(text: String, color: Color) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BoxScope.BusesBottomSheet(busStopInfo: BusStopInfo, onCompleted: () -> Unit) {
+fun BoxScope.BusesBottomSheet(
+    selectedBusUi: SelectedBusUI,
+    addBus: () -> Unit,
+    onCompleted: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .align(Alignment.BottomCenter)
@@ -216,11 +243,29 @@ fun BoxScope.BusesBottomSheet(busStopInfo: BusStopInfo, onCompleted: () -> Unit)
                         .background(TextWColor)
                         .padding(horizontal = 16.dp, vertical = 24.5.dp)
                 ) {
-                    Text(text = busStopInfo.busStop, style = mTitle.copy(Primary))
+                    Text(text = selectedBusUi.busStop, style = mTitle.copy(Primary))
                 }
             }
-            items(items = busStopInfo.getBuses(), key = { it.name }) {
-                BusCard(name = it.name, type = BusType.find(it.type))
+            items(items = selectedBusUi.buses, key = { it.name }) {
+                BusCard(
+                    name = "${it.name}번",
+                    type = it.type,
+                    suffixIcon = {
+                        CheckBoxIcon(it.isSelected)
+                    }) { it.isSelected = !it.isSelected }
+            }
+            item {
+                BusCard(
+                    name = "버스 번호 추가하기",
+                    type = BusType.지정,
+                    suffixIcon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = "ic_add",
+                            tint = Primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }) { addBus() }
             }
         }
         Box(
@@ -231,7 +276,7 @@ fun BoxScope.BusesBottomSheet(busStopInfo: BusStopInfo, onCompleted: () -> Unit)
             MainButton(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = "완료",
-                enabled = true
+                enabled = selectedBusUi.buses.any { it.isSelected }
             ) {
                 onCompleted()
             }
@@ -239,4 +284,5 @@ fun BoxScope.BusesBottomSheet(busStopInfo: BusStopInfo, onCompleted: () -> Unit)
     }
 }
 
-fun Modifier.customNavigationBarPadding(state: Boolean) = if(state) this.navigationBarsPadding() else this
+fun Modifier.customNavigationBarPadding(state: Boolean) =
+    if (state) this.navigationBarsPadding() else this

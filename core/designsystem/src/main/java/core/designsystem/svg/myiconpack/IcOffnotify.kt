@@ -14,10 +14,10 @@ import core.designsystem.svg.IconPack
 
 public val IconPack.IcOffnotify: ImageVector
     get() {
-        if (_icNotnotify != null) {
-            return _icNotnotify!!
+        if (_icOffnotify != null) {
+            return _icOffnotify!!
         }
-        _icNotnotify = Builder(name = "IcNotnotify", defaultWidth = 24.0.dp, defaultHeight =
+        _icOffnotify = Builder(name = "IcOffnotify", defaultWidth = 24.0.dp, defaultHeight =
                 24.0.dp, viewportWidth = 24.0f, viewportHeight = 24.0f).apply {
             path(fill = SolidColor(Color(0xFF000000)), stroke = null, strokeLineWidth = 0.0f,
                     strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
@@ -80,7 +80,7 @@ public val IconPack.IcOffnotify: ImageVector
             }
         }
         .build()
-        return _icNotnotify!!
+        return _icOffnotify!!
     }
 
-private var _icNotnotify: ImageVector? = null
+private var _icOffnotify: ImageVector? = null
