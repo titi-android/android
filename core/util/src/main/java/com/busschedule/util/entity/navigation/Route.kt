@@ -27,6 +27,16 @@ sealed interface Route {
             val busStop: String = ""
         ): Route
     }
+
+    @Serializable
+    data object SettingGraph: Route {
+        @Serializable
+        data object Setting: Route
+        @Serializable
+        data object Ask : Route
+        @Serializable
+        data object EditProfile: Route
+    }
 }
 
 

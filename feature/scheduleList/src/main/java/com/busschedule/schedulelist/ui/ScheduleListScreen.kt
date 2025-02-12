@@ -73,7 +73,7 @@ fun ScheduleListScreen(
             .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp)
     ) {
         HeightSpacer(height = 6.dp)
-        ScheduleListAppBar {}
+        ScheduleListAppBar { appState.navigate(Route.SettingGraph.Setting) }
         HeightSpacer(height = 16.dp)
         DayOfWeekSelectArea(dayOfWeekUi = uiState.dayOfWeeks) {
             scheduleListViewModel.fetchReadDayOfWeekSchedules(it)

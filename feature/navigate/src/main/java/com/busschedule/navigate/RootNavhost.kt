@@ -33,5 +33,6 @@ fun RootNavHost() {
         loginGraph(appState)
         scheduleListComposable(appState)
         registerBusScheduleGraph(appState)
+        settingGraph(appState)
     }
 }

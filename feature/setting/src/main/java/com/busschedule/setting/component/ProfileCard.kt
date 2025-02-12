@@ -1,6 +1,7 @@
 package com.busschedule.setting.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,8 +40,25 @@ fun ProfileCard(image: String, text: String, onEdit: () -> Unit) {
                 imageVector = IconPack.IcEdit,
                 contentDescription = "ic_edit",
                 tint = Primary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onEdit() }
             )
         }
+    }
+}
+
+@Composable
+fun ProfileCard(image: String, text: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Card(shape = CircleShape, modifier = Modifier.size(120.dp)) {
+            Image(
+                painter = painterResource(id = core.designsystem.R.drawable.ic_launcher_background),
+                contentDescription = "image_profile",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        HeightSpacer(height = 12.dp)
+        Text(text = text, style = rTitle.copy(Primary))
     }
 }

@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.Search
@@ -62,10 +61,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.domain.model.response.busstop.BusResponse
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusBox
 import com.busschedule.register.constant.TimePickerType
-import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.NotifyInfo
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.util.convertTimePickerToUiTime
@@ -77,6 +76,8 @@ import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainButton
+import core.designsystem.svg.IconPack
+import core.designsystem.svg.myiconpack.IcBus
 import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextColor
@@ -216,7 +217,7 @@ fun RegionArea(
     region: String,
     goRegionScreen: () -> Unit,
     busStop: String,
-    buses: List<Bus>,
+    buses: List<BusResponse>,
     deleteBus: (String) -> Unit,
     goBusStopScreen: () -> Unit,
 ) {
@@ -234,8 +235,9 @@ fun RegionArea(
                     if (index != buses.lastIndex) Modifier.padding(end = 8.dp) else Modifier
                 BusBox(
                     modifier = modifier,
-                    icon = Icons.Outlined.DirectionsBus,
-                    name = bus.name
+                    icon = IconPack.IcBus,
+                    name = bus.name,
+                    type = bus.type,
                 ) { deleteBus(bus.name) }
             }
         }

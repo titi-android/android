@@ -4,5 +4,5 @@ import com.busschedule.domain.repository.BusStopRepository
 import javax.inject.Inject
 
 class ReadAllBusStopUseCase @Inject constructor(private val busStopRepository: BusStopRepository){
-    operator fun invoke(cityName: String, busStop: String) = busStopRepository.readAllBusStop(cityName, busStop)
+    operator fun invoke(cityName: String, nodeId: String) = busStopRepository.readAllBusStop(cityName, nodeId)
 }

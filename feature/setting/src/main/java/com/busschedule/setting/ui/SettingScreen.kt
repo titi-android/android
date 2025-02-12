@@ -1,4 +1,4 @@
-package com.busschedule.setting
+package com.busschedule.setting.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowForwardIos
@@ -18,9 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.busschedule.setting.component.ProfileCard
+import com.busschedule.util.entity.navigation.Route
+import com.example.connex.ui.domain.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
@@ -34,14 +37,22 @@ import core.designsystem.theme.rFooter
 
 @Composable
 fun SettingScreen(appState: ApplicationState) {
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        BackArrowAppBar(title = "설정") {}
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        BackArrowAppBar(title = "설정") { appState.popBackStack() }
         HeightSpacer(height = 16.dp)
         ProfileCard(image = "", text = "닉네임") {
-
+            appState.navigate(Route.SettingGraph.EditProfile)
         }
         HeightSpacer(height = 32.dp)
-        WhiteRoundedCard(padding = PaddingValues(horizontal = 16.dp)) {
+        WhiteRoundedCard(
+            padding = PaddingValues(horizontal = 16.dp),
+            onClick = { appState.navigate(Route.SettingGraph.Ask) }) {
             Row(modifier = Modifier.weight(1f)) {
                 Icon(
                     imageVector = IconPack.IcTalk,
@@ -72,11 +83,18 @@ fun SettingScreen(appState: ApplicationState) {
 
 
 @Composable
-fun WhiteRoundedCard(padding: PaddingValues, content: @Composable RowScope.() -> Unit) {
+fun WhiteRoundedCard(
+    padding: PaddingValues,
+    onClick: () -> Unit,
+    content: @Composable RowScope.() -> Unit,
+) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth().padding(padding),
-        colors = CardDefaults.cardColors(containerColor = TextWColor, contentColor = TextMColor)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(padding),
+        colors = CardDefaults.cardColors(containerColor = TextWColor, contentColor = TextMColor),
+        onClick = { onClick() }
     ) {
         Row(
             modifier = Modifier

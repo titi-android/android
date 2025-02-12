@@ -13,6 +13,9 @@ import com.busschedule.login.SignUpScreen
 import com.busschedule.register.ui.RegisterBusScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
+import com.busschedule.setting.ui.AskScreen
+import com.busschedule.setting.ui.ProfileEditScreen
+import com.busschedule.setting.ui.SettingScreen
 import com.busschedule.util.entity.navigation.Route
 import com.example.connex.ui.domain.ApplicationState
 
@@ -76,6 +79,21 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
         }
     }
 }
+
+fun NavGraphBuilder.settingGraph(appState: ApplicationState) {
+    navigation<Route.SettingGraph>(startDestination = Route.SettingGraph.Setting) {
+        composable<Route.SettingGraph.Setting> { entry ->
+            SettingScreen(appState = appState)
+        }
+        composable<Route.SettingGraph.Ask> { entry ->
+            AskScreen(appState)
+        }
+        composable<Route.SettingGraph.EditProfile> { entry ->
+            ProfileEditScreen(appState)
+        }
+    }
+}
+
 
 @Composable
 fun rememberNavControllerBackEntry(

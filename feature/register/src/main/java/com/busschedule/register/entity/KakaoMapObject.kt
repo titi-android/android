@@ -42,8 +42,10 @@ class KakaoMapObject(val map: KakaoMap) {
         return CameraUpdateFactory.newCenterPosition(LatLng.from(x, y), zoomLevel)
     }
 
-    fun moveCamera(latLng: LatLng) {
-        val cameraUpdate = makeCameraUpdate(latLng.latitude, latLng.longitude, 18)
+    fun moveCamera(latLng: LatLng, isUpCamera: Boolean = false) {
+        val lat = if(isUpCamera) -0.000500 else 0.0
+        val cameraUpdate = makeCameraUpdate(latLng.latitude + lat, latLng.longitude, 18)
+
         // 카메라를 지정된 위치로 이동
         map.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
     }

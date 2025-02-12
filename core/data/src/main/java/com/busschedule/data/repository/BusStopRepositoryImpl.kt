@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class BusStopRepositoryImpl @Inject constructor(private val busStopApi: BusStopApi): BusStopRepository {
-    override fun readAllBusStop(cityName: String, busStop: String): Flow<ApiState<BusInfosResponse>> = safeFlow {
-        busStopApi.readAllBusStop(cityName, busStop)
+    override fun readAllBusStop(cityName: String, nodeId: String): Flow<ApiState<BusInfosResponse>> = safeFlow {
+        busStopApi.readAllBusStop(cityName, nodeId)
     }
 }

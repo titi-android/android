@@ -57,3 +57,13 @@ fun <T : Any> safeFlowUnit(apiFunc: suspend () -> Response<ApiResponse<T>>): Flo
             emit(ApiState.NotResponse(message = e.message ?: "", exception = e))
         }
     }.flowOn(Dispatchers.IO)
+
+fun <T : Any> safeFlowNotJson(apiFunc: suspend () -> T): Flow<ApiState<T>> =
+    flow {
+        try {
+            val res = apiFunc()
+                emit(ApiState.Success(data = res , msg = ""))
+        } catch (e: Exception) {
+            emit(ApiState.NotResponse(message = e.message ?: "", exception = e))
+        }
+    }.flowOn(Dispatchers.IO)

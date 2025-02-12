@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.busschedule.domain.model.ApiState
+import com.busschedule.domain.model.response.busstop.BusResponse
 import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
-import com.busschedule.domain.usecase.bus.ReadAllBusUseCase
+import com.busschedule.domain.usecase.bus.ReadAllBusOfBusStopUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
-import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.BusStopInfo
 import com.busschedule.register.entity.CityOfRegion
 import com.busschedule.register.entity.KakaoMapObject
@@ -42,7 +42,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val postScheduleUseCase: PostScheduleUseCase,
     private val readAllBusStopUseCase: ReadAllBusStopUseCase,
-    private val readAllBusUseCase: ReadAllBusUseCase,
+    private val readAllBusOfBusStopUseCase: ReadAllBusOfBusStopUseCase,
     private val readScheduleUseCase: ReadScheduleUseCase,
     private val putScheduleUseCase: PutScheduleUseCase,
     savedStateHandle: SavedStateHandle,
@@ -107,8 +107,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _busStopInput = MutableStateFlow("")
     val busStopInput: StateFlow<String> = _busStopInput.asStateFlow()
 
-    private val _busStop = MutableStateFlow<BusStopInfo?>(null)
-    val busStop: StateFlow<BusStopInfo?> = _busStop
+    private val _busStop = MutableStateFlow(BusStopInfo())
+    val busStop: StateFlow<BusStopInfo> = _busStop
 
     lateinit var kakaoMap: KakaoMapObject
 
@@ -211,34 +211,36 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 is ApiState.Success -> {
                     kakaoMap.removeAndAddLabel(
                         icon = core.designsystem.R.drawable.image_busstop_label,
-                        labels = result.data.busInfosResponse
+                        labels = result.data.busInfosResponse,
                     )
                 }
             }
         }
     }
 
-    fun fetchReadAllBus() {
+    fun fetchReadAllBusOfBusStop(busStopName: String, nodeId: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
-//            when (val result = readAllBusUseCase(
-//                cityOfRegion.value.getSelectedCityName(),
-//                busStopNodeId.nodeId
-//            ).first()) {
-//                is ApiState.Error -> {
-//                    Log.d("daeyoung", "error: ${result.errMsg}")
-//                }
-//
-//                ApiState.Loading -> {}
-//                is ApiState.NotResponse -> Log.d(
-//                    "daeyoung",
-//                    "not response: ${result.message}, ${result.exception}"
-//                )
-//
-//                is ApiState.Success -> {
-//                    _bus.update { result.data.map { Bus(it) } }
-//                    Log.d("daeyoung", "success: ${bus.value}")
-//                }
-//            }
+            _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
+            when (val result = readAllBusOfBusStopUseCase(
+                cityOfRegion.value.getSelectedCityName(),
+                nodeId
+            ).first()) {
+                is ApiState.Error -> {
+                    Log.d("daeyoung", "error: ${result.errMsg}")
+                }
+
+                ApiState.Loading -> {}
+                is ApiState.NotResponse -> Log.d(
+                    "daeyoung",
+                    "not response: ${result.message}, ${result.exception}"
+                )
+
+                is ApiState.Success -> {
+                    _busStop.update { it.copy(busesInit = result.data) }
+                    onSuccess()
+                    Log.d("daeyoung", "success: ${busStop.value}")
+                }
+            }
         }
     }
 
@@ -269,7 +271,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
                             BusStopInfo(
                                 busStop = res.busStopName,
                                 nodeId = res.nodeId,
-                                busesInit = res.busNames.map { Bus(it) })
+                                /* TODO: 서버 api 수정시 코드 수정*/
+                                busesInit = res.busNames.map { BusResponse(it, "일반") })
                         }
                     }
                 }

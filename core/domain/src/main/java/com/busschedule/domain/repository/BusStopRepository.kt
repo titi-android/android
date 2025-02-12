@@ -5,5 +5,5 @@ import com.busschedule.domain.model.response.busstop.BusInfosResponse
 import kotlinx.coroutines.flow.Flow
 
 interface BusStopRepository {
-    fun readAllBusStop(cityName: String, busStop: String): Flow<ApiState<BusInfosResponse>>
+    fun readAllBusStop(cityName: String, nodeId: String): Flow<ApiState<BusInfosResponse>>
 }
