@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.busschedule.setting.component.ProfileCard
-import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
@@ -47,12 +46,12 @@ fun SettingScreen(appState: ApplicationState) {
         BackArrowAppBar(title = "설정") { appState.popBackStack() }
         HeightSpacer(height = 16.dp)
         ProfileCard(image = "", text = "닉네임") {
-            appState.navigate(Route.SettingGraph.EditProfile)
+            appState.navigateToEditProfile()
         }
         HeightSpacer(height = 32.dp)
         WhiteRoundedCard(
             padding = PaddingValues(horizontal = 16.dp),
-            onClick = { appState.navigate(Route.SettingGraph.Ask) }) {
+            onClick = { appState.navigateToAsk() }) {
             Row(modifier = Modifier.weight(1f)) {
                 Icon(
                     imageVector = IconPack.IcTalk,

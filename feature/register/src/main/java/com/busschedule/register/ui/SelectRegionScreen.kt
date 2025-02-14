@@ -32,7 +32,6 @@ import com.busschedule.register.entity.CityUiState
 import com.busschedule.register.entity.RegionUiState
 import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.TextBoxColor
-import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
@@ -79,7 +78,7 @@ fun SelectRegionScreen(
         HeightSpacer(height = 16.dp)
         Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
             MainButton(modifier = Modifier.padding(horizontal = 16.dp), text = "다음", enabled = btnEnable) {
-                appState.navigate(Route.RegisterGraph.SelectBusStop())
+                appState.navigateToSelectBusStop()
             }
         }
     }

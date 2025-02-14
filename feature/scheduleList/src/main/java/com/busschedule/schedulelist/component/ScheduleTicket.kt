@@ -35,6 +35,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.busschedule.schedulelist.model.BusScheduleUi
 import com.busschedule.util.ext.toFormatTime
@@ -48,7 +49,6 @@ import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.ImageBusOfTicket
 import core.designsystem.theme.Background
 import core.designsystem.theme.BusBlueM1
-import core.designsystem.theme.BusBlueM2
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mBody
 import core.designsystem.theme.mBody2
@@ -57,12 +57,14 @@ import core.designsystem.theme.sbTitle4
 
 @Composable
 fun ScheduleTicket(
-    ticketColor: Color,
-    holeColor: Color,
-    schedule: BusScheduleUi,
-    changeNotifyState: () -> Unit,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit,
+    ticketColor: Color = Color.Gray,
+    holeColor: Color = Color.Transparent,
+    schedule: BusScheduleUi = BusScheduleUi(),
+    ticketT1Color: Color = Color.White,
+    ticketT2Color: Color = Color.White,
+    changeNotifyState: () -> Unit = {},
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {},
 ) {
     val icNotify = if (schedule.getAlarm()) IconPack.IcNotify  else IconPack.IcOffnotify
     var isShowCloseDialog by remember { mutableStateOf(false) }
@@ -89,15 +91,15 @@ fun ScheduleTicket(
             drawRoundRect(
                 color = ticketColor,
                 size = Size(width = this.size.width, height = this.size.height),
-                cornerRadius = CornerRadius(50f),
+                cornerRadius = CornerRadius(25f),
             )
             drawLine(
                 color = Background,
                 start = Offset.Zero.copy(y = topRectHeight),
                 end = Offset(x = this.size.width, y = topRectHeight),
-                strokeWidth = 10f,
+                strokeWidth = 5f,
                 cap = StrokeCap.Round,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(40f, 40f), 10f)
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 30f), 10f)
             )
             drawCircle(
                 color = holeColor,
@@ -139,14 +141,18 @@ fun ScheduleTicket(
                             imageVector = icNotify,
                             contentDescription = "ic_notify",
                             tint = TextWColor,
-                            modifier = Modifier.size(24.dp).clickable { changeNotifyState() }
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable { changeNotifyState() }
                         )
                         WidthSpacer(width = 20.dp)
                         Icon(
                             imageVector = IconPack.IcEdit,
                             contentDescription = "ic_edit",
                             tint = TextWColor,
-                            modifier = Modifier.size(24.dp).clickable { onEdit() }
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable { onEdit() }
                         )
                         WidthSpacer(width = 20.dp)
                         Icon(
@@ -190,10 +196,10 @@ fun ScheduleTicket(
                         withStyle(SpanStyle(color = TextWColor)) {
                             append("${busInfo.routeno} ")
                         }
-                        withStyle(SpanStyle(color = BusBlueM1)) {
+                        withStyle(SpanStyle(color = ticketT1Color)) {
                             append("(${busInfo.arrtime.toFormatTime()}분) ")
                         }
-                        withStyle(mBody2.copy(BusBlueM2).toSpanStyle()) {
+                        withStyle(mBody2.copy(ticketT2Color).toSpanStyle()) {
                             append("${busInfo.arrprevstationcnt}정거장")
                         }
                     }, style = mBody)
@@ -215,4 +221,10 @@ fun StartTextBox(bgColor: Color, contentColor: Color) {
     ) {
         Text(text = "출발", style = mBody2, color = contentColor, modifier = Modifier.align(Alignment.Center))
     }
+}
+
+@Composable
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+fun ScheduleTicketPreview() {
+    ScheduleTicket()
 }

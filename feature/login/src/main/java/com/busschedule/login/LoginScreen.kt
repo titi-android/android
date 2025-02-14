@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.state.ApplicationState
 
 @Composable
@@ -54,13 +53,13 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
         Button(onClick = {
             loginViewModel.fetchLogin(loginUiState.inputId, loginUiState.inputPw) {
                 Toast.makeText(context, "로그인에 성공하셨습니다.", Toast.LENGTH_SHORT).show()
-                appState.navigate(Route.ScheduleList)
+                appState.navigate(com.busschedule.navigation.Route.ScheduleList)
             }
         }, modifier = Modifier.fillMaxWidth()) {
             Text(text = "로그인")
         }
         Button(
-            onClick = { appState.navigate(Route.LoginGraph.Signup) },
+            onClick = { appState.navigateToSignUp() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "회원가입 하러 가기")

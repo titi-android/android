@@ -10,14 +10,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.busschedule.login.LoginScreen
 import com.busschedule.login.SignUpScreen
+import com.busschedule.model.BusStopInfo
+import com.busschedule.model.BusStopInfoType
+import com.busschedule.navigation.Route
 import com.busschedule.register.ui.RegisterBusScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
 import com.busschedule.setting.ui.AskScreen
 import com.busschedule.setting.ui.ProfileEditScreen
 import com.busschedule.setting.ui.SettingScreen
-import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.state.ApplicationState
+import kotlinx.serialization.json.Json
+import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
     navigation<Route.LoginGraph>(startDestination = Route.LoginGraph.Login) {
@@ -65,7 +69,9 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
                 registerBusScheduleViewModel = hiltViewModel(backStackEntry)
             )
         }
-        composable<Route.RegisterGraph.SelectBusStop> { entry ->
+        composable<Route.RegisterGraph.SelectBusStop>(
+            typeMap = mapOf(typeOf<BusStopInfo>() to BusStopInfoType)
+        ) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
@@ -74,21 +80,25 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             SelectBusScreen(
                 appState = appState,
                 registerBusScheduleViewModel = hiltViewModel(backStackEntry),
-                busStopInput =entry.arguments?.getString("busStop") ?: ""
+//                busStopInfo = entry.savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStopInfo
+                busStopInfo = entry.savedStateHandle.get<String>("busStopInfo")?.let { str ->
+                    Json.decodeFromString<BusStopInfo>(str)
+                }
+
             )
         }
     }
 }
 
 fun NavGraphBuilder.settingGraph(appState: ApplicationState) {
-    navigation<Route.SettingGraph>(startDestination = Route.SettingGraph.Setting) {
-        composable<Route.SettingGraph.Setting> { entry ->
+    navigation<com.busschedule.navigation.Route.SettingGraph>(startDestination = com.busschedule.navigation.Route.SettingGraph.Setting) {
+        composable<com.busschedule.navigation.Route.SettingGraph.Setting> { entry ->
             SettingScreen(appState = appState)
         }
-        composable<Route.SettingGraph.Ask> { entry ->
+        composable<com.busschedule.navigation.Route.SettingGraph.Ask> { entry ->
             AskScreen(appState)
         }
-        composable<Route.SettingGraph.EditProfile> { entry ->
+        composable<com.busschedule.navigation.Route.SettingGraph.EditProfile> { entry ->
             ProfileEditScreen(appState)
         }
     }
@@ -99,7 +109,7 @@ fun NavGraphBuilder.settingGraph(appState: ApplicationState) {
 fun rememberNavControllerBackEntry(
     entry: NavBackStackEntry,
     navController: NavController,
-    graph: Route,
+    graph: com.busschedule.navigation.Route,
 ) = remember(entry) {
     navController.getBackStackEntry(graph)
 }

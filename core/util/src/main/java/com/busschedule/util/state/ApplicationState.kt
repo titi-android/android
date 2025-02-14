@@ -8,8 +8,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
-import androidx.navigation.navOptions
-import com.busschedule.util.entity.navigation.Route
+import com.busschedule.model.BusStopInfo
+import com.busschedule.navigation.Route
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -70,17 +70,42 @@ class ApplicationState(
         navController.navigate(route)
     }
 
-    fun navigateSaveState(route: Route) {
-//        val nav = navController.currentBackStackEntry?.
-        navController.navigate(route = route,
-//            navOptions = navOptions {
-//                popUpTo(route) {saveState = true}
-//                restoreState = true
-//            }
-            navOptions = navOptions {
-                popUpTo(route) { inclusive = true }
-            }
-        )
+    fun navigateToLogin() {
+        navController.navigate(Route.LoginGraph.Login)
+    }
+    fun navigateToSignUp() {
+        navController.navigate(Route.LoginGraph.Signup)
+    }
+
+    fun navigateToScheduleList() {
+        navController.navigate(Route.ScheduleList)
+    }
+    fun navigateToRegister(id: Int? = null) {
+        navController.navigate(Route.RegisterGraph.RegisterSchedule(id))
+    }
+
+    fun navigateToSelectRegion() {
+        navController.navigate(Route.RegisterGraph.SelectRegion)
+    }
+    fun navigateToSelectBusStop(busStopInfo: BusStopInfo? = null) {
+        if (busStopInfo == null) {
+            navController.navigate(Route.RegisterGraph.SelectBusStop())
+            return
+        }
+        navController.navigate(Route.RegisterGraph.SelectBusStop(busStopInfo))
+    }
+    fun navigateToSetting() {
+        navController.navigate(Route.SettingGraph.Setting)
+    }
+    fun navigateToAsk() {
+        navController.navigate(Route.SettingGraph.Ask)
+    }
+    fun navigateToEditProfile() {
+        navController.navigate(Route.SettingGraph.EditProfile)
+    }
+
+    fun popBackStackRegister() {
+        navController.popBackStack<Route.RegisterGraph.RegisterSchedule>(inclusive = false)
     }
 
     fun navigateEncodingUrl(prefixUrl: String, encodeUrl: String, param: String) {

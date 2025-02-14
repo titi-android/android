@@ -14,7 +14,7 @@ data class BusScheduleUi(
     val endTime: String = "",
     val busStopName: String = "",
     val busInfos: List<ArrivingBus> = emptyList(),
-    private val alarmInit: Boolean
+    private val alarmInit: Boolean = false
 ) {
     private var isCheckedAlarm by mutableStateOf(alarmInit)
 

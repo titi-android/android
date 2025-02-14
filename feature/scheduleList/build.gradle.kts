@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:util"))
     implementation(projects.core.domain)
+    implementation(projects.core.navigation)
 
     // hiltViewModel 사용
     implementation(libs.androidx.hilt.compose)

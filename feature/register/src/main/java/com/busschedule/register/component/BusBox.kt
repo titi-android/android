@@ -34,7 +34,7 @@ import core.designsystem.theme.mTitle
 
 @Composable
 fun BusBox(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     name: String,
     type: String,

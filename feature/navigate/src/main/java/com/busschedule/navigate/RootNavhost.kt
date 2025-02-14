@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import com.busschedule.util.entity.navigation.Route
+import com.busschedule.navigation.Route
 import com.busschedule.util.remember.rememberApplicationState
 
 @Composable

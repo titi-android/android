@@ -32,8 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.component.ScheduleTicket
 import com.busschedule.schedulelist.model.ScheduleListUiState
+import com.busschedule.util.entity.BusType
 import com.busschedule.util.entity.DayOfWeekUi
-import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
@@ -42,7 +42,6 @@ import core.designsystem.svg.IconPack
 import core.designsystem.svg.myiconpack.IcRefresh
 import core.designsystem.svg.myiconpack.IcSetting
 import core.designsystem.theme.Background
-import core.designsystem.theme.BusBlue
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextWColor
 import kotlinx.coroutines.async
@@ -73,7 +72,7 @@ fun ScheduleListScreen(
             .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp)
     ) {
         HeightSpacer(height = 6.dp)
-        ScheduleListAppBar { appState.navigate(Route.SettingGraph.Setting) }
+        ScheduleListAppBar { appState.navigateToSetting() }
         HeightSpacer(height = 16.dp)
         DayOfWeekSelectArea(dayOfWeekUi = uiState.dayOfWeeks) {
             scheduleListViewModel.fetchReadDayOfWeekSchedules(it)
@@ -89,17 +88,20 @@ fun ScheduleListScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(items = uiState.schedules, key = { it.id }) { schedule ->
+                    val color = if (schedule.busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busInfos[0].routeno)
                     ScheduleTicket(
-                        ticketColor = BusBlue,
+                        ticketColor = color.color,
                         holeColor = Background,
                         schedule = schedule,
+                        ticketT1Color = color.colorT1,
+                        ticketT2Color = color.colorT2,
                         changeNotifyState = {
                             schedule.updateAlarm()
                             scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id) {
                                 schedule.updateAlarm()
                             }
                         },
-                        onEdit = { appState.navigate(Route.RegisterGraph.RegisterSchedule(id = schedule.id)) }) {
+                        onEdit = { appState.navigateToRegister(schedule.id) }) {
                         scheduleListViewModel.fetchDeleteSchedules(schedule.id)
                     }
                 }
@@ -107,7 +109,7 @@ fun ScheduleListScreen(
             RefreshIcon { scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek()) }
         }
 
-        MainButton(text = "스케줄 등록") { appState.navigate(Route.RegisterGraph.RegisterSchedule()) }
+        MainButton(text = "스케줄 등록") { appState.navigate(com.busschedule.navigation.Route.RegisterGraph.RegisterSchedule()) }
     }
 }
 

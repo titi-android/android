@@ -28,7 +28,6 @@ import com.busschedule.register.entity.asDomain
 import com.busschedule.util.entity.BusType
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
-import com.busschedule.util.ext.toFormatTime
 import com.kakao.vectormap.KakaoMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -97,8 +96,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
             )
         }
 
-    private val _regionInput =
-        MutableStateFlow(savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStopInfo.busStop ?: "")
+    private val _regionInput = MutableStateFlow("")
     val regionInput: StateFlow<String> = _regionInput.asStateFlow()
 
     val selectRegionUiState = combine(regionInput, cityOfRegion) { input, cityOfRegion ->
@@ -214,12 +212,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
     }
 
     // 이미 지역이 정해져 있을 때 지도 화면 출력 시 한번 호출하는 함수
-    fun fetchFirstReadAllBusStop() {
+    fun fetchFirstReadAllBusStop(region: String, busStop: String) {
         viewModelScope.launch {
-            when (val result = readAllBusStopUseCase(
-                cityOfRegion.value.getSelectedCityName(),
-                selectBusStopInfoUI.value!!.busStop
-            ).first()) {
+            when (val result = readAllBusStopUseCase(region, busStop).first()) {
                 is ApiState.Error -> {}
 
                 ApiState.Loading -> {}
@@ -280,9 +275,13 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 )
 
                 is ApiState.Success -> {
-                    _busStop.update {
-                        it.copy(buses = result.data.map { bus ->
-                            Bus(bus.name, BusType.find(bus.type))
+                    _busStop.update { selectedBusUI ->
+                        selectedBusUI.copy(buses = result.data.map { bus ->
+                            Bus(
+                                name = bus.name,
+                                type = BusType.find(bus.type),
+                                selectedInit = selectBusStopInfoUI.value?.getBuses()
+                                    ?.any { it.name == bus.name && it.type == bus.type } ?: false)
                         })
                     }
                     onSuccess()

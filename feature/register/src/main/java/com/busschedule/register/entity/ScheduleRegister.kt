@@ -10,7 +10,7 @@ data class ScheduleRegister (
     val endTime: String = "",
     val isNotify: Boolean = false,
     val regionName: String = "",
-    val busStopInfo: BusStopInfo? = null
+    val busStopInfoUI: BusStopInfoUI? = null
 )
 
 fun ScheduleRegister.asDomain() = ScheduleRegisterRequest(
@@ -19,8 +19,8 @@ fun ScheduleRegister.asDomain() = ScheduleRegisterRequest(
     startTime = startTime,
     endTime = endTime,
     regionName = regionName,
-    busStopName = busStopInfo?.busStop ?: "",
-    nodeId = busStopInfo?.nodeId ?: "",
-    busInfos = busStopInfo?.getBuses() ?: emptyList(),
+    busStopName = busStopInfoUI?.busStop ?: "",
+    nodeId = busStopInfoUI?.nodeId ?: "",
+    busInfos = busStopInfoUI?.getBuses() ?: emptyList(),
     isAlarmOn = isNotify
 )

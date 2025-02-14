@@ -44,6 +44,8 @@ firebaseBom = "33.8.0"
 firebaseMessagingKtx = "24.1.0"
 
 kakaoMaps = "2.12.8"
+navigationSafeArgsGenerator = "2.8.7"
+navigationCommonAndroid = "2.9.0-alpha06"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -127,6 +129,8 @@ firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messa
 
 # kakao map
 kakao-maps = { group = "com.kakao.maps.open", name = "android", version.ref = "kakaoMaps" }
+androidx-navigation-safe-args-generator = { group = "androidx.navigation", name = "navigation-safe-args-generator", version.ref = "navigationSafeArgsGenerator" }
+androidx-navigation-common-android = { group = "androidx.navigation", name = "navigation-common-android", version.ref = "navigationCommonAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

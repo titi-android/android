@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -67,9 +69,9 @@ import com.busschedule.register.component.BusBox
 import com.busschedule.register.constant.TimePickerType
 import com.busschedule.register.entity.NotifyInfo
 import com.busschedule.register.entity.ScheduleRegister
+import com.busschedule.register.entity.asBusStopInfo
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.util.entity.DayOfWeekUi
-import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
@@ -96,7 +98,7 @@ fun RegisterBusScheduleScreen(
     appState: ApplicationState,
     registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
 ) {
-    val registerBusScheduleUiState by
+    val uiState by
     registerBusScheduleViewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(
         ScheduleRegister()
     )
@@ -120,29 +122,29 @@ fun RegisterBusScheduleScreen(
         ) {
             HeightSpacer(height = 32.dp)
             ScheduleNameTextField(
-                value = registerBusScheduleUiState.name,
+                value = uiState.name,
                 onValueChange = { registerBusScheduleViewModel.updateScheduleName(it) },
                 placeholder = "스케줄"
             )
             HeightSpacer(height = 32.dp)
             NotifyArea(
-                dayOfWeeks = registerBusScheduleUiState.dayOfWeeks,
-                startTime = registerBusScheduleUiState.startTime,
-                endTime = registerBusScheduleUiState.endTime,
+                dayOfWeeks = uiState.dayOfWeeks,
+                startTime = uiState.startTime,
+                endTime = uiState.endTime,
                 updateStartTime = { registerBusScheduleViewModel.updateStartTime(it.convertTimePickerToUiTime()) },
                 updateEndTime = { registerBusScheduleViewModel.updateEndTime(it.convertTimePickerToUiTime()) },
-                isNotify = registerBusScheduleUiState.isNotify
+                isNotify = uiState.isNotify
             ) {
                 registerBusScheduleViewModel.updateIsNotify()
             }
             HeightSpacer(height = 32.dp)
             RegionArea(
-                region = registerBusScheduleUiState.regionName,
-                goRegionScreen = { appState.navigate(Route.RegisterGraph.SelectRegion) },
-                busStop = registerBusScheduleUiState.busStopInfo?.busStop ?: "버스 정류장",
-                buses = registerBusScheduleUiState.busStopInfo?.getBuses() ?: emptyList(),
-                deleteBus = { registerBusScheduleUiState.busStopInfo?.remove(it) }) {
-                appState.navigate(Route.RegisterGraph.SelectBusStop(busStop = registerBusScheduleUiState.busStopInfo?.busStop ?: ""))
+                region = uiState.regionName,
+                goRegionScreen = { appState.navigateToSelectRegion() },
+                busStop = uiState.busStopInfoUI?.busStop ?: "버스 정류장",
+                buses = uiState.busStopInfoUI?.getBuses() ?: emptyList(),
+                deleteBus = { uiState.busStopInfoUI?.remove(it) }) {
+                appState.navigateToSelectBusStop(uiState.busStopInfoUI?.asBusStopInfo(uiState.regionName))
             }
         }
 
@@ -153,7 +155,7 @@ fun RegisterBusScheduleScreen(
         ) {
             MainButton(text = "완료") { registerBusScheduleViewModel.fetchPutSchedule {
                 appState.showToastMsg("스케줄을 수정했습니다.")
-                appState.navigate(Route.ScheduleList)
+                appState.navigateToScheduleList()
             } }
         }
     }
@@ -212,6 +214,7 @@ fun NotifyArea(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RegionArea(
     region: String,
@@ -229,12 +232,10 @@ fun RegionArea(
         SearchBox(text = busStop) { goBusStopScreen() }
         HeightSpacer(height = 14.dp)
         SearchBox(text = "버스 번호") {}
-        Row {
-            buses.forEachIndexed { index, bus ->
-                val modifier =
-                    if (index != buses.lastIndex) Modifier.padding(end = 8.dp) else Modifier
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            buses.forEach { bus ->
                 BusBox(
-                    modifier = modifier,
                     icon = IconPack.IcBus,
                     name = bus.name,
                     type = bus.type,

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.model.BusStopInfo
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusInputDialog
 import com.busschedule.register.component.CheckBoxIcon
@@ -47,7 +48,6 @@ import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.SelectedBusUI
 import com.busschedule.util.entity.BusType
-import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.state.ApplicationState
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -70,7 +70,7 @@ import core.designsystem.theme.rFooter
 fun SelectBusScreen(
     appState: ApplicationState,
     registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
-    busStopInput: String = "",
+    busStopInfo: BusStopInfo?,
 ) {
     val uiState by registerBusScheduleViewModel.busStopInput.collectAsStateWithLifecycle()
 
@@ -80,8 +80,10 @@ fun SelectBusScreen(
     var isShowDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        if (busStopInput.isNotEmpty()) {
-            registerBusScheduleViewModel.fetchFirstReadAllBusStop()
+        busStopInfo?.let {
+            if (it.busStop.isNotEmpty()&& it.nodeId.isNotEmpty()) {
+                registerBusScheduleViewModel.fetchFirstReadAllBusStop(it.region, it.busStop)
+            }
         }
     }
     Box(
@@ -148,9 +150,7 @@ fun SelectBusScreen(
             BusesBottomSheet(
                 selectedBusUi = registerBusScheduleViewModel.busStop.collectAsStateWithLifecycle().value,
                 addBus = { isShowDialog = true }) {
-                registerBusScheduleViewModel.addBusStopInSelectBusStopInfo {
-                    appState.navigateSaveState(Route.RegisterGraph.RegisterSchedule(it))
-                }
+                registerBusScheduleViewModel.addBusStopInSelectBusStopInfo { appState.popBackStackRegister() }
             }
         }
         if (isShowDialog) {

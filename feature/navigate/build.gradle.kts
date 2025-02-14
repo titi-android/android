@@ -1,5 +1,6 @@
 plugins {
     id("busSchedule.android.compose.library")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -9,6 +10,9 @@ android {
 dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.feature.login)
+    implementation(projects.core.navigation)
+    implementation(projects.core.model)
+
 
     // hiltViewModel 사용
     implementation(libs.androidx.hilt.compose)
@@ -24,4 +28,7 @@ dependencies {
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.kotlinx.serialization.json)
+
 }
