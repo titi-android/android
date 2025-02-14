@@ -15,9 +15,10 @@ import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
+import com.busschedule.navigation.Route
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.Bus
-import com.busschedule.register.entity.BusStopInfo
+import com.busschedule.register.entity.BusStopInfoUI
 import com.busschedule.register.entity.CityOfRegion
 import com.busschedule.register.entity.KakaoMapObject
 import com.busschedule.register.entity.ScheduleRegister
@@ -27,7 +28,6 @@ import com.busschedule.register.entity.asDomain
 import com.busschedule.util.entity.BusType
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
-import com.busschedule.util.entity.navigation.Route
 import com.busschedule.util.ext.toFormatTime
 import com.kakao.vectormap.KakaoMap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,8 +73,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _cityOfRegion = MutableStateFlow(CityOfRegion())
     val cityOfRegion: StateFlow<CityOfRegion> = _cityOfRegion.asStateFlow()
 
-    private val _selectBusStopInfo = MutableStateFlow<BusStopInfo?>(null)
-    val selectBusStopInfo: StateFlow<BusStopInfo?> = _selectBusStopInfo
+    private val _selectBusStopInfoUI = MutableStateFlow<BusStopInfoUI?>(null)
+    val selectBusStopInfoUI: StateFlow<BusStopInfoUI?> = _selectBusStopInfoUI
 
     val registerBusScheduleUiState =
         combine(
@@ -84,7 +84,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
             endTime,
             isNotify,
             cityOfRegion,
-            selectBusStopInfo
+            selectBusStopInfoUI
         ) {
             ScheduleRegister(
                 name = scheduleName.value,
@@ -93,12 +93,12 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 endTime = endTime.value,
                 isNotify = isNotify.value,
                 regionName = cityOfRegion.value.getSelectedCityName(),
-                busStopInfo = selectBusStopInfo.value
+                busStopInfoUI = selectBusStopInfoUI.value
             )
         }
 
     private val _regionInput =
-        MutableStateFlow(savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStop)
+        MutableStateFlow(savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStopInfo.busStop ?: "")
     val regionInput: StateFlow<String> = _regionInput.asStateFlow()
 
     val selectRegionUiState = combine(regionInput, cityOfRegion) { input, cityOfRegion ->
@@ -178,16 +178,16 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _addBus.update { emptyList() }
     }
 
-    fun addBusStopInSelectBusStopInfo(navigate: (Int?) -> Unit) {
-        _selectBusStopInfo.update {
+    fun addBusStopInSelectBusStopInfo(popBackStack: () -> Unit) {
+        _selectBusStopInfoUI.update {
             val bus = busStop.value
-            BusStopInfo(
+            BusStopInfoUI(
                 busStop = bus.busStop,
                 nodeId = bus.nodeId,
                 busesInit = bus.buses.filter { it.isSelected }
                     .map { BusInfo(name = it.name, type = it.type.name) })
         }
-        navigate(scheduleId)
+        popBackStack()
     }
 
     fun initKakaoMap(map: KakaoMap): KakaoMapObject {
@@ -218,7 +218,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = readAllBusStopUseCase(
                 cityOfRegion.value.getSelectedCityName(),
-                selectBusStopInfo.value!!.busStop
+                selectBusStopInfoUI.value!!.busStop
             ).first()) {
                 is ApiState.Error -> {}
 
@@ -310,12 +310,12 @@ class RegisterBusScheduleViewModel @Inject constructor(
                                 )
                             }
                         }
-                        _startTime.update { res.startTime.toFormatTime() }
-                        _endTime.update { res.endTime.toFormatTime() }
+                        _startTime.update { res.startTime }
+                        _endTime.update { res.endTime }
                         _isNotify.update { res.isAlarmOn }
                         _cityOfRegion.update { CityOfRegion(initCity = res.regionName) }
-                        _selectBusStopInfo.update {
-                            BusStopInfo(
+                        _selectBusStopInfoUI.update {
+                            BusStopInfoUI(
                                 busStop = res.busStopName,
                                 nodeId = res.nodeId,
                                 busesInit = res.busInfos

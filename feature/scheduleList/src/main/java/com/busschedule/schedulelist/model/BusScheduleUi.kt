@@ -10,8 +10,8 @@ data class BusScheduleUi(
     val id: Int = 0,
     val name: String = "",
     val days: List<String> = emptyList(),
-    val startTime: List<Int> = emptyList(),
-    val endTime: List<Int> = emptyList(),
+    val startTime: String = "",
+    val endTime: String = "",
     val busStopName: String = "",
     val busInfos: List<ArrivingBus> = emptyList(),
     private val alarmInit: Boolean
