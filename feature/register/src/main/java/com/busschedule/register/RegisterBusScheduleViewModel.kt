@@ -2,7 +2,6 @@ package com.busschedule.register
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -193,11 +192,13 @@ class RegisterBusScheduleViewModel @Inject constructor(
         return kakaoMap
     }
 
-    fun fetchPostBusSchedule(scheduleRegister: ScheduleRegister) {
+    private fun fetchPostBusSchedule(onSuccess: () -> Unit, onFail: (String) -> Unit) {
 
         viewModelScope.launch {
-            when (val result = postScheduleUseCase(scheduleRegister.asDomain()).first()) {
-                is ApiState.Error -> Log.d("daeyoung", "error : ${result.errMsg}")
+            val schedule = registerBusScheduleUiState.first().asDomain()
+            Log.d("daeyoung", "${schedule}")
+            when (val result = postScheduleUseCase(schedule).first()) {
+                is ApiState.Error -> onFail(result.errMsg)
                 ApiState.Loading -> {}
                 is ApiState.NotResponse -> Log.d(
                     "daeyoung",
@@ -205,7 +206,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 )
 
                 is ApiState.Success -> {
-                    Toast.makeText(context, "스케줄이 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                    onSuccess()
                 }
             }
         }
@@ -330,12 +331,12 @@ class RegisterBusScheduleViewModel @Inject constructor(
         }
     }
 
-    fun fetchPutSchedule(onSuccess: () -> Unit) {
+    private fun fetchPutSchedule(onSuccess: () -> Unit, onFail: (String) -> Unit) {
         viewModelScope.launch {
             val scheduleReq = registerBusScheduleUiState.first().asDomain()
             when (val result = putScheduleUseCase(scheduleId!!, scheduleReq).first()) {
                 is ApiState.Error -> {
-                    Log.d("daeyoung", "error: ${result.errMsg}")
+                    onFail(result.errMsg)
                 }
 
                 ApiState.Loading -> TODO()
@@ -348,5 +349,13 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun putOrPostSchedule(onSuccessOfPut: () -> Unit, onFailOfPut: (String) -> Unit, onSuccessOfPost: () -> Unit, onFailOfPost: (String) -> Unit) {
+        if (scheduleId != null) {
+            fetchPutSchedule(onSuccess = {onSuccessOfPut()}) { onFailOfPut(it) }
+            return
+        }
+        fetchPostBusSchedule(onSuccess = {onSuccessOfPost()}) { onFailOfPost(it) }
     }
 }

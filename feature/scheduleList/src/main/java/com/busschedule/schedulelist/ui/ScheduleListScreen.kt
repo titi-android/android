@@ -88,7 +88,7 @@ fun ScheduleListScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(items = uiState.schedules, key = { it.id }) { schedule ->
-                    val color = if (schedule.busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busInfos[0].routeno)
+                    val color = if (schedule.busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busInfos[0].routetp)
                     ScheduleTicket(
                         ticketColor = color.color,
                         holeColor = Background,

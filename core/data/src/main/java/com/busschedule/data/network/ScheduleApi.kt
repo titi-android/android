@@ -26,7 +26,7 @@ interface ScheduleApi {
     suspend fun readSchedule(@Path("scheduleId") scheduleId: Int): DefaultResponse<ScheduleRegisterResponse>
 
     // 스케줄 등록
-    @POST("/api/v1/schedules")
+    @POST("/api/v2/schedules")
     suspend fun postSchedule(@Body schedule: ScheduleRegisterRequest): DefaultResponse<Unit>
 
     // 스케줄 삭제

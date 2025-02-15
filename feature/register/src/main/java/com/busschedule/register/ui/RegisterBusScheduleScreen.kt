@@ -153,10 +153,24 @@ fun RegisterBusScheduleScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            MainButton(text = "완료") { registerBusScheduleViewModel.fetchPutSchedule {
-                appState.showToastMsg("스케줄을 수정했습니다.")
-                appState.navigateToScheduleList()
-            } }
+            MainButton(text = "완료") {
+                registerBusScheduleViewModel.putOrPostSchedule(
+                    onSuccessOfPut = {
+                        appState.showToastMsg("스케줄을 수정했습니다.")
+                        appState.navigateToScheduleList()
+                    },
+                    onFailOfPut = {
+
+                    },
+                    onSuccessOfPost = {
+                        appState.showToastMsg("스케줄을 등록했습니다.")
+                        appState.navigateToScheduleList()
+                    },
+                    onFailOfPost = {
+                        appState.showToastMsg(it)
+                    }
+                )
+            }
         }
     }
 }
@@ -233,7 +247,8 @@ fun RegionArea(
         HeightSpacer(height = 14.dp)
         SearchBox(text = "버스 번호") {}
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             buses.forEach { bus ->
                 BusBox(
                     icon = IconPack.IcBus,
