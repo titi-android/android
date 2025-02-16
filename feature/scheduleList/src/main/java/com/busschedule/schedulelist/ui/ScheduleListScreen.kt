@@ -1,7 +1,6 @@
 package com.busschedule.schedulelist.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -20,7 +19,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,22 +28,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.schedulelist.ScheduleListViewModel
+import com.busschedule.schedulelist.component.ScheduleListAppBar
 import com.busschedule.schedulelist.component.ScheduleTicket
 import com.busschedule.schedulelist.model.ScheduleListUiState
+import com.busschedule.util.constant.Constants
 import com.busschedule.util.entity.BusType
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
-import core.designsystem.component.button.MainButton
-import core.designsystem.svg.IconPack
+import core.designsystem.component.button.MainBottomButton
+import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcRefresh
-import core.designsystem.svg.myiconpack.IcSetting
 import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextWColor
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 
 @Composable
 fun ScheduleListScreen(
@@ -60,7 +60,12 @@ fun ScheduleListScreen(
     LaunchedEffect(Unit) {
         listOf(
             async { scheduleListViewModel.initFCMToken() },
-            async { scheduleListViewModel.fetchReadTodaySchedules() }
+            async {
+                while (true) {
+                    scheduleListViewModel.fetchReadTodaySchedules()
+                    delay(Constants.MINUTE_1)
+                }
+            }
         ).awaitAll()
     }
     Column(
@@ -88,7 +93,8 @@ fun ScheduleListScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(items = uiState.schedules, key = { it.id }) { schedule ->
-                    val color = if (schedule.busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busInfos[0].routetp)
+                    val color =
+                        if (schedule.busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busInfos[0].routetp)
                     ScheduleTicket(
                         ticketColor = color.color,
                         holeColor = Background,
@@ -109,25 +115,7 @@ fun ScheduleListScreen(
             RefreshIcon { scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek()) }
         }
 
-        MainButton(text = "스케줄 등록") { appState.navigate(com.busschedule.navigation.Route.RegisterGraph.RegisterSchedule()) }
-    }
-}
-
-
-@Composable
-fun ScheduleListAppBar(onClickSetting: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Absolute.SpaceBetween
-    ) {
-        /*TODO: 버스링 로고 및 텍스트로 넣을 것 */
-        Text(text = "버스링")
-        Icon(imageVector = IconPack.IcSetting,
-            contentDescription = "ic_setting",
-            tint = Primary,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable { onClickSetting() })
+        MainBottomButton(text = "스케줄 등록") { appState.navigate(com.busschedule.navigation.Route.RegisterGraph.RegisterSchedule()) }
     }
 }
 
@@ -167,7 +155,7 @@ fun BoxScope.RefreshIcon(onClick: () -> Unit) {
             contentColor = TextWColor
         ), onClick = { onClick() }) {
         Icon(
-            imageVector = IconPack.IcRefresh,
+            imageVector = MyIconPack.IcRefresh,
             contentDescription = "ic_refresh",
             modifier = Modifier.size(24.dp)
         )

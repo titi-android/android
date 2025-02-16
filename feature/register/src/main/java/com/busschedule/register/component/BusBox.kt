@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.busschedule.util.entity.BusType
 import core.designsystem.component.WidthSpacer
-import core.designsystem.svg.IconPack
+import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.theme.BusIcGreen
 import core.designsystem.theme.Primary
@@ -72,7 +72,7 @@ fun BusBox(
             )
             WidthSpacer(width = 4.dp)
             Icon(
-                imageVector = IconPack.IcClose,
+                imageVector = MyIconPack.IcClose,
                 contentDescription = "ic_close",
                 modifier = Modifier
                     .size(14.dp)

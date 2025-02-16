@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import core.designsystem.svg.IconPack
+import core.designsystem.svg.MyIconPack
 
-public val IconPack.IcBus: ImageVector
+public val MyIconPack.IcBus: ImageVector
     get() {
         if (_icBus != null) {
             return _icBus!!

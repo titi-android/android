@@ -29,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsOff
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -77,9 +76,10 @@ import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.component.button.MainButton
-import core.designsystem.svg.IconPack
+import core.designsystem.component.button.MainBottomButton
+import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
+import core.designsystem.svg.myiconpack.IcSearch
 import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextColor
@@ -147,30 +147,23 @@ fun RegisterBusScheduleScreen(
                 appState.navigateToSelectBusStop(uiState.busStopInfoUI?.asBusStopInfo(uiState.regionName))
             }
         }
+        MainBottomButton(text = "완료") {
+            registerBusScheduleViewModel.putOrPostSchedule(
+                onSuccessOfPut = {
+                    appState.showToastMsg("스케줄을 수정했습니다.")
+                    appState.navigateToScheduleList()
+                },
+                onFailOfPut = {
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            MainButton(text = "완료") {
-                registerBusScheduleViewModel.putOrPostSchedule(
-                    onSuccessOfPut = {
-                        appState.showToastMsg("스케줄을 수정했습니다.")
-                        appState.navigateToScheduleList()
-                    },
-                    onFailOfPut = {
-
-                    },
-                    onSuccessOfPost = {
-                        appState.showToastMsg("스케줄을 등록했습니다.")
-                        appState.navigateToScheduleList()
-                    },
-                    onFailOfPost = {
-                        appState.showToastMsg(it)
-                    }
-                )
-            }
+                },
+                onSuccessOfPost = {
+                    appState.showToastMsg("스케줄을 등록했습니다.")
+                    appState.navigateToScheduleList()
+                },
+                onFailOfPost = {
+                    appState.showToastMsg(it)
+                }
+            )
         }
     }
 }
@@ -251,7 +244,7 @@ fun RegionArea(
         ) {
             buses.forEach { bus ->
                 BusBox(
-                    icon = IconPack.IcBus,
+                    icon = MyIconPack.IcBus,
                     name = bus.name,
                     type = bus.type,
                 ) { deleteBus(bus.name) }
@@ -499,7 +492,7 @@ fun SearchBox(text: String, onClick: () -> Unit) {
     ) {
         Text(text = text, style = rTextBox.copy(TextMColor))
         Icon(
-            imageVector = Icons.Outlined.Search,
+            imageVector = MyIconPack.IcSearch,
             contentDescription = "ic_search",
             tint = TextMColor,
             modifier = Modifier.size(24.dp)

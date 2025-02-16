@@ -1,6 +1,5 @@
 package com.busschedule.setting.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +25,7 @@ import com.busschedule.setting.component.RoundTextField
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.component.button.MainButton
+import core.designsystem.component.button.MainBottomButton
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
@@ -47,7 +46,9 @@ fun AskScreen(appState: ApplicationState) {
 
     ) {
         BackArrowAppBar(title = "개발자에게 문의하기") { appState.popBackStack() }
-        Column(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+        Column(modifier = Modifier
+            .weight(1f)
+            .padding(horizontal = 16.dp)) {
             HeightSpacer(height = 50.dp)
             RoundTextField(value = "", onValueChange = {}, placeholder = "닉네임") {
                 focusManager.moveFocus(FocusDirection.Down)
@@ -75,12 +76,6 @@ fun AskScreen(appState: ApplicationState) {
                 textStyle = rTextBox.copy(TextMColor),
             )
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            MainButton(text = "완료") { appState.popBackStack() }
-        }
+        MainBottomButton(text = "완료") { appState.popBackStack() }
     }
 }

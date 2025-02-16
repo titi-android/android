@@ -2,7 +2,6 @@ package com.busschedule.register.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -35,7 +34,7 @@ import com.busschedule.register.entity.TextBoxColor
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.component.button.MainButton
+import core.designsystem.component.button.MainBottomButton
 import core.designsystem.theme.Background
 
 @Composable
@@ -63,7 +62,8 @@ fun SelectRegionScreen(
         SearchTextField(
             value = selectedRegionUiState.input,
             onValueChange = { registerBusScheduleViewModel.updateRegionInput(it) },
-            placeholder = "도시(지역) 이름 검색") {
+            placeholder = "도시(지역) 이름 검색"
+        ) {
             if (selectedRegionUiState.region.searchCity(it).not()) {
                 appState.showToastMsg("일치하는 지역이 없습니다.")
             }
@@ -73,14 +73,14 @@ fun SelectRegionScreen(
             RegionArea(selectedRegionUiState.region.regionUiStates) {
                 selectedRegionUiState.region.selectRegion(it)
             }
-            CityArea(selectedRegionUiState.region.citiesUiState,) { selectedRegionUiState.region.selectCity(it) }
-        }
-        HeightSpacer(height = 16.dp)
-        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-            MainButton(modifier = Modifier.padding(horizontal = 16.dp), text = "다음", enabled = btnEnable) {
-                appState.navigateToSelectBusStop()
+            CityArea(selectedRegionUiState.region.citiesUiState) {
+                selectedRegionUiState.region.selectCity(
+                    it
+                )
             }
         }
+        HeightSpacer(height = 16.dp)
+        MainBottomButton(text = "다음", enabled = btnEnable) { appState.navigateToSelectBusStop() }
     }
 }
 

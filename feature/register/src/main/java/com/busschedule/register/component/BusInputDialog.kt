@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,9 +33,13 @@ import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.button.MainButton
 import core.designsystem.component.button.MainOutlineButton
+import core.designsystem.svg.MyIconPack
+import core.designsystem.svg.myiconpack.IcInfomationCircle
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextBoxDis
+import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
+import core.designsystem.theme.rFooter
 import core.designsystem.theme.rTextBox
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -52,20 +58,41 @@ fun BusInputDialog(
             shape = RoundedCornerShape(12.dp)
         ) {
             Column(
-                modifier = Modifier.padding(
-                    top = 16.dp,
-                    bottom = 10.dp,
-                    start = 16.dp,
-                    end = 16.dp
-                ).heightIn(max = 400.dp),
+                modifier = Modifier
+                    .padding(
+                        top = 16.dp,
+                        bottom = 10.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                LazyColumn(modifier = Modifier.weight(1f)) {
+                LazyColumn(modifier = Modifier.wrapContentHeight().heightIn(max = 300.dp)) {
                     stickyHeader {
                         BusAddTextField(
                             value = uiState.input,
                             onValueChange = { updateInput(it) }) { addBus() }
-                        HeightSpacer(height = 16.dp)
+                        HeightSpacer(height = 8.dp)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = MyIconPack.IcInfomationCircle,
+                                contentDescription = "ic_info_circle",
+                                modifier = Modifier.size(12.dp),
+                                tint = TextMColor
+                            )
+                            WidthSpacer(width = 4.dp)
+                            Text(
+                                text = "올바르지 않은 노선은 정보 제공이 제한될 수 있습니다.",
+                                style = rFooter.copy(TextMColor)
+                            )
+                        }
+                        HeightSpacer(height = 12.dp)
+
                     }
                     items(items = uiState.bus, key = { it.name }) {
                         BusCard(name = it.name, type = it.type, suffixIcon = {

@@ -1,6 +1,8 @@
 package core.designsystem.component.button
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -27,5 +29,23 @@ fun MainButton(modifier: Modifier = Modifier, text: String, enabled: Boolean = t
         ),
         onClick = { onClick() }) {
         Text(text = text, style = mTitle)
+    }
+}
+@Composable
+fun MainBottomButton(text: String, enabled: Boolean = true, onClick: () -> Unit) {
+    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp)) {
+        TextButton(
+            modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.textButtonColors(
+                containerColor = Primary,
+                contentColor = TextWColor,
+                disabledContainerColor = TextBoxDis,
+                disabledContentColor = TextWColor
+            ),
+            onClick = { onClick() }) {
+            Text(text = text, style = mTitle)
+        }
     }
 }

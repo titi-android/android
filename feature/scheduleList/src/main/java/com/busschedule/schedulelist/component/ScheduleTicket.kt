@@ -41,7 +41,7 @@ import com.busschedule.schedulelist.model.BusScheduleUi
 import com.busschedule.util.ext.toFormatTime
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.dialog.CloseDialog
-import core.designsystem.svg.IconPack
+import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
 import core.designsystem.svg.myiconpack.IcNotify
@@ -66,7 +66,7 @@ fun ScheduleTicket(
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
 ) {
-    val icNotify = if (schedule.getAlarm()) IconPack.IcNotify  else IconPack.IcOffnotify
+    val icNotify = if (schedule.getAlarm()) MyIconPack.IcNotify  else MyIconPack.IcOffnotify
     var isShowCloseDialog by remember { mutableStateOf(false) }
     if (isShowCloseDialog) {
         CloseDialog(
@@ -113,7 +113,7 @@ fun ScheduleTicket(
             )
         }
         Image(
-            imageVector = IconPack.ImageBusOfTicket,
+            imageVector = MyIconPack.ImageBusOfTicket,
             contentDescription = "image_bus_of_ticket",
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -147,7 +147,7 @@ fun ScheduleTicket(
                         )
                         WidthSpacer(width = 20.dp)
                         Icon(
-                            imageVector = IconPack.IcEdit,
+                            imageVector = MyIconPack.IcEdit,
                             contentDescription = "ic_edit",
                             tint = TextWColor,
                             modifier = Modifier
@@ -156,7 +156,7 @@ fun ScheduleTicket(
                         )
                         WidthSpacer(width = 20.dp)
                         Icon(
-                            imageVector = IconPack.IcClose,
+                            imageVector = MyIconPack.IcClose,
                             contentDescription = "ic_close",
                             tint = TextWColor,
                             modifier = Modifier

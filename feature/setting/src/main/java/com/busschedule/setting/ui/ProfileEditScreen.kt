@@ -1,6 +1,5 @@
 package com.busschedule.setting.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,7 @@ import com.busschedule.setting.component.RoundTextField
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.component.button.MainButton
+import core.designsystem.component.button.MainBottomButton
 
 @Composable
 fun ProfileEditScreen(appState: ApplicationState) {
@@ -46,14 +45,6 @@ fun ProfileEditScreen(appState: ApplicationState) {
                 placeholder = "닉네임 변경"
             ) { focusManager.clearFocus() }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            MainButton(text = "완료") { appState.popBackStack() }
-        }
-
-
+        MainBottomButton(text = "완료") { appState.popBackStack() }
     }
 }

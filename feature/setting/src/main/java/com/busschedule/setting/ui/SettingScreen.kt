@@ -26,7 +26,7 @@ import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.svg.IconPack
+import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcTalk
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextMColor
@@ -54,7 +54,7 @@ fun SettingScreen(appState: ApplicationState) {
             onClick = { appState.navigateToAsk() }) {
             Row(modifier = Modifier.weight(1f)) {
                 Icon(
-                    imageVector = IconPack.IcTalk,
+                    imageVector = MyIconPack.IcTalk,
                     contentDescription = "ic_forward",
                     modifier = Modifier.size(24.dp),
                     tint = Primary

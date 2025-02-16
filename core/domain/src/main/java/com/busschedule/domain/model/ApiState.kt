@@ -25,6 +25,14 @@ sealed class ApiState<out T : Any> {
 //        }
     }
 
+//    fun setSafeNotResponse(e: Exception): Exception {
+//        return if (e is ConnectException) {
+//            this(NetWorkException("네트워크 연결이 불안정합니다."))
+//        } else {
+//            e
+//        }
+//    }
+
     fun onLoading(onLoading: () -> Unit) {
         if (this is Loading) {
             onLoading()
@@ -32,3 +40,5 @@ sealed class ApiState<out T : Any> {
     }
 
 }
+
+class NetWorkException(message: String) : Exception(message)

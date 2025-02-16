@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
-import core.designsystem.svg.IconPack
+import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcEdit
 import core.designsystem.theme.Primary
 import core.designsystem.theme.rTitle
@@ -37,7 +37,7 @@ fun ProfileCard(image: String, text: String, onEdit: () -> Unit) {
             Text(text = text, style = rTitle.copy(Primary))
             WidthSpacer(width = 10.dp)
             Icon(
-                imageVector = IconPack.IcEdit,
+                imageVector = MyIconPack.IcEdit,
                 contentDescription = "ic_edit",
                 tint = Primary,
                 modifier = Modifier

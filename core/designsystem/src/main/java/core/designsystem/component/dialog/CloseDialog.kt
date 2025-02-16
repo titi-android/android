@@ -20,7 +20,7 @@ import core.designsystem.component.button.MainOutlineButton
 import core.designsystem.theme.TextColor
 import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
-import core.designsystem.theme.mFooter
+import core.designsystem.theme.rTextLabel
 import core.designsystem.theme.sbTitle3
 
 @Composable
@@ -41,7 +41,7 @@ fun CloseDialog(title: String, content: String, onDismissRequest: () -> Unit, on
             ) {
                 Text(text = title, style = sbTitle3.copy(TextColor))
                 HeightSpacer(height = 8.dp)
-                Text(text = content, style = mFooter.copy(TextMColor))
+                Text(text = content, style = rTextLabel.copy(TextMColor))
                 HeightSpacer(height = 20.dp)
                 Row(modifier = Modifier.padding(top = 10.dp)) {
                     Box(modifier = Modifier.weight(1f)) {

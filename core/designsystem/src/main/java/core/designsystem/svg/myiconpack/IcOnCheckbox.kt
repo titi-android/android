@@ -1,17 +1,20 @@
 package core.designsystem.svg.myiconpack
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.PathFillType.Companion.NonZero
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeCap.Companion.Butt
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.StrokeJoin.Companion.Miter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import core.designsystem.svg.IconPack
+import core.designsystem.svg.MyIconPack
 
-public val IconPack.IcOnCheckbox: ImageVector
+public val MyIconPack.IcOnCheckbox: ImageVector
     get() {
         if (_icOnCheckbox != null) {
             return _icOnCheckbox!!

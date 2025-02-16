@@ -10,6 +10,7 @@ android {
 dependencies {
 
     implementation(projects.core.navigation)
+    implementation(projects.core.designsystem)
 
     // hiltViewModel 사용
     implementation(libs.androidx.hilt.compose)

@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import core.designsystem.svg.IconPack
+import core.designsystem.svg.MyIconPack
 
-public val IconPack.IcTalk: ImageVector
+public val MyIconPack.IcTalk: ImageVector
     get() {
         if (_icTalk != null) {
             return _icTalk!!

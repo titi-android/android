@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import com.busschedule.navigation.Route
+import com.busschedule.navigation.LoginGraph
 import com.busschedule.util.remember.rememberApplicationState
 
 @Composable
@@ -26,7 +26,7 @@ fun RootNavHost() {
 //    }
     NavHost(
         navController = appState.getNavController(),
-        startDestination = Route.LoginGraph,
+        startDestination = LoginGraph.Start,
         modifier = Modifier
             .fillMaxSize()
     ) {

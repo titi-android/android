@@ -29,13 +29,14 @@ fun safeFlowAndSaveToken(
     flow {
         try {
             val res = apiFunc.invoke()
-            if (res.isSuccessful) {
+            val apiResult = res.body()!!
+            if (res.isSuccessful && apiResult.success) {
                 val data = res.body()?.data?.accessToken
                 saveToken(data ?: "")
-                emit(ApiState.Success(res.body()?.data ?: throw NullPointerException()))
+                emit(ApiState.Success(res.body()?.data ?: throw NullPointerException(), msg = apiResult.message))
             } else {
                 val errorBody = res.errorBody() ?: throw NullPointerException()
-                emit(ApiState.Error(errorBody.string()))
+                emit(ApiState.Error( res.body()?.message ?: throw NullPointerException() ))
             }
         } catch (e: Exception) {
             emit(ApiState.NotResponse(message = e.message ?: "", exception = e))

@@ -8,10 +8,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.busschedule.login.LoginScreen
-import com.busschedule.login.SignUpScreen
+import com.busschedule.login.login.ui.LoginScreen
+import com.busschedule.login.signup.ui.SignUpScreen
+import com.busschedule.login.start.ui.AppStartScreen
 import com.busschedule.model.BusStopInfo
 import com.busschedule.model.BusStopInfoType
+import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
 import com.busschedule.register.ui.RegisterBusScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
@@ -24,25 +26,18 @@ import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
-    navigation<Route.LoginGraph>(startDestination = Route.LoginGraph.Login) {
-        composable<Route.LoginGraph.Login> { entry ->
-            val backStackEntry = rememberNavControllerBackEntry(
-                entry = entry,
-                navController = appState.getNavController(),
-                graph = Route.LoginGraph
-            )
-            LoginScreen(appState, loginViewModel = hiltViewModel(backStackEntry))
-        }
-        composable<Route.LoginGraph.Signup> { entry ->
-            val backStackEntry = rememberNavControllerBackEntry(
-                entry = entry,
-                navController = appState.getNavController(),
-                graph = Route.LoginGraph
-            )
-            SignUpScreen(appState = appState, loginViewModel = hiltViewModel(backStackEntry))
+//    navigation<Route.LoginGraph>(startDestination = Route.LoginGraph.Login) {
+        composable<LoginGraph.Start> {
+            AppStartScreen(appState)
         }
 
-    }
+        composable<LoginGraph.Login> {
+            LoginScreen(appState)
+        }
+        composable<LoginGraph.Signup> {
+            SignUpScreen(appState = appState)
+        }
+//    }
 }
 
 fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {

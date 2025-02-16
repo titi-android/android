@@ -8,14 +8,6 @@ sealed interface Route {
     data object ScheduleList: Route
 
     @Serializable
-    data object LoginGraph: Route {
-        @Serializable
-        data object Login: Route
-        @Serializable
-        data object Signup: Route
-    }
-
-    @Serializable
     data object RegisterGraph: Route {
         @Serializable
         data class RegisterSchedule(
@@ -40,4 +32,12 @@ sealed interface Route {
     }
 }
 
-
+@Serializable
+sealed interface LoginGraph: Route {
+    @Serializable
+    data object Start: LoginGraph
+    @Serializable
+    data object Login: LoginGraph
+    @Serializable
+    data object Signup: LoginGraph
+}

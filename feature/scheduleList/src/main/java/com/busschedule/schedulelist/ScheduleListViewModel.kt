@@ -61,8 +61,6 @@ class ScheduleListViewModel @Inject constructor(
                 val token = FirebaseMessaging.getInstance().token.await()
                 tokenManager.saveFCMToken(token)
                 fetchPostFCMToken(token)
-            } else {
-                Log.d("daeyoung", "FCMToken already exist: ${tokenManager.getFCMToken().first()}")
             }
         } catch (e: Exception) {
             e.printStackTrace()

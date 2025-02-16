@@ -56,8 +56,8 @@ import com.kakao.vectormap.MapView
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
-import core.designsystem.component.button.MainButton
-import core.designsystem.svg.IconPack
+import core.designsystem.component.button.MainBottomButton
+import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
 import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
@@ -81,7 +81,7 @@ fun SelectBusScreen(
 
     LaunchedEffect(Unit) {
         busStopInfo?.let {
-            if (it.busStop.isNotEmpty()&& it.nodeId.isNotEmpty()) {
+            if (it.busStop.isNotEmpty() && it.nodeId.isNotEmpty()) {
                 registerBusScheduleViewModel.fetchFirstReadAllBusStop(it.region, it.busStop)
             }
         }
@@ -186,7 +186,7 @@ fun BusCard(name: String, type: BusType, suffixIcon: @Composable () -> Unit, onC
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = IconPack.IcBus,
+            imageVector = MyIconPack.IcBus,
             contentDescription = "ic_bus",
             modifier = Modifier
                 .size(24.dp)
@@ -272,19 +272,7 @@ fun BoxScope.BusesBottomSheet(
                     }) { addBus() }
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-        ) {
-            MainButton(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = "완료",
-                enabled = btnEnable
-            ) {
-                onCompleted()
-            }
-        }
+        MainBottomButton(text = "완료", enabled = btnEnable) { onCompleted() }
     }
 }
 

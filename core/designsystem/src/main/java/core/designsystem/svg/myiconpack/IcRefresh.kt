@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.ImageVector.Builder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
-import core.designsystem.svg.IconPack
+import core.designsystem.svg.MyIconPack
 
-public val IconPack.IcRefresh: ImageVector
+public val MyIconPack.IcRefresh: ImageVector
     get() {
         if (_icRefresh != null) {
             return _icRefresh!!

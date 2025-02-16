@@ -9,6 +9,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
 import com.busschedule.model.BusStopInfo
+import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -71,10 +72,10 @@ class ApplicationState(
     }
 
     fun navigateToLogin() {
-        navController.navigate(Route.LoginGraph.Login)
+        navController.navigate(LoginGraph.Login)
     }
     fun navigateToSignUp() {
-        navController.navigate(Route.LoginGraph.Signup)
+        navController.navigate(LoginGraph.Signup)
     }
 
     fun navigateToScheduleList() {

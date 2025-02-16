@@ -19,6 +19,20 @@ val Typography = Typography(
     )
 )
 
+val bigLogo = TextStyle(
+    fontFamily = FontFamily(Font(R.font.riasans)),
+    fontWeight = FontWeight.ExtraBold,
+    fontSize = 40.sp,
+    color = Primary
+)
+
+val logo = TextStyle(
+    fontFamily = FontFamily(Font(R.font.riasans)),
+    fontWeight = FontWeight.ExtraBold,
+    fontSize = 20.sp,
+    color = Primary
+)
+
 val sbTitle = TextStyle(
     fontFamily = FontFamily(Font(R.font.roboto)),
     fontWeight = FontWeight.SemiBold,
