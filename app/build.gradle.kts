@@ -47,6 +47,7 @@ dependencies {
     implementation(projects.core.datastore)
     implementation(projects.core.notification)
     implementation(project(":feature:lock"))
+    implementation(projects.core.widget)
     implementation(libs.firebase.messaging.ktx)
 
     implementation(libs.androidx.core.ktx)
