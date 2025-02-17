@@ -49,12 +49,8 @@ fun AskScreen(appState: ApplicationState) {
         Column(modifier = Modifier
             .weight(1f)
             .padding(horizontal = 16.dp)) {
-            HeightSpacer(height = 50.dp)
-            RoundTextField(value = "", onValueChange = {}, placeholder = "닉네임") {
-                focusManager.moveFocus(FocusDirection.Down)
-            }
-            HeightSpacer(height = 32.dp)
-            RoundTextField(value = "", onValueChange = {}, placeholder = "닉네임") {
+            HeightSpacer(height = 16.dp)
+            RoundTextField(value = "", onValueChange = {}, placeholder = "제목") {
                 focusManager.moveFocus(FocusDirection.Down)
             }
             HeightSpacer(height = 32.dp)
@@ -79,3 +75,9 @@ fun AskScreen(appState: ApplicationState) {
         MainBottomButton(text = "완료") { appState.popBackStack() }
     }
 }
+
+//@Composable
+//@Preview(showBackground = true)
+//fun AskScreenPreview() {
+//    AskScreen(rememberApplicationState())
+//}

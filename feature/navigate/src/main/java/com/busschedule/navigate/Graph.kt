@@ -86,16 +86,14 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
 }
 
 fun NavGraphBuilder.settingGraph(appState: ApplicationState) {
-    navigation<com.busschedule.navigation.Route.SettingGraph>(startDestination = com.busschedule.navigation.Route.SettingGraph.Setting) {
-        composable<com.busschedule.navigation.Route.SettingGraph.Setting> { entry ->
+    navigation<Route.SettingGraph>(startDestination = Route.SettingGraph.Setting) {
+        composable<Route.SettingGraph.Setting> { entry ->
             SettingScreen(appState = appState)
         }
-        composable<com.busschedule.navigation.Route.SettingGraph.Ask> { entry ->
+        composable<Route.SettingGraph.Ask> { entry ->
             AskScreen(appState)
         }
-        composable<com.busschedule.navigation.Route.SettingGraph.EditProfile> { entry ->
-            ProfileEditScreen(appState)
-        }
+
     }
 }
 

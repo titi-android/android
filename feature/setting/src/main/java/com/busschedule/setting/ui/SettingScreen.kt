@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -21,12 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.busschedule.setting.component.ProfileCard
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.svg.MyIconPack
+import core.designsystem.svg.myiconpack.IcForwardArrow
 import core.designsystem.svg.myiconpack.IcTalk
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextMColor
@@ -45,10 +43,6 @@ fun SettingScreen(appState: ApplicationState) {
     ) {
         BackArrowAppBar(title = "설정") { appState.popBackStack() }
         HeightSpacer(height = 16.dp)
-        ProfileCard(image = "", text = "닉네임") {
-            appState.navigateToEditProfile()
-        }
-        HeightSpacer(height = 32.dp)
         WhiteRoundedCard(
             padding = PaddingValues(horizontal = 16.dp),
             onClick = { appState.navigateToAsk() }) {
@@ -71,7 +65,7 @@ fun SettingScreen(appState: ApplicationState) {
             }
 
             Icon(
-                imageVector = Icons.Rounded.ArrowForwardIos,
+                imageVector = MyIconPack.IcForwardArrow,
                 contentDescription = "ic_forward",
                 modifier = Modifier.size(24.dp),
                 tint = Primary
@@ -105,3 +99,9 @@ fun WhiteRoundedCard(
         }
     }
 }
+
+//@Composable
+//@Preview(showBackground = true)
+//fun SettingScreenPreview() {
+//    SettingScreen(rememberApplicationState())
+//}
