@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class BusSchedule(
     val id: Int = 0,
     val name: String = "",
-    val days: List<String> = emptyList(),
+    val daysList: List<String> = emptyList(),
     val startTime: String = "",
     val endTime: String = "",
     val busStopName: String = "",

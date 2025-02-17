@@ -1,5 +1,5 @@
 plugins {
-    id("busSchedule.android.library")
+    id("busSchedule.android.compose.library")
     alias(libs.plugins.kotlin.serialization)
 }
 

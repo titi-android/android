@@ -4,7 +4,8 @@ plugins {
     id("busSchedule.android.compose.library")
 }
 android {
-    namespace = "core.designsystem"
+//    namespace = "core.designsystem"
+    namespace = "com.busschedule.designsystem"
 }
 
 dependencies {

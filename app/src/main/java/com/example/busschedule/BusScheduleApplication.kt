@@ -1,14 +1,22 @@
 package com.example.busschedule
 
 import android.app.Application
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.google.firebase.FirebaseApp
 import com.kakao.vectormap.KakaoMapSdk
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
-class BusScheduleApplication : Application() {
+class BusScheduleApplication : Application(), Configuration.Provider {
 
-//    var kakaoMapKey: String =
+    @Inject
+    lateinit var workFactory: HiltWorkerFactory
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workFactory)
+            .build()
 
     override fun onCreate() {
         super.onCreate()

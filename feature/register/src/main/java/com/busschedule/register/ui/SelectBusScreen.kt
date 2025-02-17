@@ -47,7 +47,7 @@ import com.busschedule.register.component.CheckBoxIcon
 import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.SelectedBusUI
-import com.busschedule.util.entity.BusType
+import com.busschedule.model.BusType
 import com.busschedule.util.state.ApplicationState
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback

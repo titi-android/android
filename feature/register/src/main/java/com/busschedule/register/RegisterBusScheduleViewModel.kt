@@ -6,6 +6,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.busschedule.domain.model.ApiState
 import com.busschedule.domain.model.response.busstop.BusInfo
 import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
@@ -14,6 +16,7 @@ import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
+import com.busschedule.model.BusType
 import com.busschedule.navigation.Route
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.Bus
@@ -24,9 +27,9 @@ import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.SelectedBusUI
 import com.busschedule.register.entity.asDomain
-import com.busschedule.util.entity.BusType
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.widget.widget.worker.ScheduleWorker
 import com.kakao.vectormap.KakaoMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -192,6 +195,12 @@ class RegisterBusScheduleViewModel @Inject constructor(
         return kakaoMap
     }
 
+    private fun updateWidget() {
+        WorkManager.getInstance(context).enqueue(
+            OneTimeWorkRequestBuilder<ScheduleWorker>().build()
+        )
+    }
+
     private fun fetchPostBusSchedule(onSuccess: () -> Unit, onFail: (String) -> Unit) {
 
         viewModelScope.launch {
@@ -207,6 +216,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
                 is ApiState.Success -> {
                     onSuccess()
+                    updateWidget()
                 }
             }
         }
@@ -226,8 +236,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
                 is ApiState.Success -> {
                     kakaoMap.removeAndAddLabel(
-                        icon = core.designsystem.R.drawable.image_busstop_label,
-                        labels = result.data.busInfosResponse
+                        icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
+                        labels = result.data.busInfoResponses
                     )
                 }
             }
@@ -250,8 +260,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
                 is ApiState.Success -> {
                     kakaoMap.removeAndAddLabel(
-                        icon = core.designsystem.R.drawable.image_busstop_label,
-                        labels = result.data.busInfosResponse,
+                        icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
+                        labels = result.data.busInfoResponses,
                     )
                 }
             }
@@ -277,7 +287,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
                 is ApiState.Success -> {
                     _busStop.update { selectedBusUI ->
-                        selectedBusUI.copy(buses = result.data.map { bus ->
+                        selectedBusUI.copy(buses = result.data!!.map { bus ->
                             Bus(
                                 name = bus.name,
                                 type = BusType.find(bus.type),

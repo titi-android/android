@@ -13,6 +13,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ScheduleApi {
+    // 현재 스케줄의 가장 빠른 첫 번쨰, 두 번째 버스 정보 조회
+    @GET("/api/v2/schedules/now")
+    suspend fun readNowSchedules(): DefaultResponse<BusSchedule>
     // 오늘 스케줄 목록 조회
     @GET("/api/v2/schedules/today")
     suspend fun readTodayAllSchedules(): DefaultResponse<List<BusSchedule>>

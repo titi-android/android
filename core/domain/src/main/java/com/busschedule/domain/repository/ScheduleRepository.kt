@@ -7,6 +7,7 @@ import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
+    fun readNowSchedule(): Flow<ApiState<BusSchedule>>
     fun raedTodaySchedules(): Flow<ApiState<List<BusSchedule>>>
     fun raedDaySchedules(day: String): Flow<ApiState<List<BusSchedule>>>
     fun readSchedule(scheduleId: Int): Flow<ApiState<ScheduleRegisterResponse>>

@@ -50,6 +50,10 @@ dependencies {
     implementation(projects.core.widget)
     implementation(libs.firebase.messaging.ktx)
 
+    // work
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

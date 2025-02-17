@@ -1,5 +1,6 @@
 package com.busschedule.register.entity
 
+import android.util.Log
 import com.busschedule.domain.model.response.busstop.BusStopInfoResponse
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng

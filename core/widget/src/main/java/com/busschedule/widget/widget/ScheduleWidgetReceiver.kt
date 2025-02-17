@@ -1,8 +1,8 @@
-package com.busschedule.widget
+package com.busschedule.widget.widget
 
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import com.busschedule.widget.worker.ScheduleWorker
+import com.busschedule.widget.widget.worker.ScheduleWorker
 
 class ScheduleWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget = ScheduleGlanceWidget()

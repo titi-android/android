@@ -1,5 +1,6 @@
 package com.busschedule.domain.model
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,8 +15,10 @@ fun <T : Any> safeFlow(apiFunc: suspend () -> Response<ApiResponse<T>>): Flow<Ap
             if (res.isSuccessful && apiResult.success) {
                 emit(ApiState.Success(data = apiResult.data ?: throw NullPointerException(), msg = apiResult.message))
             } else {
+                Log.d("daeyoung", "errorbody: ${res.errorBody()?.string()}")
                 val errorBody = apiResult.message
-                emit(ApiState.Error(errorBody))
+                val errorCode = apiResult.code
+                emit(ApiState.Error(errorCode, errorBody))
             }
         } catch (e: Exception) {
             emit(ApiState.NotResponse(message = e.message ?: "", exception = e))
@@ -36,7 +39,7 @@ fun safeFlowAndSaveToken(
                 emit(ApiState.Success(res.body()?.data ?: throw NullPointerException(), msg = apiResult.message))
             } else {
                 val errorBody = res.errorBody() ?: throw NullPointerException()
-                emit(ApiState.Error( res.body()?.message ?: throw NullPointerException() ))
+                emit(ApiState.Error( apiResult.code, res.body()?.message ?: throw NullPointerException() ))
             }
         } catch (e: Exception) {
             emit(ApiState.NotResponse(message = e.message ?: "", exception = e))
@@ -52,7 +55,7 @@ fun <T : Any> safeFlowUnit(apiFunc: suspend () -> Response<ApiResponse<T>>): Flo
                 emit(ApiState.Success(data = Unit, msg = apiResult.message))
             } else {
                 val errorBody = apiResult.message
-                emit(ApiState.Error(errorBody))
+                emit(ApiState.Error(apiResult.code, errorBody))
             }
         } catch (e: Exception) {
             emit(ApiState.NotResponse(message = e.message ?: "", exception = e))

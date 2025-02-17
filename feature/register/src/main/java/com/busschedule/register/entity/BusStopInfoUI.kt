@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import com.busschedule.domain.model.response.busstop.BusInfo
 import com.busschedule.model.BusStopInfo
-import com.busschedule.util.entity.BusType
+import com.busschedule.model.BusType
 
 
 @Stable

@@ -29,7 +29,7 @@ fun BusSchedule.asDomain() =
     BusScheduleUi(
         id = id,
         name = name,
-        days = days,
+        days = daysList,
         startTime = startTime,
         endTime = endTime,
         busStopName = busStopName,

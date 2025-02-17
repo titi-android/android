@@ -13,6 +13,10 @@ import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: ScheduleApi) :
     ScheduleRepository {
+    override fun readNowSchedule(): Flow<ApiState<BusSchedule>> = safeFlow {
+        scheduleApi.readNowSchedules()
+    }
+
     override fun raedTodaySchedules(): Flow<ApiState<List<BusSchedule>>> = safeFlow {
         scheduleApi.readTodayAllSchedules()
     }

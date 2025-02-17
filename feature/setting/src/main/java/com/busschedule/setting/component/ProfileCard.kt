@@ -27,7 +27,7 @@ fun ProfileCard(image: String, text: String, onEdit: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Card(shape = CircleShape, modifier = Modifier.size(120.dp)) {
             Image(
-                painter = painterResource(id = core.designsystem.R.drawable.ic_launcher_background),
+                painter = painterResource(id = com.busschedule.designsystem.R.drawable.ic_launcher_background),
                 contentDescription = "image_profile",
                 modifier = Modifier.fillMaxSize()
             )
@@ -53,7 +53,7 @@ fun ProfileCard(image: String, text: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Card(shape = CircleShape, modifier = Modifier.size(120.dp)) {
             Image(
-                painter = painterResource(id = core.designsystem.R.drawable.ic_launcher_background),
+                painter = painterResource(id = com.busschedule.designsystem.R.drawable.ic_launcher_background),
                 contentDescription = "image_profile",
                 modifier = Modifier.fillMaxSize()
             )

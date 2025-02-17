@@ -1,5 +1,6 @@
 package core.designsystem.theme
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -26,6 +27,7 @@ val BusYellowM1 = Color(0xFF6E5824)
 val BusYellowM2 = Color(0xFFFFEDC4)
 val ErrorColor = Color(0xFFC31C1C)
 val TextWColor = Color(0xFFFFFFFF)
+@Stable
 val TextColor = Color(0xFF232527)
 val TextBoxDis = Color(0xFFA4AAC5)
 val TextMColor = Color(0xFF808991)

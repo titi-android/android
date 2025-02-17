@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.material)
     implementation(project(":core:datastore"))
     implementation(libs.firebase.messaging.ktx)
+    implementation(project(":core:model"))
 //    implementation(project(":feature:navigate"))
 
     testImplementation(libs.junit4)

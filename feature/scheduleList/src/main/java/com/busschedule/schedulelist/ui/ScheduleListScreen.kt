@@ -27,12 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.model.BusType
 import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.component.ScheduleListAppBar
 import com.busschedule.schedulelist.component.ScheduleTicket
 import com.busschedule.schedulelist.model.ScheduleListUiState
 import com.busschedule.util.constant.Constants
-import com.busschedule.util.entity.BusType
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
