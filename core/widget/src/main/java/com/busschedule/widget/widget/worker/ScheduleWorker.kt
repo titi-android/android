@@ -13,10 +13,13 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.usecase.schedule.ReadNowScheduleUseCase
+import com.busschedule.model.exception.AccessTokenExpiredException
 import com.busschedule.widget.widget.ScheduleGlanceWidget
 import com.busschedule.widget.widget.ScheduleInfo
 import com.busschedule.widget.widget.ScheduleStateDefinition
+import com.busschedule.widget.widget.toWidgetState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.time.Duration
@@ -31,7 +34,6 @@ class ScheduleWorker @AssistedInject constructor(
         private val uniqueWorkName = ScheduleWorker::class.java.simpleName
 
         internal fun enqueue(context: Context, force: Boolean = false) {
-            Log.d("daeyoung", "ScheduleWorker ,enqueue()")
             val manager = WorkManager.getInstance(context)
             val requestBuilder =
                 PeriodicWorkRequestBuilder<ScheduleWorker>(Duration.ofHours(1))
@@ -61,37 +63,38 @@ class ScheduleWorker @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result {
-        Log.d("daeyoung", "ScheduleWorker ,doWork()")
         val manager = GlanceAppWidgetManager(context)
         val glanceIds = manager.getGlanceIds(ScheduleGlanceWidget::class.java)
 
         setWidgetState(glanceIds, ScheduleInfo.Loading)
-//        return when (val res = readNowScheduleUseCase().first()) {
-//            is com.busschedule.data.network.ApiState.Error -> {
-//                val scheduleInfo =
-//                    if (res.code == "JWT401") ScheduleInfo.Unavailable.JWT401 else ScheduleInfo.Unavailable.UnExpected
-//                setWidgetState(glanceIds, scheduleInfo)
-//                Result.failure()
-//            }
-//
-//            com.busschedule.data.network.ApiState.Loading -> TODO()
-//            is com.busschedule.data.network.ApiState.NotResponse -> {
-//                if (res.exception is NullPointerException) {
-//                    setWidgetState(glanceIds, ScheduleInfo.Unavailable.DataIsNull)
-//                } else {
-//                    setWidgetState(glanceIds, ScheduleInfo.Unavailable.UnExpected)
-//                }
-//                Result.failure()
-//            }
-//
-//            is com.busschedule.data.network.ApiState.Success -> {
-//                setWidgetState(glanceIds, res.data.toWidgetState())
-//                Result.success()
-//            }
-//        }
-        return Result.success()
-
+        var resultState = Result.success()
+        readNowScheduleUseCase().onSuccess { schedule ->
+            val scheduleInfo = getSuccessWidgetState(schedule)
+            setWidgetState(glanceIds, scheduleInfo)
+            resultState = Result.success()
+        }.onFailure {
+            val scheduleInfo = getExceptionWidgetState(it)
+            setWidgetState(glanceIds, scheduleInfo)
+            resultState = Result.failure()
+        }
+        return resultState
     }
+
+    private fun getExceptionWidgetState(e: Throwable): ScheduleInfo.Unavailable {
+        Log.d("daeyoung","e: ${e}")
+        return when (e) {
+            is AccessTokenExpiredException -> ScheduleInfo.Unavailable.JWT401
+            else -> ScheduleInfo.Unavailable.UnExpected
+        }
+    }
+
+    private fun getSuccessWidgetState(schedule: BusSchedule?): ScheduleInfo {
+        if (schedule == null) {
+            return  ScheduleInfo.Unavailable.DataIsNull
+        }
+        return schedule.toWidgetState()
+    }
+
 
     private suspend fun setWidgetState(
         glanceIds: List<GlanceId>,

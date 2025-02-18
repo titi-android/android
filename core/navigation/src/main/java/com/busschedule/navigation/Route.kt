@@ -1,6 +1,6 @@
 package com.busschedule.navigation
 
-import com.busschedule.model.BusStopInfo
+import com.busschedule.model.BusStop
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -17,7 +17,7 @@ sealed interface Route {
         data object SelectRegion : Route
         @Serializable
         data class SelectBusStop(
-            val busStopInfo: BusStopInfo = BusStopInfo()
+            val busStop: BusStop = BusStop()
         ): Route
     }
 

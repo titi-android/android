@@ -1,6 +1,7 @@
-package com.busschedule.domain.model.response.schedule
+package com.busschedule.data.model.response
 
-import com.busschedule.domain.model.response.busstop.BusInfo
+import com.busschedule.model.BusInfo
+import com.busschedule.model.ScheduleRegister
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,4 +16,17 @@ data class ScheduleRegisterResponse(
     val nodeId: String = "",
     val busInfos: List<BusInfo> = emptyList(),
     val isAlarmOn: Boolean
+)
+
+fun ScheduleRegisterResponse.asDomain() = ScheduleRegister(
+    id = id,
+    name = name,
+    days = days,
+    startTime = startTime,
+    endTime = endTime,
+    regionName = regionName,
+    busStopName = busStopName,
+    nodeId = nodeId,
+    busInfos = busInfos,
+    isAlarmOn = isAlarmOn
 )

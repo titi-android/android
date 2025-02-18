@@ -1,6 +1,6 @@
-package com.busschedule.domain.model.request
+package com.busschedule.data.model.request
 
-import com.busschedule.domain.model.response.busstop.BusInfo
+import com.busschedule.model.BusInfo
 import kotlinx.serialization.Serializable
 
 @Serializable

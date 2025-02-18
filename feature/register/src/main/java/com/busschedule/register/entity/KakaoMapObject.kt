@@ -1,7 +1,6 @@
 package com.busschedule.register.entity
 
-import android.util.Log
-import com.busschedule.domain.model.response.busstop.BusStopInfoResponse
+import com.busschedule.model.exception.BusStopInfo
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.camera.CameraAnimation
@@ -15,7 +14,7 @@ import com.kakao.vectormap.label.LabelTextBuilder
 class KakaoMapObject(val map: KakaoMap) {
 
     private fun removeAllLabels() = map.labelManager?.removeAllLabelLayer()
-    private var labels: List<BusStopInfoResponse> = emptyList()
+    private var labels: List<BusStopInfo> = emptyList()
 
     private fun addLabel(icon: Int, text: String, lat: Double, lng: Double) {
         val styles = map.labelManager?.addLabelStyles(
@@ -31,7 +30,7 @@ class KakaoMapObject(val map: KakaoMap) {
         layer?.addLabel(options)
     }
 
-    fun removeAndAddLabel(icon: Int, labels: List<BusStopInfoResponse>) {
+    fun removeAndAddLabel(icon: Int, labels: List<BusStopInfo>) {
         removeAllLabels()
         this.labels = labels
         this.labels.forEach {

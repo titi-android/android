@@ -1,5 +1,7 @@
 package com.busschedule.domain.repository
 
+import com.busschedule.model.exception.BusStopInfo
+
 interface BusStopRepository {
-//    fun readAllBusStop(cityName: String, nodeId: String): ApiResponse<BusInfosResponse>>
+    suspend fun readAllBusStop(cityName: String, nodeId: String): List<BusStopInfo>
 }

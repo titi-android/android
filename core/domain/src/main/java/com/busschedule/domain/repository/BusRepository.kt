@@ -1,5 +1,7 @@
 package com.busschedule.domain.repository
 
+import com.busschedule.model.BusInfo
+
 interface BusRepository {
-//    fun readAllBus(cityName: String,busStopId: String): Flow<com.busschedule.data.network.ApiState<List<BusInfo>>>
+    suspend fun readAllBus(cityName: String,busStopId: String): List<BusInfo>
 }

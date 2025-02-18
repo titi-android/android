@@ -40,14 +40,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.model.BusStopInfo
+import com.busschedule.model.BusStop
+import com.busschedule.model.BusType
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusInputDialog
 import com.busschedule.register.component.CheckBoxIcon
 import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.SelectedBusUI
-import com.busschedule.model.BusType
 import com.busschedule.util.state.ApplicationState
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -70,7 +70,7 @@ import core.designsystem.theme.rFooter
 fun SelectBusScreen(
     appState: ApplicationState,
     registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
-    busStopInfo: BusStopInfo?,
+    busStop: BusStop?,
 ) {
     val uiState by registerBusScheduleViewModel.busStopInput.collectAsStateWithLifecycle()
 
@@ -80,7 +80,7 @@ fun SelectBusScreen(
     var isShowDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        busStopInfo?.let {
+        busStop?.let {
             if (it.busStop.isNotEmpty() && it.nodeId.isNotEmpty()) {
                 registerBusScheduleViewModel.fetchFirstReadAllBusStop(it.region, it.busStop)
             }

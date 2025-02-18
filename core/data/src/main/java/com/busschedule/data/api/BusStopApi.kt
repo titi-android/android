@@ -1,7 +1,7 @@
 package com.busschedule.data.api
 
 import com.busschedule.data.model.DefaultResponse
-import com.busschedule.domain.model.response.busstop.BusInfosResponse
+import com.busschedule.data.model.response.BusInfosResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

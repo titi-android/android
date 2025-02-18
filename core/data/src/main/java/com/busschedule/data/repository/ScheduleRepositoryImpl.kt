@@ -1,40 +1,88 @@
 package com.busschedule.data.repository
 
 import com.busschedule.data.api.ScheduleApi
+import com.busschedule.data.model.request.ScheduleRegisterRequest
+import com.busschedule.data.model.response.asDomain
+import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.repository.ScheduleRepository
+import com.busschedule.model.BusInfo
+import com.busschedule.model.ScheduleRegister
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: ScheduleApi) :
     ScheduleRepository {
-//    override fun readNowSchedule(): Flow<ApiResult<BusSchedule>> = safeFlow {
-//        scheduleApi.readNowSchedules()
-//    }
-//
-//    override fun raedTodaySchedules(): Flow<ApiResult<List<BusSchedule>>> = safeFlow {
-//        scheduleApi.readTodayAllSchedules()
-//    }
-//
-//    override fun raedDaySchedules(day: String): Flow<ApiResult<List<BusSchedule>>> = safeFlow {
-//        scheduleApi.readDaySchedules(day)
-//    }
-//
-//    override fun readSchedule(scheduleId: Int): Flow<ApiResult<ScheduleRegisterResponse>> = safeFlow {
-//        scheduleApi.readSchedule(scheduleId)
-//    }
-//
-//    override fun postSchedule(scheduleRegisterRequest: ScheduleRegisterRequest): Flow<ApiResult<Unit>> =
-//        safeFlowUnit { scheduleApi.postSchedule(scheduleRegisterRequest) }
-//
-//    override fun deleteSchedule(scheduleId: Int): Flow<ApiResult<Unit>> = safeFlowUnit {
-//        scheduleApi.deleteSchedule(scheduleId)
-//    }
-//
-//    override fun putSchedule(scheduleId: Int, schedule: ScheduleRegisterRequest): Flow<ApiResult<Unit>> = safeFlowUnit {
-//        scheduleApi.putSchedule(scheduleId = scheduleId, schedule = schedule)
-//    }
-//
-//    override fun putScheduleAlarm(scheduleId: Int): Flow<ApiResult<Unit>> = safeFlowUnit {
-//        scheduleApi.putScheduleAlarm(scheduleId)
-//    }
+    override suspend fun readNowSchedule(): BusSchedule? =
+        scheduleApi.readNowSchedules().getOrThrow().data
+
+    override suspend fun readTodaySchedules(): List<BusSchedule> =
+        scheduleApi.readTodayAllSchedules().getOrThrow().data!!
+
+    override suspend fun readDaySchedules(day: String): List<BusSchedule> =
+        scheduleApi.readDaySchedules(day).getOrThrow().data!!
+
+    override suspend fun readSchedule(scheduleId: Int): ScheduleRegister =
+        scheduleApi.readSchedule(scheduleId).getOrThrow().data!!.asDomain()
+
+
+    override suspend fun postSchedule(
+        name: String,
+        daysList: List<String>,
+        startTime: String,
+        endTime: String,
+        regionName: String,
+        busStopName: String,
+        nodeId: String,
+        busInfos: List<BusInfo>,
+        isAlarmOn: Boolean,
+    ) {
+        val scheduleRegisterRequest = ScheduleRegisterRequest(
+            name = name,
+            daysList = daysList,
+            startTime = startTime,
+            endTime = endTime,
+            regionName = regionName,
+            busStopName = busStopName,
+            nodeId = nodeId,
+            busInfos = busInfos,
+            isAlarmOn = isAlarmOn
+        )
+        scheduleApi.postSchedule(scheduleRegisterRequest).getOrThrow()
+    }
+
+    override suspend fun deleteSchedule(scheduleId: Int) {
+        scheduleApi.deleteSchedule(scheduleId).getOrThrow()
+    }
+
+
+    override suspend fun putSchedule(
+        scheduleId: Int,
+        name: String,
+        daysList: List<String>,
+        startTime: String,
+        endTime: String,
+        regionName: String,
+        busStopName: String,
+        nodeId: String,
+        busInfos: List<BusInfo>,
+        isAlarmOn: Boolean,
+    ) {
+        val scheduleRegisterRequest = ScheduleRegisterRequest(
+            name = name,
+            daysList = daysList,
+            startTime = startTime,
+            endTime = endTime,
+            regionName = regionName,
+            busStopName = busStopName,
+            nodeId = nodeId,
+            busInfos = busInfos,
+            isAlarmOn = isAlarmOn
+        )
+        scheduleApi.putSchedule(scheduleId = scheduleId, schedule = scheduleRegisterRequest)
+            .getOrThrow()
+    }
+
+    override suspend fun putScheduleAlarm(scheduleId: Int) {
+        scheduleApi.putScheduleAlarm(scheduleId).getOrThrow()
+    }
 
 }

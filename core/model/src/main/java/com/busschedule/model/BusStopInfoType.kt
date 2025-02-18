@@ -4,20 +4,20 @@ import android.os.Bundle
 import androidx.navigation.NavType
 import kotlinx.serialization.json.Json
 
-val BusStopInfoType = object : NavType<BusStopInfo>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): BusStopInfo? {
+val BusStopType = object : NavType<BusStop>(isNullableAllowed = false) {
+    override fun get(bundle: Bundle, key: String): BusStop? {
         return bundle.getString(key)?.let { Json.decodeFromString(it) }
     }
 
-    override fun parseValue(value: String): BusStopInfo {
+    override fun parseValue(value: String): BusStop {
         return Json.decodeFromString(value)
     }
 
-    override fun put(bundle: Bundle, key: String, value: BusStopInfo) {
-        bundle.putString(key, Json.encodeToString(BusStopInfo.serializer(), value))
+    override fun put(bundle: Bundle, key: String, value: BusStop) {
+        bundle.putString(key, Json.encodeToString(BusStop.serializer(), value))
     }
 
-    override fun serializeAsValue(value: BusStopInfo): String {
-        return Json.encodeToString(BusStopInfo.serializer(), value)
+    override fun serializeAsValue(value: BusStop): String {
+        return Json.encodeToString(BusStop.serializer(), value)
     }
 }

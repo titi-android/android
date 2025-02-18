@@ -11,8 +11,8 @@ import androidx.navigation.navigation
 import com.busschedule.login.login.ui.LoginScreen
 import com.busschedule.login.signup.ui.SignUpScreen
 import com.busschedule.login.start.ui.AppStartScreen
-import com.busschedule.model.BusStopInfo
-import com.busschedule.model.BusStopInfoType
+import com.busschedule.model.BusStop
+import com.busschedule.model.BusStopType
 import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
 import com.busschedule.register.ui.RegisterBusScheduleScreen
@@ -64,7 +64,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             )
         }
         composable<Route.RegisterGraph.SelectBusStop>(
-            typeMap = mapOf(typeOf<BusStopInfo>() to BusStopInfoType)
+            typeMap = mapOf(typeOf<BusStop>() to BusStopType)
         ) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
@@ -75,8 +75,8 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
                 appState = appState,
                 registerBusScheduleViewModel = hiltViewModel(backStackEntry),
 //                busStopInfo = entry.savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStopInfo
-                busStopInfo = entry.savedStateHandle.get<String>("busStopInfo")?.let { str ->
-                    Json.decodeFromString<BusStopInfo>(str)
+                busStop = entry.savedStateHandle.get<String>("busStopInfo")?.let { str ->
+                    Json.decodeFromString<BusStop>(str)
                 }
 
             )

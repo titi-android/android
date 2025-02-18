@@ -76,13 +76,17 @@ fun Available(
     busStop: String = "",
     busArrivalInfo: List<BusArrivalData> = emptyList(),
 ) {
-    val type = BusType.find(busArrivalInfo.first().type)
-    val busImage = when (type) {
-        BusType.간선 -> R.drawable.image_bluebus
-        in listOf(BusType.마을, BusType.지선, BusType.일반) -> R.drawable.image_greenbus
-        BusType.순환 -> R.drawable.image_yellowbus
-        in listOf(BusType.급행, BusType.광역, BusType.직행, BusType.인천) -> R.drawable.image_redbus
-        else -> R.drawable.image_graybus
+    val busImage = if (busArrivalInfo.isEmpty()) {
+        R.drawable.image_graybus
+    } else {
+        val type = BusType.find(busArrivalInfo.first().type)
+        when (type) {
+            BusType.간선 -> R.drawable.image_bluebus
+            in listOf(BusType.마을, BusType.지선, BusType.일반) -> R.drawable.image_greenbus
+            BusType.순환 -> R.drawable.image_yellowbus
+            in listOf(BusType.급행, BusType.광역, BusType.직행, BusType.인천) -> R.drawable.image_redbus
+            else -> R.drawable.image_graybus
+        }
     }
     val backgroundColor =
         if (busArrivalInfo.isEmpty()) BusType.지정.color else BusType.find(busArrivalInfo.first().type).color

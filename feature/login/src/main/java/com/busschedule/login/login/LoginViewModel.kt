@@ -1,6 +1,5 @@
 package com.busschedule.login.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.busschedule.domain.usecase.login.LoginUseCase
@@ -48,8 +47,7 @@ class LoginViewModel @Inject constructor(
                 showToast("로그인에 성공했습니다.")
                 navigationToScheduleList()
             }.onFailure {
-                Log.d("daeyoung", "exception : $it, msg: ${it.message}")
-                Log.d("daeyoung", "printstack : ${it.stackTrace}")
+                showToast(it.message!!)
             }
         }
     }

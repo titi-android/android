@@ -3,7 +3,6 @@ package com.busschedule.schedulelist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.busschedule.datastore.TokenManager
-import com.busschedule.domain.model.request.FCMTokenRequest
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
@@ -11,6 +10,7 @@ import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
 import com.busschedule.schedulelist.model.BusScheduleUi
 import com.busschedule.schedulelist.model.ScheduleListUiState
+import com.busschedule.schedulelist.model.asDomain
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.google.firebase.messaging.FirebaseMessaging
@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
@@ -63,81 +64,36 @@ class ScheduleListViewModel @Inject constructor(
 
     fun fetchReadTodaySchedules() {
         viewModelScope.launch {
-//            when (val result = readTodaySchedulesUseCase().first()) {
-//                is com.busschedule.data.network.ApiState.Error -> Log.d("daeyoung", "api 통신 에러: ${result.errMsg}")
-//                com.busschedule.data.network.ApiState.Loading -> TODO()
-//                is com.busschedule.data.network.ApiState.Success<*> -> result.onSuccess {
-//                    _schedules.update { (result.data as List<BusSchedule>).map { it.asDomain() } }
-//                }
-//
-//                is com.busschedule.data.network.ApiState.NotResponse -> {
-//                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
-//                }
-//            }
+            readTodaySchedulesUseCase().onSuccess { schedules ->
+                _schedules.update { schedules.map { it.asDomain() } }
+            }.onFailure {  }
         }
     }
 
     fun fetchReadDayOfWeekSchedules(dayOfWeek: String) {
         viewModelScope.launch {
-//            when (val result = readDaysSchedulesUseCase(dayOfWeek).first()) {
-//                is com.busschedule.data.network.ApiState.Error -> Log.d("daeyoung", "api 통신 에러: ${result.errMsg}")
-//                com.busschedule.data.network.ApiState.Loading -> TODO()
-//                is com.busschedule.data.network.ApiState.Success<*> -> result.onSuccess {
-//                    Log.d("daeyoung", "fetchReadDayOfWeekSchedules: $result")
-//                    _schedules.update { (result.data as List<BusSchedule>).map { it.asDomain() } }
-//                }
-//
-//                is com.busschedule.data.network.ApiState.NotResponse -> {
-//                }
-//            }
+            readDaysSchedulesUseCase(dayOfWeek).onSuccess { schedules ->
+                _schedules.update { schedules.map { it.asDomain() } }
+            }
         }
     }
 
     fun fetchDeleteSchedules(scheduleId: Int) {
         viewModelScope.launch {
-//            when (val result = deleteScheduleUseCase(scheduleId).first()) {
-//                is com.busschedule.data.network.ApiState.Error -> Log.d("daeyoung", "api 통신 에러: ${result.errMsg}")
-//                com.busschedule.data.network.ApiState.Loading -> TODO()
-//                is com.busschedule.data.network.ApiState.Success<*> -> result.onSuccess {
-//                    _schedules.update { schedule -> schedule.filter { it.id != scheduleId } }
-//                    Log.d("daeyoung", "fetchDeleteSchedules: $result")
-//                }
-//
-//                is com.busschedule.data.network.ApiState.NotResponse -> {
-//                    Log.d("daeyoung", "api NotResponse: ${result.exception}, ${result.message}")
-//                }
-//            }
+            deleteScheduleUseCase(scheduleId).onSuccess {
+                _schedules.update { schedule -> schedule.filter { it.id != scheduleId } }
+            }.onFailure {  }
         }
     }
 
     private fun fetchPostFCMToken(token: String) {
-        viewModelScope.launch {
-            val fcmToken = FCMTokenRequest(token)
-//            when (val result = postFCMTokenUseCase(fcmToken).first()) {
-//                is com.busschedule.data.network.ApiState.Error -> Log.d("daeyoung", "error: ${result.errMsg}")
-//                com.busschedule.data.network.ApiState.Loading -> TODO()
-//                is com.busschedule.data.network.ApiState.Success<*> -> {}
-//                is com.busschedule.data.network.ApiState.NotResponse -> {
-//                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
-//                }
-//            }
-        }
+        viewModelScope.launch { postFCMTokenUseCase(token) }
     }
 
-    fun fetchPutScheduleAlarm(scheduleId: Int, onFail: () -> Unit) {
+    fun fetchPutScheduleAlarm(scheduleId: Int, updateAlarm: () -> Unit) {
         viewModelScope.launch {
-//            when (val result = putScheduleAlarmUseCase(scheduleId).first()) {
-//                is com.busschedule.data.network.ApiState.Error -> {
-//                    Log.d("daeyoung", "error: ${result.errMsg}")
-//                    onFail()
-//                }
-//
-//                com.busschedule.data.network.ApiState.Loading -> TODO()
-//                is com.busschedule.data.network.ApiState.Success<*> -> {}
-//                is com.busschedule.data.network.ApiState.NotResponse -> {
-//                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
-//                }
-//            }
+            putScheduleAlarmUseCase(scheduleId).onSuccess { updateAlarm() }.onFailure {  }
+
         }
     }
 }

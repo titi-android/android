@@ -1,6 +1,6 @@
 package com.busschedule.data.model
 
+import com.busschedule.data.network.ApiResult
 import com.busschedule.domain.model.ApiResponse
-import retrofit2.Response
 
-typealias DefaultResponse<T> = Response<ApiResponse<T>>
+typealias DefaultResponse<T> = ApiResult<ApiResponse<T>>

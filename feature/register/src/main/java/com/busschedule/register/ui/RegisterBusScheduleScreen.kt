@@ -62,7 +62,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.domain.model.response.busstop.BusInfo
+import com.busschedule.model.BusInfo
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusBox
 import com.busschedule.register.constant.TimePickerType
@@ -148,22 +148,22 @@ fun RegisterBusScheduleScreen(
             }
         }
         MainBottomButton(text = "완료") {
-//            registerBusScheduleViewModel.putOrPostSchedule(
-//                onSuccessOfPut = {
-//                    appState.showToastMsg("스케줄을 수정했습니다.")
-//                    appState.navigateToScheduleList()
-//                },
-//                onFailOfPut = {
-//
-//                },
-//                onSuccessOfPost = {
-//                    appState.showToastMsg("스케줄을 등록했습니다.")
-//                    appState.navigateToScheduleList()
-//                },
-//                onFailOfPost = {
-//                    appState.showToastMsg(it)
-//                }
-//            )
+            registerBusScheduleViewModel.putOrPostSchedule(
+                onSuccessOfPut = {
+                    appState.showToastMsg("스케줄을 수정했습니다.")
+                    appState.navigateToScheduleList()
+                },
+                onFailOfPut = {
+
+                },
+                onSuccessOfPost = {
+                    appState.showToastMsg("스케줄을 등록했습니다.")
+                    appState.navigateToScheduleList()
+                },
+                onFailOfPost = {
+                    appState.showToastMsg(it)
+                }
+            )
         }
     }
 }

@@ -39,6 +39,10 @@ private class ApiResultCall<R>(
                         body = errorBody ?: "Unknown http response error",
                     )
                 }
+                // 모든 버스들 불러오는 api(/api/v1/nodes/bus-names/all) 때문에 사용
+                if ( body() !is ApiResponse<*> ) {
+                    body()?.let { body -> return ApiResult.successOf(body) }
+                }
                 val isSuccess = (body() as ApiResponse<*>).success
                 if (isSuccess) {
                     body()?.let { body -> return ApiResult.successOf(body) }
@@ -49,6 +53,7 @@ private class ApiResultCall<R>(
                         message = errorBody.message,
                     )
                 }
+
                 return if (successType == Unit::class.java) {
                     @Suppress("UNCHECKED_CAST")
                     (ApiResult.successOf(Unit as R))

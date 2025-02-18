@@ -44,16 +44,11 @@ class SignUpViewModel  @Inject constructor(
 
     fun fetchSignup(id: String, pw: String, showToast: (String) -> Unit, navigateToLogin: () -> Unit) {
         viewModelScope.launch {
-//            when (val result = signupUseCase(LoginUser(name = id, password = pw)).first()) {
-//                is com.busschedule.data.network.ApiState.Error -> { showToast(result.errMsg) }
-//                com.busschedule.data.network.ApiState.Loading -> TODO()
-//                is com.busschedule.data.network.ApiState.Success<*> -> result.onSuccess { showToast(result.msg) }
-//                is com.busschedule.data.network.ApiState.NotResponse -> {
-//                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
-//                    if (result.exception is ConnectException) {
-//                    }
-//                }
-//            }
+            signupUseCase(name = id, password = pw).onSuccess {
+                showToast("로그인에 성공했습니다.")
+            }.onFailure {
+                showToast(it.message!!)
+            }
         }
     }
 }

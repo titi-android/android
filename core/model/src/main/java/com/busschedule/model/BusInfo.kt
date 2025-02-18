@@ -1,4 +1,4 @@
-package com.busschedule.domain.model.response.busstop
+package com.busschedule.model
 
 import kotlinx.serialization.Serializable
 

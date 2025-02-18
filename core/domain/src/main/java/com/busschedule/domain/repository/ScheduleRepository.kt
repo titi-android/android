@@ -1,16 +1,41 @@
 package com.busschedule.domain.repository
 
-interface ScheduleRepository {
-//    fun readNowSchedule(): Flow<com.busschedule.data.network.ApiState<BusSchedule>>
-//    fun raedTodaySchedules(): Flow<com.busschedule.data.network.ApiState<List<BusSchedule>>>
-//    fun raedDaySchedules(day: String): Flow<com.busschedule.data.network.ApiState<List<BusSchedule>>>
-//    fun readSchedule(scheduleId: Int): Flow<com.busschedule.data.network.ApiState<ScheduleRegisterResponse>>
-//
-//    fun postSchedule(scheduleRegisterRequest: ScheduleRegisterRequest): Flow<com.busschedule.data.network.ApiState<Unit>>
-//
-//    fun deleteSchedule(scheduleId: Int): Flow<com.busschedule.data.network.ApiState<Unit>>
-//
-//    fun putSchedule(scheduleId: Int, schedule: ScheduleRegisterRequest): Flow<com.busschedule.data.network.ApiState<Unit>>
-//    fun putScheduleAlarm(scheduleId: Int): Flow<com.busschedule.data.network.ApiState<Unit>>
+import com.busschedule.domain.model.response.schedule.BusSchedule
+import com.busschedule.model.BusInfo
+import com.busschedule.model.ScheduleRegister
 
+interface ScheduleRepository {
+    suspend fun readNowSchedule(): BusSchedule?
+    suspend fun readTodaySchedules(): List<BusSchedule>
+    suspend fun readDaySchedules(day: String):List<BusSchedule>
+    suspend fun readSchedule(scheduleId: Int): ScheduleRegister
+
+    suspend fun postSchedule(
+        name: String = "",
+        daysList: List<String> = emptyList(),
+        startTime: String = "",
+        endTime: String = "",
+        regionName: String = "",
+        busStopName: String = "",
+        nodeId: String = "",
+        busInfos: List<BusInfo> = emptyList(),
+        isAlarmOn: Boolean
+    )
+
+    suspend fun deleteSchedule(scheduleId: Int)
+
+    suspend fun putSchedule(
+        scheduleId: Int,
+        name: String = "",
+        daysList: List<String> = emptyList(),
+        startTime: String = "",
+        endTime: String = "",
+        regionName: String = "",
+        busStopName: String = "",
+        nodeId: String = "",
+        busInfos: List<BusInfo> = emptyList(),
+        isAlarmOn: Boolean
+    )
+
+    suspend fun putScheduleAlarm(scheduleId: Int)
 }

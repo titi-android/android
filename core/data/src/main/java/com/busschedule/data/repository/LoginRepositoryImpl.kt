@@ -14,13 +14,12 @@ class LoginRepositoryImpl @Inject constructor(
 ) : LoginRepository {
     override suspend fun login(name: String, password: String): Token {
         val user = LoginUserRequest(name = name, password = password)
-        loginApi.login(user).getOrThrow().data?.asDomain()
-//        loginApi.login(user).getOrThrow().data?.asDomain().also {
-//            tokenManager.saveAccessToken(it.accessToken)
-//        }
-        return Token("", "")
+        return loginApi.login(user).getOrThrow().data!!.asDomain().also {
+            tokenManager.saveAccessToken(it.accessToken)
+        }
     }
-
-//    override fun signup(loginUser: LoginUser): Flow<ApiResult<Unit>> =
-//        safeFlowUnit { loginApi.signup(loginUser) }
+    override suspend fun signup(name: String, password: String) {
+        val user = LoginUserRequest(name = name, password = password)
+        loginApi.signup(user).getOrThrow().data!!
+    }
 }

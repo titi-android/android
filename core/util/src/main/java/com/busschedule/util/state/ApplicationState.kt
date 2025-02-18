@@ -8,7 +8,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
-import com.busschedule.model.BusStopInfo
+import com.busschedule.model.BusStop
 import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
 import kotlinx.coroutines.CoroutineScope
@@ -88,12 +88,12 @@ class ApplicationState(
     fun navigateToSelectRegion() {
         navController.navigate(Route.RegisterGraph.SelectRegion)
     }
-    fun navigateToSelectBusStop(busStopInfo: BusStopInfo? = null) {
-        if (busStopInfo == null) {
+    fun navigateToSelectBusStop(busStop: BusStop? = null) {
+        if (busStop == null) {
             navController.navigate(Route.RegisterGraph.SelectBusStop())
             return
         }
-        navController.navigate(Route.RegisterGraph.SelectBusStop(busStopInfo))
+        navController.navigate(Route.RegisterGraph.SelectBusStop(busStop))
     }
     fun navigateToSetting() {
         navController.navigate(Route.SettingGraph.Setting)

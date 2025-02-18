@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
-import com.busschedule.domain.model.response.busstop.BusInfo
-import com.busschedule.model.BusStopInfo
+import com.busschedule.model.BusInfo
+import com.busschedule.model.BusStop
 import com.busschedule.model.BusType
 
 
@@ -28,7 +28,7 @@ data class BusStopInfoUI(
     fun getBuses() = buses.toList()
 }
 
-fun BusStopInfoUI.asBusStopInfo(region: String) = BusStopInfo(
+fun BusStopInfoUI.asBusStopInfo(region: String) = BusStop(
     region = region,
     busStop = busStop,
     nodeId = nodeId,
