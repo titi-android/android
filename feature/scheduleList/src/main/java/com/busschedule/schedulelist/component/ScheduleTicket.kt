@@ -41,6 +41,7 @@ import com.busschedule.schedulelist.model.BusScheduleUi
 import com.busschedule.util.ext.toFormatTime
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.dialog.CloseDialog
+import core.designsystem.shadow.scheduleShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
@@ -81,6 +82,12 @@ fun ScheduleTicket(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(2.42f)
+            .scheduleShadow(
+                color = Color(0x2E000000),
+                borderRadius = 10.dp,
+                blurRadius = 1.dp,
+                spread = 1.dp
+            )
     ) {
         Canvas(
             modifier = Modifier
@@ -225,5 +232,8 @@ fun StartTextBox(bgColor: Color, contentColor: Color) {
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 fun ScheduleTicketPreview() {
-    ScheduleTicket()
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        ScheduleTicket()
+    }
 }
+

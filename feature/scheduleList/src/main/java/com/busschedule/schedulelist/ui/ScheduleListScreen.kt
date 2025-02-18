@@ -74,7 +74,6 @@ fun ScheduleListScreen(
             .background(Background)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp)
     ) {
         HeightSpacer(height = 6.dp)
         ScheduleListAppBar { appState.navigateToSetting() }
@@ -89,7 +88,7 @@ fun ScheduleListScreen(
                     .fillMaxSize()
                     .padding(vertical = 8.dp),
                 state = lazyListState,
-                contentPadding = PaddingValues(top = 8.dp),
+                contentPadding = PaddingValues(top = 8.dp, start = 16.dp, end = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(items = uiState.schedules, key = { it.id }) { schedule ->
@@ -125,7 +124,7 @@ fun DayOfWeekSelectArea(dayOfWeekUi: List<DayOfWeekUi>, requestDaySchedule: (Str
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 24.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         dayOfWeekUi.forEach { day ->
