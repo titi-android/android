@@ -5,6 +5,7 @@ import com.busschedule.domain.repository.ScheduleRepository
 import javax.inject.Inject
 
 class PutScheduleUseCase @Inject constructor(private val scheduleRepository: ScheduleRepository) {
-    operator fun invoke(scheduleId: Int, schedule: ScheduleRegisterRequest) =
-        scheduleRepository.putSchedule(scheduleId = scheduleId, schedule = schedule)
+//    operator fun invoke(scheduleId: Int, schedule: ScheduleRegisterRequest) =
+//        scheduleRepository.putSchedule(scheduleId = scheduleId, schedule = schedule)
+    operator fun invoke(scheduleId: Int, schedule: ScheduleRegisterRequest) {}
 }

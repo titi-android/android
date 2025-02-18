@@ -1,4 +1,4 @@
-package com.busschedule.data.network
+package com.busschedule.data.api
 
 import com.busschedule.data.model.DefaultResponse
 import com.busschedule.domain.model.response.busstop.BusInfosResponse

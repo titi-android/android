@@ -13,15 +13,12 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.busschedule.domain.model.ApiState
 import com.busschedule.domain.usecase.schedule.ReadNowScheduleUseCase
 import com.busschedule.widget.widget.ScheduleGlanceWidget
 import com.busschedule.widget.widget.ScheduleInfo
 import com.busschedule.widget.widget.ScheduleStateDefinition
-import com.busschedule.widget.widget.toWidgetState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.first
 import java.time.Duration
 
 @HiltWorker
@@ -69,29 +66,30 @@ class ScheduleWorker @AssistedInject constructor(
         val glanceIds = manager.getGlanceIds(ScheduleGlanceWidget::class.java)
 
         setWidgetState(glanceIds, ScheduleInfo.Loading)
-        return when (val res = readNowScheduleUseCase().first()) {
-            is ApiState.Error -> {
-                val scheduleInfo =
-                    if (res.code == "JWT401") ScheduleInfo.Unavailable.JWT401 else ScheduleInfo.Unavailable.UnExpected
-                setWidgetState(glanceIds, scheduleInfo)
-                Result.failure()
-            }
-
-            ApiState.Loading -> TODO()
-            is ApiState.NotResponse -> {
-                if (res.exception is NullPointerException) {
-                    setWidgetState(glanceIds, ScheduleInfo.Unavailable.DataIsNull)
-                } else {
-                    setWidgetState(glanceIds, ScheduleInfo.Unavailable.UnExpected)
-                }
-                Result.failure()
-            }
-
-            is ApiState.Success -> {
-                setWidgetState(glanceIds, res.data.toWidgetState())
-                Result.success()
-            }
-        }
+//        return when (val res = readNowScheduleUseCase().first()) {
+//            is com.busschedule.data.network.ApiState.Error -> {
+//                val scheduleInfo =
+//                    if (res.code == "JWT401") ScheduleInfo.Unavailable.JWT401 else ScheduleInfo.Unavailable.UnExpected
+//                setWidgetState(glanceIds, scheduleInfo)
+//                Result.failure()
+//            }
+//
+//            com.busschedule.data.network.ApiState.Loading -> TODO()
+//            is com.busschedule.data.network.ApiState.NotResponse -> {
+//                if (res.exception is NullPointerException) {
+//                    setWidgetState(glanceIds, ScheduleInfo.Unavailable.DataIsNull)
+//                } else {
+//                    setWidgetState(glanceIds, ScheduleInfo.Unavailable.UnExpected)
+//                }
+//                Result.failure()
+//            }
+//
+//            is com.busschedule.data.network.ApiState.Success -> {
+//                setWidgetState(glanceIds, res.data.toWidgetState())
+//                Result.success()
+//            }
+//        }
+        return Result.success()
 
     }
 

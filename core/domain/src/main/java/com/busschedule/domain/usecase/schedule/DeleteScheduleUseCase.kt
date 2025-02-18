@@ -4,5 +4,6 @@ import com.busschedule.domain.repository.ScheduleRepository
 import javax.inject.Inject
 
 class DeleteScheduleUseCase @Inject constructor(private val scheduleRepository: ScheduleRepository) {
-    operator fun invoke(scheduleId: Int) = scheduleRepository.deleteSchedule(scheduleId)
+//    operator fun invoke(scheduleId: Int) = scheduleRepository.deleteSchedule(scheduleId)
+    operator fun invoke(scheduleId: Int) {}
 }

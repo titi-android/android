@@ -1,22 +1,18 @@
 package com.busschedule.register
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.busschedule.domain.model.ApiState
 import com.busschedule.domain.model.response.busstop.BusInfo
-import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
 import com.busschedule.domain.usecase.bus.ReadAllBusOfBusStopUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
-import com.busschedule.model.BusType
 import com.busschedule.navigation.Route
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.Bus
@@ -26,7 +22,6 @@ import com.busschedule.register.entity.KakaoMapObject
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.SelectedBusUI
-import com.busschedule.register.entity.asDomain
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.widget.widget.worker.ScheduleWorker
@@ -37,7 +32,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -204,168 +198,168 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private fun fetchPostBusSchedule(onSuccess: () -> Unit, onFail: (String) -> Unit) {
 
         viewModelScope.launch {
-            val schedule = registerBusScheduleUiState.first().asDomain()
-            Log.d("daeyoung", "${schedule}")
-            when (val result = postScheduleUseCase(schedule).first()) {
-                is ApiState.Error -> onFail(result.errMsg)
-                ApiState.Loading -> {}
-                is ApiState.NotResponse -> Log.d(
-                    "daeyoung",
-                    "not response: ${result.message}, ${result.exception}"
-                )
-
-                is ApiState.Success -> {
-                    onSuccess()
-                    updateWidget()
-                }
-            }
+//            val schedule = registerBusScheduleUiState.first().asDomain()
+//            Log.d("daeyoung", "${schedule}")
+//            when (val result = postScheduleUseCase(schedule).first()) {
+//                is com.busschedule.data.network.ApiState.Error -> onFail(result.errMsg)
+//                com.busschedule.data.network.ApiState.Loading -> {}
+//                is com.busschedule.data.network.ApiState.NotResponse -> Log.d(
+//                    "daeyoung",
+//                    "not response: ${result.message}, ${result.exception}"
+//                )
+//
+//                is com.busschedule.data.network.ApiState.Success -> {
+//                    onSuccess()
+//                    updateWidget()
+//                }
+//            }
         }
     }
 
     // 이미 지역이 정해져 있을 때 지도 화면 출력 시 한번 호출하는 함수
     fun fetchFirstReadAllBusStop(region: String, busStop: String) {
         viewModelScope.launch {
-            when (val result = readAllBusStopUseCase(region, busStop).first()) {
-                is ApiState.Error -> {}
-
-                ApiState.Loading -> {}
-                is ApiState.NotResponse -> Log.d(
-                    "daeyoung",
-                    "not response: ${result.message}, ${result.exception}"
-                )
-
-                is ApiState.Success -> {
-                    kakaoMap.removeAndAddLabel(
-                        icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
-                        labels = result.data.busInfoResponses
-                    )
-                }
-            }
+//            when (val result = readAllBusStopUseCase(region, busStop).first()) {
+//                is com.busschedule.data.network.ApiState.Error -> {}
+//
+//                com.busschedule.data.network.ApiState.Loading -> {}
+//                is com.busschedule.data.network.ApiState.NotResponse -> Log.d(
+//                    "daeyoung",
+//                    "not response: ${result.message}, ${result.exception}"
+//                )
+//
+//                is com.busschedule.data.network.ApiState.Success -> {
+//                    kakaoMap.removeAndAddLabel(
+//                        icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
+//                        labels = result.data.busInfoResponses
+//                    )
+//                }
+//            }
         }
     }
 
     fun fetchReadAllBusStop(busStopName: String) {
         viewModelScope.launch {
-            when (val result = readAllBusStopUseCase(
-                cityOfRegion.value.getSelectedCityName(),
-                busStopName
-            ).first()) {
-                is ApiState.Error -> {}
-
-                ApiState.Loading -> {}
-                is ApiState.NotResponse -> Log.d(
-                    "daeyoung",
-                    "not response: ${result.message}, ${result.exception}"
-                )
-
-                is ApiState.Success -> {
-                    kakaoMap.removeAndAddLabel(
-                        icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
-                        labels = result.data.busInfoResponses,
-                    )
-                }
-            }
+//            when (val result = readAllBusStopUseCase(
+//                cityOfRegion.value.getSelectedCityName(),
+//                busStopName
+//            ).first()) {
+//                is com.busschedule.data.network.ApiState.Error -> {}
+//
+//                com.busschedule.data.network.ApiState.Loading -> {}
+//                is com.busschedule.data.network.ApiState.NotResponse -> Log.d(
+//                    "daeyoung",
+//                    "not response: ${result.message}, ${result.exception}"
+//                )
+//
+//                is com.busschedule.data.network.ApiState.Success -> {
+//                    kakaoMap.removeAndAddLabel(
+//                        icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
+//                        labels = result.data.busInfoResponses,
+//                    )
+//                }
+//            }
         }
     }
 
     fun fetchReadAllBusOfBusStop(busStopName: String, nodeId: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
-            when (val result = readAllBusOfBusStopUseCase(
-                cityOfRegion.value.getSelectedCityName(),
-                nodeId
-            ).first()) {
-                is ApiState.Error -> {
-                    Log.d("daeyoung", "error: ${result.errMsg}")
-                }
-
-                ApiState.Loading -> {}
-                is ApiState.NotResponse -> Log.d(
-                    "daeyoung",
-                    "not response: ${result.message}, ${result.exception}"
-                )
-
-                is ApiState.Success -> {
-                    _busStop.update { selectedBusUI ->
-                        selectedBusUI.copy(buses = result.data!!.map { bus ->
-                            Bus(
-                                name = bus.name,
-                                type = BusType.find(bus.type),
-                                selectedInit = selectBusStopInfoUI.value?.getBuses()
-                                    ?.any { it.name == bus.name && it.type == bus.type } ?: false)
-                        })
-                    }
-                    onSuccess()
-                }
-            }
+//            _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
+//            when (val result = readAllBusOfBusStopUseCase(
+//                cityOfRegion.value.getSelectedCityName(),
+//                nodeId
+//            ).first()) {
+//                is com.busschedule.data.network.ApiState.Error -> {
+//                    Log.d("daeyoung", "error: ${result.errMsg}")
+//                }
+//
+//                com.busschedule.data.network.ApiState.Loading -> {}
+//                is com.busschedule.data.network.ApiState.NotResponse -> Log.d(
+//                    "daeyoung",
+//                    "not response: ${result.message}, ${result.exception}"
+//                )
+//
+//                is com.busschedule.data.network.ApiState.Success -> {
+//                    _busStop.update { selectedBusUI ->
+//                        selectedBusUI.copy(buses = result.data!!.map { bus ->
+//                            Bus(
+//                                name = bus.name,
+//                                type = BusType.find(bus.type),
+//                                selectedInit = selectBusStopInfoUI.value?.getBuses()
+//                                    ?.any { it.name == bus.name && it.type == bus.type } ?: false)
+//                        })
+//                    }
+//                    onSuccess()
+//                }
+//            }
         }
     }
 
     private fun fetchReadSchedule(scheduleId: Int) {
         viewModelScope.launch {
-            when (val result = readScheduleUseCase(scheduleId).first()) {
-                is ApiState.Error -> {
-                    Log.d("daeyoung", "error: ${result.errMsg}")
-                }
-
-                ApiState.Loading -> TODO()
-                is ApiState.Success<*> -> {
-                    (result.data as ScheduleRegisterResponse).also { res ->
-                        _scheduleName.update { res.name }
-                        _dayOfWeeks.update {
-                            DayOfWeek.entries.map {
-                                DayOfWeekUi(
-                                    dayOfWeek = it,
-                                    init = res.days.contains("${it.value}요일")
-                                )
-                            }
-                        }
-                        _startTime.update { res.startTime }
-                        _endTime.update { res.endTime }
-                        _isNotify.update { res.isAlarmOn }
-                        _cityOfRegion.update { CityOfRegion(initCity = res.regionName) }
-                        _selectBusStopInfoUI.update {
-                            BusStopInfoUI(
-                                busStop = res.busStopName,
-                                nodeId = res.nodeId,
-                                busesInit = res.busInfos
-                            )
-                        }
-                    }
-                }
-
-                is ApiState.NotResponse -> {
-                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
-                }
-            }
+//            when (val result = readScheduleUseCase(scheduleId).first()) {
+//                is com.busschedule.data.network.ApiState.Error -> {
+//                    Log.d("daeyoung", "error: ${result.errMsg}")
+//                }
+//
+//                com.busschedule.data.network.ApiState.Loading -> TODO()
+//                is com.busschedule.data.network.ApiState.Success<*> -> {
+//                    (result.data as ScheduleRegisterResponse).also { res ->
+//                        _scheduleName.update { res.name }
+//                        _dayOfWeeks.update {
+//                            DayOfWeek.entries.map {
+//                                DayOfWeekUi(
+//                                    dayOfWeek = it,
+//                                    init = res.days.contains("${it.value}요일")
+//                                )
+//                            }
+//                        }
+//                        _startTime.update { res.startTime }
+//                        _endTime.update { res.endTime }
+//                        _isNotify.update { res.isAlarmOn }
+//                        _cityOfRegion.update { CityOfRegion(initCity = res.regionName) }
+//                        _selectBusStopInfoUI.update {
+//                            BusStopInfoUI(
+//                                busStop = res.busStopName,
+//                                nodeId = res.nodeId,
+//                                busesInit = res.busInfos
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                is com.busschedule.data.network.ApiState.NotResponse -> {
+//                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
+//                }
+//            }
         }
     }
 
     private fun fetchPutSchedule(onSuccess: () -> Unit, onFail: (String) -> Unit) {
         viewModelScope.launch {
-            val scheduleReq = registerBusScheduleUiState.first().asDomain()
-            when (val result = putScheduleUseCase(scheduleId!!, scheduleReq).first()) {
-                is ApiState.Error -> {
-                    onFail(result.errMsg)
-                }
-
-                ApiState.Loading -> TODO()
-                is ApiState.Success<*> -> {
-                    onSuccess()
-                }
-
-                is ApiState.NotResponse -> {
-                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
-                }
-            }
+//            val scheduleReq = registerBusScheduleUiState.first().asDomain()
+//            when (val result = putScheduleUseCase(scheduleId!!, scheduleReq).first()) {
+//                is com.busschedule.data.network.ApiState.Error -> {
+//                    onFail(result.errMsg)
+//                }
+//
+//                com.busschedule.data.network.ApiState.Loading -> TODO()
+//                is com.busschedule.data.network.ApiState.Success<*> -> {
+//                    onSuccess()
+//                }
+//
+//                is com.busschedule.data.network.ApiState.NotResponse -> {
+//                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
+//                }
+//            }
         }
     }
 
-    fun putOrPostSchedule(onSuccessOfPut: () -> Unit, onFailOfPut: (String) -> Unit, onSuccessOfPost: () -> Unit, onFailOfPost: (String) -> Unit) {
-        if (scheduleId != null) {
-            fetchPutSchedule(onSuccess = {onSuccessOfPut()}) { onFailOfPut(it) }
-            return
-        }
-        fetchPostBusSchedule(onSuccess = {onSuccessOfPost()}) { onFailOfPost(it) }
-    }
+//    fun putOrPostSchedule(onSuccessOfPut: () -> Unit, onFailOfPut: (String) -> Unit, onSuccessOfPost: () -> Unit, onFailOfPost: (String) -> Unit) {
+//        if (scheduleId != null) {
+//            fetchPutSchedule(onSuccess = {onSuccessOfPut()}) { onFailOfPut(it) }
+//            return
+//        }
+//        fetchPostBusSchedule(onSuccess = {onSuccessOfPost()}) { onFailOfPost(it) }
+//    }
 }

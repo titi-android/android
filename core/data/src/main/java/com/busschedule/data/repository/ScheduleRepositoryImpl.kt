@@ -1,47 +1,40 @@
 package com.busschedule.data.repository
 
-import com.busschedule.data.network.ScheduleApi
-import com.busschedule.domain.model.ApiState
-import com.busschedule.domain.model.request.ScheduleRegisterRequest
-import com.busschedule.domain.model.response.schedule.BusSchedule
-import com.busschedule.domain.model.response.schedule.ScheduleRegisterResponse
-import com.busschedule.domain.model.safeFlow
-import com.busschedule.domain.model.safeFlowUnit
+import com.busschedule.data.api.ScheduleApi
 import com.busschedule.domain.repository.ScheduleRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: ScheduleApi) :
     ScheduleRepository {
-    override fun readNowSchedule(): Flow<ApiState<BusSchedule>> = safeFlow {
-        scheduleApi.readNowSchedules()
-    }
-
-    override fun raedTodaySchedules(): Flow<ApiState<List<BusSchedule>>> = safeFlow {
-        scheduleApi.readTodayAllSchedules()
-    }
-
-    override fun raedDaySchedules(day: String): Flow<ApiState<List<BusSchedule>>> = safeFlow {
-        scheduleApi.readDaySchedules(day)
-    }
-
-    override fun readSchedule(scheduleId: Int): Flow<ApiState<ScheduleRegisterResponse>> = safeFlow {
-        scheduleApi.readSchedule(scheduleId)
-    }
-
-    override fun postSchedule(scheduleRegisterRequest: ScheduleRegisterRequest): Flow<ApiState<Unit>> =
-        safeFlowUnit { scheduleApi.postSchedule(scheduleRegisterRequest) }
-
-    override fun deleteSchedule(scheduleId: Int): Flow<ApiState<Unit>> = safeFlowUnit {
-        scheduleApi.deleteSchedule(scheduleId)
-    }
-
-    override fun putSchedule(scheduleId: Int, schedule: ScheduleRegisterRequest): Flow<ApiState<Unit>> = safeFlowUnit {
-        scheduleApi.putSchedule(scheduleId = scheduleId, schedule = schedule)
-    }
-
-    override fun putScheduleAlarm(scheduleId: Int): Flow<ApiState<Unit>> = safeFlowUnit {
-        scheduleApi.putScheduleAlarm(scheduleId)
-    }
+//    override fun readNowSchedule(): Flow<ApiResult<BusSchedule>> = safeFlow {
+//        scheduleApi.readNowSchedules()
+//    }
+//
+//    override fun raedTodaySchedules(): Flow<ApiResult<List<BusSchedule>>> = safeFlow {
+//        scheduleApi.readTodayAllSchedules()
+//    }
+//
+//    override fun raedDaySchedules(day: String): Flow<ApiResult<List<BusSchedule>>> = safeFlow {
+//        scheduleApi.readDaySchedules(day)
+//    }
+//
+//    override fun readSchedule(scheduleId: Int): Flow<ApiResult<ScheduleRegisterResponse>> = safeFlow {
+//        scheduleApi.readSchedule(scheduleId)
+//    }
+//
+//    override fun postSchedule(scheduleRegisterRequest: ScheduleRegisterRequest): Flow<ApiResult<Unit>> =
+//        safeFlowUnit { scheduleApi.postSchedule(scheduleRegisterRequest) }
+//
+//    override fun deleteSchedule(scheduleId: Int): Flow<ApiResult<Unit>> = safeFlowUnit {
+//        scheduleApi.deleteSchedule(scheduleId)
+//    }
+//
+//    override fun putSchedule(scheduleId: Int, schedule: ScheduleRegisterRequest): Flow<ApiResult<Unit>> = safeFlowUnit {
+//        scheduleApi.putSchedule(scheduleId = scheduleId, schedule = schedule)
+//    }
+//
+//    override fun putScheduleAlarm(scheduleId: Int): Flow<ApiResult<Unit>> = safeFlowUnit {
+//        scheduleApi.putScheduleAlarm(scheduleId)
+//    }
 
 }

@@ -1,10 +1,10 @@
 package com.busschedule.data.di
 
-import com.busschedule.data.network.BusApi
-import com.busschedule.data.network.BusStopApi
-import com.busschedule.data.network.FCMApi
-import com.busschedule.data.network.LoginApi
-import com.busschedule.data.network.ScheduleApi
+import com.busschedule.data.api.BusApi
+import com.busschedule.data.api.BusStopApi
+import com.busschedule.data.api.FCMApi
+import com.busschedule.data.api.LoginApi
+import com.busschedule.data.api.ScheduleApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

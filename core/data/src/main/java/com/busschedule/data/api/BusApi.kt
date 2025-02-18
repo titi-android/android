@@ -1,4 +1,4 @@
-package com.busschedule.data.network
+package com.busschedule.data.api
 
 import com.busschedule.domain.model.response.busstop.BusInfo
 import retrofit2.http.GET

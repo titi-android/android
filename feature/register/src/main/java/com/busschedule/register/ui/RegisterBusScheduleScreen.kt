@@ -148,22 +148,22 @@ fun RegisterBusScheduleScreen(
             }
         }
         MainBottomButton(text = "완료") {
-            registerBusScheduleViewModel.putOrPostSchedule(
-                onSuccessOfPut = {
-                    appState.showToastMsg("스케줄을 수정했습니다.")
-                    appState.navigateToScheduleList()
-                },
-                onFailOfPut = {
-
-                },
-                onSuccessOfPost = {
-                    appState.showToastMsg("스케줄을 등록했습니다.")
-                    appState.navigateToScheduleList()
-                },
-                onFailOfPost = {
-                    appState.showToastMsg(it)
-                }
-            )
+//            registerBusScheduleViewModel.putOrPostSchedule(
+//                onSuccessOfPut = {
+//                    appState.showToastMsg("스케줄을 수정했습니다.")
+//                    appState.navigateToScheduleList()
+//                },
+//                onFailOfPut = {
+//
+//                },
+//                onSuccessOfPost = {
+//                    appState.showToastMsg("스케줄을 등록했습니다.")
+//                    appState.navigateToScheduleList()
+//                },
+//                onFailOfPost = {
+//                    appState.showToastMsg(it)
+//                }
+//            )
         }
     }
 }

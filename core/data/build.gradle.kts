@@ -15,7 +15,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:domain"))
+    implementation(projects.core.model)
+    implementation(projects.core.domain)
 
     implementation(libs.bundles.retrofit2)
     implementation(libs.kotlinx.serialization.json)
@@ -24,6 +25,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(project(":core:datastore"))
+    implementation(project(":core:model"))
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

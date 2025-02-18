@@ -1,10 +1,7 @@
 package com.busschedule.login.signup
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.busschedule.domain.model.ApiState
-import com.busschedule.domain.model.LoginUser
 import com.busschedule.domain.usecase.login.SignupUseCase
 import com.busschedule.login.entity.SignupUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,10 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.ConnectException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,16 +44,16 @@ class SignUpViewModel  @Inject constructor(
 
     fun fetchSignup(id: String, pw: String, showToast: (String) -> Unit, navigateToLogin: () -> Unit) {
         viewModelScope.launch {
-            when (val result = signupUseCase(LoginUser(name = id, password = pw)).first()) {
-                is ApiState.Error -> { showToast(result.errMsg) }
-                ApiState.Loading -> TODO()
-                is ApiState.Success<*> -> result.onSuccess { showToast(result.msg) }
-                is ApiState.NotResponse -> {
-                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
-                    if (result.exception is ConnectException) {
-                    }
-                }
-            }
+//            when (val result = signupUseCase(LoginUser(name = id, password = pw)).first()) {
+//                is com.busschedule.data.network.ApiState.Error -> { showToast(result.errMsg) }
+//                com.busschedule.data.network.ApiState.Loading -> TODO()
+//                is com.busschedule.data.network.ApiState.Success<*> -> result.onSuccess { showToast(result.msg) }
+//                is com.busschedule.data.network.ApiState.NotResponse -> {
+//                    Log.d("daeyoung", "exception: ${result.exception}, msg: ${result.message}")
+//                    if (result.exception is ConnectException) {
+//                    }
+//                }
+//            }
         }
     }
 }

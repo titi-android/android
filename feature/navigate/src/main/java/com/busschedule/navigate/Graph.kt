@@ -19,7 +19,6 @@ import com.busschedule.register.ui.RegisterBusScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
 import com.busschedule.setting.ui.AskScreen
-import com.busschedule.setting.ui.ProfileEditScreen
 import com.busschedule.setting.ui.SettingScreen
 import com.busschedule.util.state.ApplicationState
 import kotlinx.serialization.json.Json

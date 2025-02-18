@@ -3,6 +3,7 @@ package com.busschedule.data.di
 import com.busschedule.data.BuildConfig
 import com.busschedule.data.di.auth.AuthAuthenticator
 import com.busschedule.data.di.auth.AuthInterceptor
+import com.busschedule.data.network.ResultCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -46,6 +47,7 @@ object NetworkModule {
             prettyPrint = true
             coerceInputValues = true
             ignoreUnknownKeys = true
+            encodeDefaults = true
         }
     }
 
@@ -87,6 +89,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(BuildConfig.BASE_URL)
+            .addCallAdapterFactory(ResultCallAdapterFactory())
             .addConverterFactory(json.asConverterFactory("application/json".toMediaTypeOrNull()!!))
             .build()
     }
@@ -101,6 +104,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(BuildConfig.BASE_URL)
+            .addCallAdapterFactory(ResultCallAdapterFactory())
             .addConverterFactory(json.asConverterFactory("application/json".toMediaTypeOrNull()!!))
             .build()
     }

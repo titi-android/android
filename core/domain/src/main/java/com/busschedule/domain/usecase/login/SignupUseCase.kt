@@ -5,6 +5,6 @@ import com.busschedule.domain.repository.LoginRepository
 import javax.inject.Inject
 
 class SignupUseCase @Inject constructor(private val loginRepository: LoginRepository){
-    operator fun invoke(loginUser: LoginUser) =
-        loginRepository.signup(loginUser)
+//    operator fun invoke(loginUser: LoginUser) = loginRepository.signup(loginUser)
+    operator fun invoke(loginUser: LoginUser) {}
 }

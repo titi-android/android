@@ -5,5 +5,6 @@ import com.busschedule.domain.repository.FCMRepository
 import javax.inject.Inject
 
 class PostFCMTokenUseCase @Inject constructor(private val fcmRepository: FCMRepository) {
-    operator fun invoke(fcmTokenRequest: FCMTokenRequest) = fcmRepository.postFCMToken(fcmTokenRequest)
+//    operator fun invoke(fcmTokenRequest: FCMTokenRequest) = fcmRepository.postFCMToken(fcmTokenRequest)
+operator fun invoke(fcmTokenRequest: FCMTokenRequest) {}
 }
