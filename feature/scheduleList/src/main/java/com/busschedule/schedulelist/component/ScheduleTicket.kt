@@ -125,7 +125,7 @@ fun ScheduleTicket(
                 modifier = Modifier
                     .weight(2 / 3f)
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 10.dp)
+                    .padding(start = 20.dp, end = 10.dp, top = 10.dp)
             ) {
                 Row(modifier = Modifier.weight(1f)) {
                     Text(
@@ -134,9 +134,8 @@ fun ScheduleTicket(
                         style = sbTitle,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(top = 20.dp)
                     )
-                    Row(modifier = Modifier.padding(10.dp)) {
+                    Row() {
                         Icon(
                             imageVector = icNotify,
                             contentDescription = "ic_notify",
