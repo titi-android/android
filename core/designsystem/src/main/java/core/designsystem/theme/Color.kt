@@ -13,6 +13,8 @@ val Pink40 = Color(0xFF7D5260)
 
 
 val Primary = Color(0xFF2E2E34)
+val Primary2 = Color(0xFF3C3C44)
+val Primary3 = Color(0xFF54545F)
 val BusBlue = Color(0xFF3C89F5)
 val BusBlueM1 = Color(0xFF004099)
 val BusBlueM2 = Color(0xFFCDE2FF)

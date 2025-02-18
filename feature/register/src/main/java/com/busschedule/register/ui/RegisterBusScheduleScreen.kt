@@ -41,6 +41,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -57,6 +58,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -83,7 +85,9 @@ import core.designsystem.svg.myiconpack.IcNotify
 import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.IcSearch
 import core.designsystem.theme.Background
+import core.designsystem.theme.BusScheduleTheme
 import core.designsystem.theme.Primary
+import core.designsystem.theme.Primary2
 import core.designsystem.theme.TextColor
 import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
@@ -396,18 +400,31 @@ fun TimePickerFieldToModal(
                 .height(IntrinsicSize.Min)
                 .background(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.surface
+                    color = TextWColor
                 ),
+            color = Background
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TimePicker(state = timePickerState)
+                TimePicker(
+                    state = timePickerState,
+                    colors = TimePickerDefaults.colors(
+                        clockDialColor = TextWColor,
+                        selectorColor = Primary,
+                        clockDialUnselectedContentColor = Primary,
+                        timeSelectorSelectedContainerColor = Color.White,
+                        timeSelectorUnselectedContainerColor = Color.White,
+                        timeSelectorSelectedContentColor = Primary2,
+                        timeSelectorUnselectedContentColor = Primary2,
+
+                    )
+                )
 
                 Row() {
                     TextButton(modifier = Modifier.weight(1f), onClick = { onDismiss(false) }) {
-                        Text(text = "Cancel")
+                        Text(text = "Cancel", color = Primary)
                     }
                     TextButton(
                         modifier = Modifier.weight(1f),
@@ -415,7 +432,7 @@ fun TimePickerFieldToModal(
                             onConfirm(timePickerState)
                             onDismiss(false)
                         }) {
-                        Text(text = "Ok")
+                        Text(text = "Ok", color = Primary)
                     }
                 }
             }
@@ -504,3 +521,11 @@ fun SearchBox(text: String, onClick: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@Preview
+fun TimePickerPreview(modifier: Modifier = Modifier) {
+    BusScheduleTheme {
+        TimePickerFieldToModal({}, {})
+    }
+}
