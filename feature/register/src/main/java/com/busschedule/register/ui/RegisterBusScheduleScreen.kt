@@ -21,14 +21,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -79,6 +79,8 @@ import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
+import core.designsystem.svg.myiconpack.IcNotify
+import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.IcSearch
 import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
@@ -115,10 +117,12 @@ fun RegisterBusScheduleScreen(
         BackArrowAppBar(title = "스케줄 등록하기") {
             appState.popBackStack()
         }
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 32.dp)
+                .padding(horizontal = 24.dp)
+                .verticalScroll(scrollState)
         ) {
             HeightSpacer(height = 32.dp)
             ScheduleNameTextField(
@@ -423,14 +427,14 @@ fun TimePickerFieldToModal(
 fun NotifyIcon(isCheck: Boolean = false, onCheck: (Boolean) -> Unit) {
     val notifyInfo = if (isCheck) {
         NotifyInfo(
-            icon = Icons.Outlined.Notifications,
+            icon = MyIconPack.IcNotify,
             containerColor = Primary,
             iconColor = TextWColor,
             content = "알림 ON"
         )
     } else {
         NotifyInfo(
-            icon = Icons.Outlined.NotificationsOff,
+            icon = MyIconPack.IcOffnotify,
             containerColor = TextWColor,
             iconColor = Primary,
             content = "알림 OFF"
