@@ -20,6 +20,6 @@ class LoginRepositoryImpl @Inject constructor(
     }
     override suspend fun signup(name: String, password: String) {
         val user = LoginUserRequest(name = name, password = password)
-        loginApi.signup(user).getOrThrow().data!!
+        loginApi.signup(user).getOrThrow().data
     }
 }
