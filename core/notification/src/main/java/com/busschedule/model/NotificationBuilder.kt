@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.busschedule.notification.R
 import com.busschedule.notification.receiver.NotificationReceiver
 
 class NotificationBuilder(private val notificationManager: NotificationManager) {
@@ -64,16 +63,17 @@ class NotificationBuilder(private val notificationManager: NotificationManager) 
         val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         notification = builder.run {
-            setSmallIcon(androidx.core.R.drawable.notification_bg) // 아이콘 설정
+            setOngoing(true)
+            setSmallIcon(com.busschedule.notification.R.drawable.ic_push_notify) // 아이콘 설정
+            setColor(context.getColor(com.busschedule.notification.R.color.notify_background))
             setContentTitle(title) // 제목
             setContentText(body) // 메시지 내용
             setWhen(System.currentTimeMillis()) // 알림 발생 시간
-            setSmallIcon(R.drawable.ic_push_notify)
+            setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // 잠금 화면에서 알림 보임
             addAction(
                 NotificationCompat.Action.Builder(null, "확인", actionPendingIntent(context)).build()
             )
-            setOngoing(true)
-            setAutoCancel(true)
+//            setAutoCancel(true)
             setSound(soundUri) // 알림 소리
             build()
         }

@@ -111,7 +111,9 @@ fun ScheduleListScreen(
                     }
                 }
             }
-            RefreshIcon { scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek()) }
+            RefreshIcon(modifier = Modifier.padding(bottom = 16.dp, end = 16.dp)) {
+                scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek())
+            }
         }
 
         MainBottomButton(text = "스케줄 등록") { appState.navigate(com.busschedule.navigation.Route.RegisterGraph.RegisterSchedule()) }
@@ -144,11 +146,10 @@ fun DayOfWeekSelectArea(dayOfWeekUi: List<DayOfWeekUi>, requestDaySchedule: (Str
 }
 
 @Composable
-fun BoxScope.RefreshIcon(onClick: () -> Unit) {
+fun BoxScope.RefreshIcon(modifier: Modifier, onClick: () -> Unit) {
     IconButton(
-        modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .padding(bottom = 22.dp),
+        modifier = modifier
+            .align(Alignment.BottomEnd),
         colors = IconButtonDefaults.iconButtonColors(
             containerColor = Primary,
             contentColor = TextWColor

@@ -418,7 +418,6 @@ fun TimePickerFieldToModal(
                         timeSelectorUnselectedContainerColor = Color.White,
                         timeSelectorSelectedContentColor = Primary2,
                         timeSelectorUnselectedContentColor = Primary2,
-
                     )
                 )
 

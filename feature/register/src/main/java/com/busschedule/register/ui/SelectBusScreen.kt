@@ -1,5 +1,6 @@
 package com.busschedule.register.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -80,6 +81,7 @@ fun SelectBusScreen(
     var isShowDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        Log.d("daeyoung", "selectBusScreen: ${busStop}")
         busStop?.let {
             if (it.busStop.isNotEmpty() && it.nodeId.isNotEmpty()) {
                 registerBusScheduleViewModel.fetchFirstReadAllBusStop(it.region, it.busStop)

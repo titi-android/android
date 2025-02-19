@@ -47,8 +47,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendNotification(title: String, body: String, icon: Int) {
-        // 알림 취소 식별값
-        val notificationCode = 1
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

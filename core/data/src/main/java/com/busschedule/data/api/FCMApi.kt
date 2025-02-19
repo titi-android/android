@@ -8,4 +8,6 @@ import retrofit2.http.POST
 interface FCMApi {
     @POST("/api/v1/fcm/tokens")
     suspend fun postFCMToken(@Body request: FCMTokenRequest): DefaultResponse<Unit>
+
+
 }
