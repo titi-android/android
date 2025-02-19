@@ -13,6 +13,8 @@ data class FCMMessage(
 ) {
     fun getTitle() = "$scheduleName | $busStopName"
 
+    private fun secondTOMinute(second: String) = second.toInt() / 60
+
     fun getContent() =
-        "${firstBusName}번 ${firstArrTime}분 (${firstArrPrevStCnt}정거장), ${secondBusName}번 ${secondArrTime}분 (${secondArrPrevStCnt}정거장)"
+        "${firstBusName}번 ${secondTOMinute(firstArrTime)}분 (${firstArrPrevStCnt}정거장), ${secondBusName}번 ${secondTOMinute(secondArrTime)}분 (${secondArrPrevStCnt}정거장)"
 }
