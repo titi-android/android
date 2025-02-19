@@ -8,11 +8,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.busschedule.login.login.ui.LoginScreen
 import com.busschedule.login.signup.ui.SignUpScreen
 import com.busschedule.login.start.ui.AppStartScreen
 import com.busschedule.model.BusStop
-import com.busschedule.model.BusStopType
+import com.busschedule.model.navtype.serializableType
 import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
 import com.busschedule.register.ui.RegisterBusScheduleScreen
@@ -21,7 +22,6 @@ import com.busschedule.register.ui.SelectRegionScreen
 import com.busschedule.setting.ui.AskScreen
 import com.busschedule.setting.ui.SettingScreen
 import com.busschedule.util.state.ApplicationState
-import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
@@ -64,7 +64,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             )
         }
         composable<Route.RegisterGraph.SelectBusStop>(
-            typeMap = mapOf(typeOf<BusStop>() to BusStopType)
+            typeMap = mapOf(typeOf<BusStop?>() to serializableType<BusStop?>(isNullableAllowed = true))
         ) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
@@ -74,11 +74,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             SelectBusScreen(
                 appState = appState,
                 registerBusScheduleViewModel = hiltViewModel(backStackEntry),
-//                busStopInfo = entry.savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStopInfo
-                busStop = entry.savedStateHandle.get<String>("busStop")?.let { str ->
-                    Json.decodeFromString<BusStop>(str)
-                }
-
+                busStop = entry.toRoute<Route.RegisterGraph.SelectBusStop>().busStop
             )
         }
     }

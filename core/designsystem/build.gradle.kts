@@ -4,10 +4,12 @@ plugins {
     id("busSchedule.android.compose.library")
 }
 android {
-//    namespace = "core.designsystem"
     namespace = "com.busschedule.designsystem"
 }
 
 dependencies {
     implementation(libs.androidx.appcompat)
+
+    // lottie
+    implementation(libs.android.lottie.compose)
 }

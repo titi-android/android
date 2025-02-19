@@ -12,6 +12,7 @@ data class ScheduleListUiState(
         )
     },
     val schedules: List<BusScheduleUi> = emptyList(),
+    var isLoading: Boolean = true
 ) {
     fun getSelectedDayOfWeek(): String =
         dayOfWeeks.find { it.isSelected }?.getDayOfWeeks() ?: "월요일"

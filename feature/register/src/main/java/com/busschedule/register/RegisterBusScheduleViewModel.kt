@@ -218,13 +218,14 @@ class RegisterBusScheduleViewModel @Inject constructor(
     }
 
     // 이미 지역이 정해져 있을 때 지도 화면 출력 시 한번 호출하는 함수
-    fun fetchFirstReadAllBusStop(region: String, busStop: String) {
+    fun fetchFirstReadAllBusStop(region: String, busStop: String, changeLoadingState: (Boolean) -> Unit) {
         viewModelScope.launch {
             readAllBusStopUseCase(cityName = region, nodeId = busStop).onSuccess {
                 kakaoMap.removeAndAddLabel(
                     icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
                     labels = it
                 )
+                changeLoadingState(true)
             }.onFailure {}
         }
     }

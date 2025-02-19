@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +39,7 @@ import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.button.MainBottomButton
+import core.designsystem.component.loading.LoadingDialog
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcRefresh
 import core.designsystem.theme.Background
@@ -68,56 +70,61 @@ fun ScheduleListScreen(
             }
         ).awaitAll()
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Background)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-    ) {
-        HeightSpacer(height = 6.dp)
-        ScheduleListAppBar { appState.navigateToSetting() }
-        HeightSpacer(height = 16.dp)
-        DayOfWeekSelectArea(dayOfWeekUi = uiState.dayOfWeeks) {
-            scheduleListViewModel.fetchReadDayOfWeekSchedules(it)
-        }
-        Box(modifier = Modifier.weight(1f)) {
-            val lazyListState = rememberLazyListState()
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 8.dp),
-                state = lazyListState,
-                contentPadding = PaddingValues(top = 8.dp, start = 16.dp, end = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(items = uiState.schedules, key = { it.id }) { schedule ->
-                    val color =
-                        if (schedule.busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busInfos[0].routetp)
-                    ScheduleTicket(
-                        ticketColor = color.color,
-                        holeColor = Background,
-                        schedule = schedule,
-                        ticketT1Color = color.colorT1,
-                        ticketT2Color = color.colorT2,
-                        changeNotifyState = {
-                            schedule.updateAlarm()
-                            scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id) {
+    Surface(modifier = Modifier.fillMaxSize().background(Background)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            HeightSpacer(height = 6.dp)
+            ScheduleListAppBar { appState.navigateToSetting() }
+            HeightSpacer(height = 16.dp)
+            DayOfWeekSelectArea(dayOfWeekUi = uiState.dayOfWeeks) {
+                scheduleListViewModel.fetchReadDayOfWeekSchedules(it)
+            }
+            Box(modifier = Modifier.weight(1f)) {
+                val lazyListState = rememberLazyListState()
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 8.dp),
+                    state = lazyListState,
+                    contentPadding = PaddingValues(top = 8.dp, start = 16.dp, end = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(items = uiState.schedules, key = { it.id }) { schedule ->
+                        val color =
+                            if (schedule.busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busInfos[0].routetp)
+                        ScheduleTicket(
+                            ticketColor = color.color,
+                            holeColor = Background,
+                            schedule = schedule,
+                            ticketT1Color = color.colorT1,
+                            ticketT2Color = color.colorT2,
+                            changeNotifyState = {
                                 schedule.updateAlarm()
-                            }
-                        },
-                        onEdit = { appState.navigateToRegister(schedule.id) }) {
-                        scheduleListViewModel.fetchDeleteSchedules(schedule.id)
+                                scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id) {
+                                    schedule.updateAlarm()
+                                }
+                            },
+                            onEdit = { appState.navigateToRegister(schedule.id) }) {
+                            scheduleListViewModel.fetchDeleteSchedules(schedule.id)
+                        }
                     }
                 }
+                RefreshIcon(modifier = Modifier.padding(bottom = 16.dp, end = 16.dp)) {
+                    scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek())
+                }
             }
-            RefreshIcon(modifier = Modifier.padding(bottom = 16.dp, end = 16.dp)) {
-                scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek())
-            }
-        }
 
-        MainBottomButton(text = "스케줄 등록") { appState.navigate(com.busschedule.navigation.Route.RegisterGraph.RegisterSchedule()) }
+            MainBottomButton(text = "스케줄 등록") { appState.navigate(com.busschedule.navigation.Route.RegisterGraph.RegisterSchedule()) }
+        }
+        if (uiState.isLoading) {
+            LoadingDialog(uiState.isLoading)
+        }
     }
+
 }
 
 

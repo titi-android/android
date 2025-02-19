@@ -10,8 +10,8 @@ android {
 dependencies {
 
     implementation(projects.core.domain)
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:util"))
+    implementation(projects.core.designsystem)
+    implementation(projects.core.util)
     implementation(projects.core.navigation)
     implementation(projects.core.model)
     implementation(projects.core.widget)

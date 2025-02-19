@@ -1,6 +1,7 @@
 plugins {
     id("busSchedule.android.compose.library")
     alias(libs.plugins.kotlin.serialization)
+//    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {

@@ -46,8 +46,11 @@ class ScheduleListViewModel @Inject constructor(
     private val _schedules = MutableStateFlow(emptyList<BusScheduleUi>())
     val schedules: StateFlow<List<BusScheduleUi>> = _schedules.asStateFlow()
 
-    val scheduleListUiState = combine(dayOfWeeks, schedules) { dayOfWeeks, schedules ->
-        ScheduleListUiState(dayOfWeeks, schedules)
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    val scheduleListUiState = combine(dayOfWeeks, schedules, isLoading) { dayOfWeeks, schedules, isLoading ->
+        ScheduleListUiState(dayOfWeeks, schedules, isLoading)
     }
 
     suspend fun initFCMToken() {
@@ -66,6 +69,7 @@ class ScheduleListViewModel @Inject constructor(
         viewModelScope.launch {
             readTodaySchedulesUseCase().onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asDomain() } }
+                _isLoading.update { false }
             }.onFailure {  }
         }
     }

@@ -58,6 +58,7 @@ import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
+import core.designsystem.component.loading.LoadingDialog
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
 import core.designsystem.theme.Background
@@ -79,12 +80,13 @@ fun SelectBusScreen(
     val mapView = remember { MapView(context) }
     var isShowBottomSheet by remember { mutableStateOf(false) }
     var isShowDialog by remember { mutableStateOf(false) }
+    Log.d("daeyoung", "SelectBusScreen: $busStop")
+    var isLoading by remember { mutableStateOf(busStop != null) }
 
-    LaunchedEffect(Unit) {
-        Log.d("daeyoung", "selectBusScreen: ${busStop}")
+    LaunchedEffect(busStop) {
         busStop?.let {
             if (it.busStop.isNotEmpty() && it.nodeId.isNotEmpty()) {
-                registerBusScheduleViewModel.fetchFirstReadAllBusStop(it.region, it.busStop)
+                registerBusScheduleViewModel.fetchFirstReadAllBusStop(it.region, it.busStop) { isLoading = false }
             }
         }
     }
@@ -172,6 +174,9 @@ fun SelectBusScreen(
                 registerBusScheduleViewModel.addDialogAddBusInBusStop()
                 registerBusScheduleViewModel.initDialogAddBus()
             }
+        }
+        if (isLoading) {
+            LoadingDialog(isLoading)
         }
     }
 
