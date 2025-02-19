@@ -9,10 +9,6 @@ android {
 
 dependencies {
 
-    implementation(projects.feature.lock)
-
-//    implementation(platform(libs.firebase.bom))
-//    implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging.ktx)
 
     implementation(libs.androidx.core.ktx)
