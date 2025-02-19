@@ -1,5 +1,3 @@
-import com.example.build_logic.configureCompose
-
 plugins {
     id("busSchedule.android.compose.library")
 }
@@ -12,4 +10,7 @@ dependencies {
 
     // lottie
     implementation(libs.android.lottie.compose)
+    // coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 }

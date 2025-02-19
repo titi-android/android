@@ -16,7 +16,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 @Composable
 fun LoadingBusLottie(isShow: Boolean = false) {
     val preLoaderLottieComposition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(com.busschedule.designsystem.R.raw.loading_bus)
+        LottieCompositionSpec.RawRes(com.busschedule.designsystem.R.raw.loading_bus_coil)
 
     )
     //애니메이션 동작 설정

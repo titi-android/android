@@ -1,5 +1,6 @@
 package com.busschedule.schedulelist.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,7 +40,7 @@ import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.button.MainBottomButton
-import core.designsystem.component.loading.LoadingDialog
+import core.designsystem.component.loading.LoadingOfCoilDialog
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcRefresh
 import core.designsystem.theme.Background
@@ -121,7 +122,7 @@ fun ScheduleListScreen(
             MainBottomButton(text = "스케줄 등록") { appState.navigate(com.busschedule.navigation.Route.RegisterGraph.RegisterSchedule()) }
         }
         if (uiState.isLoading) {
-            LoadingDialog(uiState.isLoading)
+            LoadingOfCoilDialog()
         }
     }
 
