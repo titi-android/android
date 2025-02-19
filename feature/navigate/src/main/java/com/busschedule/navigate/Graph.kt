@@ -75,7 +75,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
                 appState = appState,
                 registerBusScheduleViewModel = hiltViewModel(backStackEntry),
 //                busStopInfo = entry.savedStateHandle.toRoute<Route.RegisterGraph.SelectBusStop>().busStopInfo
-                busStop = entry.savedStateHandle.get<String>("busStopInfo")?.let { str ->
+                busStop = entry.savedStateHandle.get<String>("busStop")?.let { str ->
                     Json.decodeFromString<BusStop>(str)
                 }
 
