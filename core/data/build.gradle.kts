@@ -1,7 +1,14 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("busSchedule.android.library")
     id("busSchedule.android.hilt")
     alias(libs.plugins.kotlin.serialization)
+}
+
+val localProperties = Properties().apply {
+    load(FileInputStream(rootProject.file("local.properties")))
 }
 
 android {
@@ -10,7 +17,7 @@ android {
         buildConfig = true
     }
     defaultConfig {
-        buildConfigField("String", "BASE_URL", "\"http://3.34.0.32:8080\"")
+        buildConfigField("String", "BASE_URL", "\"" + localProperties.getProperty("BASE_URL") + "\"")
     }
 }
 
