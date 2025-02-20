@@ -4,8 +4,10 @@ import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -18,7 +20,7 @@ import coil.size.Size
 import com.busschedule.designsystem.R
 
 @Composable
-fun LoadingBusCoil() {
+fun BoxScope.LoadingBusCoil() {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .components {
@@ -37,7 +39,7 @@ fun LoadingBusCoil() {
     Image(
         painter = painter,
         contentDescription = "loading_of_coil",
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(0.5f).align(Alignment.Center)
     )
 }
 
