@@ -2,7 +2,7 @@ package com.busschedule.login.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.busschedule.domain.usecase.login.LoginUseCase
+import com.busschedule.domain.usecase.user.LoginUseCase
 import com.busschedule.login.entity.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

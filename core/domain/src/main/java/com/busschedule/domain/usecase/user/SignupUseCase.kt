@@ -1,12 +1,12 @@
-package com.busschedule.domain.usecase.login
+package com.busschedule.domain.usecase.user
 
 import com.busschedule.common.runCatchingIgnoreCancelled
-import com.busschedule.domain.repository.LoginRepository
+import com.busschedule.domain.repository.UserRepository
 import javax.inject.Inject
 
-class SignupUseCase @Inject constructor(private val loginRepository: LoginRepository) {
+class SignupUseCase @Inject constructor(private val userRepository: UserRepository) {
     //    operator fun invoke(loginUser: LoginUser) = loginRepository.signup(loginUser)
     suspend operator fun invoke(name: String, password: String) = runCatchingIgnoreCancelled {
-        loginRepository.signup(name, password)
+        userRepository.signup(name, password)
     }
 }
