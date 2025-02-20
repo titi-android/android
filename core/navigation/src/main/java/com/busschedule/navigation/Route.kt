@@ -35,6 +35,8 @@ sealed interface Route {
 @Serializable
 sealed interface LoginGraph: Route {
     @Serializable
+    data object Splash: LoginGraph
+    @Serializable
     data object Start: LoginGraph
     @Serializable
     data object Login: LoginGraph

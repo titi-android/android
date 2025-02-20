@@ -27,7 +27,8 @@ fun RootNavHost(route: String) {
 //    }
     val initRoute: Route = when(route) {
         "Register" -> Route.RegisterGraph
-        else -> LoginGraph.Start
+        "Start" -> LoginGraph.Start
+        else -> LoginGraph.Splash
 
     }
 

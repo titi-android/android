@@ -204,7 +204,12 @@ private fun UnauthorizedToken() {
             modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 16.dp),
         ) {
             Row(
-                modifier = GlanceModifier.clickable(actionStartActivity(intent)),
+                modifier = GlanceModifier.clickable(
+                    actionStartActivity(
+                        intent = intent,
+                        parameters = actionParametersOf(destinationKey to "Start"),
+                    ),
+                ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "로그인 하러 가기", style = rFooter)

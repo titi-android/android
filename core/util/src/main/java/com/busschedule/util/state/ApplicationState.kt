@@ -71,6 +71,10 @@ class ApplicationState(
         navController.navigate(route)
     }
 
+    fun navigateToStart() {
+        navController.navigate(LoginGraph.Start)
+    }
+
     fun navigateToLogin() {
         navController.navigate(LoginGraph.Login)
     }

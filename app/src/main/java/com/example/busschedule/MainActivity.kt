@@ -1,7 +1,6 @@
 package com.example.busschedule
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,9 +17,7 @@ class MainActivity : ComponentActivity() {
 
         // Widget으로 받은 route 값
         val route = intent.extras?.getString(Constants.WIDGET_NAVIGATE_ROUTE_OF_MAINACTIVITY)
-            ?: "Start"
-
-        Log.d("daeyoung", "mainActivity, route: $route")
+            ?: "Splash"
 
         enableEdgeToEdge()
         setContent {

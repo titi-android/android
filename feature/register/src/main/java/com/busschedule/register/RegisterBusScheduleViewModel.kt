@@ -192,6 +192,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
     }
 
     private fun updateWidget() {
+        Log.d("daeyoung", "업데이트 위젯")
         WorkManager.getInstance(context).enqueue(
             OneTimeWorkRequestBuilder<ScheduleWorker>().build()
         )

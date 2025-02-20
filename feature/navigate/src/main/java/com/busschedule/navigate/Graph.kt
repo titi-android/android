@@ -11,6 +11,7 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.busschedule.login.login.ui.LoginScreen
 import com.busschedule.login.signup.ui.SignUpScreen
+import com.busschedule.login.splash.ui.SplashScreen
 import com.busschedule.login.start.ui.AppStartScreen
 import com.busschedule.model.BusStop
 import com.busschedule.model.navtype.serializableType
@@ -19,23 +20,25 @@ import com.busschedule.navigation.Route
 import com.busschedule.register.ui.RegisterBusScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
-import com.busschedule.setting.ui.ask.ui.AskScreen
 import com.busschedule.setting.ui.SettingScreen
+import com.busschedule.setting.ui.ask.ui.AskScreen
 import com.busschedule.util.state.ApplicationState
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
 //    navigation<Route.LoginGraph>(startDestination = Route.LoginGraph.Login) {
-        composable<LoginGraph.Start> {
-            AppStartScreen(appState)
-        }
-
-        composable<LoginGraph.Login> {
-            LoginScreen(appState)
-        }
-        composable<LoginGraph.Signup> {
-            SignUpScreen(appState = appState)
-        }
+    composable<LoginGraph.Splash> {
+        SplashScreen(navigateToStart = {appState.navigateToStart()})
+    }
+    composable<LoginGraph.Start> {
+        AppStartScreen(appState)
+    }
+    composable<LoginGraph.Login> {
+        LoginScreen(appState)
+    }
+    composable<LoginGraph.Signup> {
+        SignUpScreen(appState = appState)
+    }
 //    }
 }
 
