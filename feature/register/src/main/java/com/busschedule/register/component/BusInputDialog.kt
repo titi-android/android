@@ -22,6 +22,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +39,7 @@ import core.designsystem.component.button.MainButton
 import core.designsystem.component.button.MainOutlineButton
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcInfomationCircle
+import core.designsystem.theme.ErrorColor
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextBoxDis
 import core.designsystem.theme.TextMColor
@@ -67,7 +72,11 @@ fun BusInputDialog(
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                LazyColumn(modifier = Modifier.wrapContentHeight().heightIn(max = 300.dp)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .heightIn(max = 300.dp)
+                ) {
                     stickyHeader {
                         BusAddTextField(
                             value = uiState.input,
@@ -122,7 +131,12 @@ fun BusInputDialog(
 }
 
 @Composable
-fun BusAddTextField(value: String, onValueChange: (String) -> Unit, addBus: () -> Unit) {
+fun BusAddTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    addBus: () -> Unit,
+) {
+    var isError by remember { mutableStateOf(false) }
     OutlinedTextField(
         value = value,
         onValueChange = { onValueChange(it) },
@@ -130,20 +144,36 @@ fun BusAddTextField(value: String, onValueChange: (String) -> Unit, addBus: () -
         placeholder = {
             Text(text = "버스 번호 입력", style = rTextBox.copy(TextBoxDis))
         },
+        supportingText = if (isError) {{ Text(text = "공백은 추가할 수 없습니다.") }} else null,
+        // if (isError) { Text(text = "공백은 추가할 수 없습니다.") } else { null }
+        isError = isError,
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = Color(0xFFD9D9D9),
             unfocusedBorderColor = Color(0xFFD9D9D9),
             focusedContainerColor = TextWColor,
             unfocusedContainerColor = TextWColor,
+            errorSupportingTextColor = ErrorColor,
+            focusedSupportingTextColor = Color.Transparent,
+            unfocusedSupportingTextColor = Color.Transparent,
+            cursorColor = Primary,
         ),
+        maxLines = 1,
+        singleLine = true,
         textStyle = rTextBox.copy(TextBoxDis),
         trailingIcon = {
             Icon(
                 imageVector = Icons.Rounded.Add,
                 contentDescription = "ic_add",
                 tint = Primary,
-                modifier = Modifier.clickable { addBus() })
+                modifier = Modifier.clickable {
+                    if (value.isBlank()) {
+                        isError = true
+                    } else {
+                        isError = false
+                        addBus()
+                    }
+                })
         }
     )
 }
