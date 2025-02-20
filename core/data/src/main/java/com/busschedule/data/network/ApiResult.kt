@@ -1,5 +1,6 @@
 package com.busschedule.data.network
 
+import com.busschedule.model.exception.AccessTokenIllegalArgumentException
 import com.busschedule.model.exception.ForbiddenException
 import com.busschedule.model.exception.NetworkException
 import com.busschedule.model.exception.NotFoundException
@@ -95,6 +96,7 @@ private fun handleScheduleError(httpStatusCode: String, scheduleErrorResponse: S
 
 private fun handleNonScheduleError(httpStatusCode: String) = when (httpStatusCode) {
     "400" -> RequestFailException()
+    "401" -> AccessTokenIllegalArgumentException()
     "403" -> ForbiddenException()
     "404" -> NotFoundException()
     "500", "501", "502", "503", "504", "505" -> NetworkException()

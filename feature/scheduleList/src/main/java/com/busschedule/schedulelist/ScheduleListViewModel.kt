@@ -1,7 +1,10 @@
 package com.busschedule.schedulelist
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.busschedule.datastore.TokenManager
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
@@ -13,8 +16,10 @@ import com.busschedule.schedulelist.model.ScheduleListUiState
 import com.busschedule.schedulelist.model.asDomain
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.widget.widget.worker.ScheduleWorker
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleListViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val readTodaySchedulesUseCase: ReadTodaySchedulesUseCase,
     private val readDaysSchedulesUseCase: ReadDaysSchedulesUseCase,
     private val deleteScheduleUseCase: DeleteScheduleUseCase,
@@ -65,6 +71,12 @@ class ScheduleListViewModel @Inject constructor(
         }
     }
 
+    private fun updateWidget() {
+        WorkManager.getInstance(context).enqueue(
+            OneTimeWorkRequestBuilder<ScheduleWorker>().build()
+        )
+    }
+
     fun fetchReadTodaySchedules() {
         viewModelScope.launch {
             readTodaySchedulesUseCase().onSuccess { schedules ->
@@ -86,6 +98,7 @@ class ScheduleListViewModel @Inject constructor(
         viewModelScope.launch {
             deleteScheduleUseCase(scheduleId).onSuccess {
                 _schedules.update { schedule -> schedule.filter { it.id != scheduleId } }
+                updateWidget()
             }.onFailure {  }
         }
     }

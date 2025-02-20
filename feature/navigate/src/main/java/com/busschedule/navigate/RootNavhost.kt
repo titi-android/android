@@ -5,10 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.busschedule.navigation.LoginGraph
+import com.busschedule.navigation.Route
 import com.busschedule.util.remember.rememberApplicationState
 
 @Composable
-fun RootNavHost() {
+fun RootNavHost(route: String) {
     val appState = rememberApplicationState()
 //    val navBackStackEntry by appState.getNavController().currentBackStackEntryAsState()
 
@@ -24,9 +25,16 @@ fun RootNavHost() {
 //            registerBusScheduleGraph(appState)
 //        }
 //    }
+    val initRoute: Route = when(route) {
+        "Register" -> Route.RegisterGraph
+        else -> LoginGraph.Start
+
+    }
+
     NavHost(
         navController = appState.getNavController(),
-        startDestination = LoginGraph.Start,
+        startDestination = initRoute,
+//        startDestination = LoginGraph.Start,
         modifier = Modifier
             .fillMaxSize()
     ) {

@@ -312,7 +312,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 nodeId = selectBusStopInfoUI.value?.nodeId ?: "",
                 busInfos = selectBusStopInfoUI.value?.getBuses() ?: emptyList(),
                 isAlarmOn = isNotify.value
-            ).onSuccess { onSuccess() }.onFailure { onFail(it.message!!) }
+            ).onSuccess {
+                onSuccess()
+                updateWidget()
+            }.onFailure { onFail(it.message!!) }
         }
     }
 

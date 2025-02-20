@@ -16,6 +16,7 @@ import androidx.work.WorkerParameters
 import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.usecase.schedule.ReadNowScheduleUseCase
 import com.busschedule.model.exception.AccessTokenExpiredException
+import com.busschedule.model.exception.AccessTokenIllegalArgumentException
 import com.busschedule.widget.widget.ScheduleGlanceWidget
 import com.busschedule.widget.widget.ScheduleInfo
 import com.busschedule.widget.widget.ScheduleStateDefinition
@@ -81,16 +82,17 @@ class ScheduleWorker @AssistedInject constructor(
     }
 
     private fun getExceptionWidgetState(e: Throwable): ScheduleInfo.Unavailable {
-        Log.d("daeyoung","e: ${e}")
+        Log.d("daeyoung", "e: ${e}")
         return when (e) {
             is AccessTokenExpiredException -> ScheduleInfo.Unavailable.JWT401
+            is AccessTokenIllegalArgumentException -> ScheduleInfo.Unavailable.JWT401
             else -> ScheduleInfo.Unavailable.UnExpected
         }
     }
 
     private fun getSuccessWidgetState(schedule: BusSchedule?): ScheduleInfo {
         if (schedule == null) {
-            return  ScheduleInfo.Unavailable.DataIsNull
+            return ScheduleInfo.Unavailable.DataIsNull
         }
         return schedule.toWidgetState()
     }

@@ -33,7 +33,6 @@ import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.component.ScheduleListAppBar
 import com.busschedule.schedulelist.component.ScheduleTicket
 import com.busschedule.schedulelist.model.ScheduleListUiState
-import com.busschedule.util.constant.Constants
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
@@ -65,7 +64,7 @@ fun ScheduleListScreen(
             async {
                 while (true) {
                     scheduleListViewModel.fetchReadTodaySchedules()
-                    delay(Constants.MINUTE_1)
+                    delay(com.busschedule.common.constant.Constants.MINUTE_1)
                 }
             }
         ).awaitAll()

@@ -47,6 +47,7 @@ dependencies {
     implementation(projects.core.datastore)
     implementation(projects.core.notification)
     implementation(projects.core.widget)
+    implementation(projects.core.common)
     implementation(libs.firebase.messaging.ktx)
 
     // work

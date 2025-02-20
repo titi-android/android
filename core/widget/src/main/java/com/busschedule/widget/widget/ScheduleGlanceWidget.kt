@@ -1,15 +1,21 @@
 package com.busschedule.widget.widget
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
@@ -26,12 +32,17 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.Text
+import com.busschedule.common.constant.Constants
 import com.busschedule.model.BusType
 import com.busschedule.widget.R
 import com.busschedule.widget.designsystem.style.TextBlackColor
 import com.busschedule.widget.designsystem.style.TextColor
 import com.busschedule.widget.designsystem.style.rFooter
 import com.busschedule.widget.designsystem.style.sbTitle3
+
+private val destinationKey = ActionParameters.Key<String>(
+    Constants.WIDGET_NAVIGATE_ROUTE_OF_MAINACTIVITY
+)
 
 class ScheduleGlanceWidget : GlanceAppWidget() {
 
@@ -169,6 +180,11 @@ private fun Unavailable() {
 private fun UnauthorizedToken() {
     val busImage = R.drawable.image_graybus
     val backgroundColor = BusType.지정.color
+    val context = LocalContext.current
+    val intent = Intent().setComponent(
+        ComponentName(context.packageName, "com.example.busschedule.MainActivity")
+    )
+
     Box(
         modifier = GlanceModifier.fillMaxSize()
             .background(backgroundColor).padding(bottom = 16.dp),
@@ -187,7 +203,10 @@ private fun UnauthorizedToken() {
         Column(
             modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 16.dp),
         ) {
-            Row {
+            Row(
+                modifier = GlanceModifier.clickable(actionStartActivity(intent)),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(text = "로그인 하러 가기", style = rFooter)
                 Spacer(GlanceModifier.width(4.dp))
                 Image(
@@ -207,13 +226,53 @@ private fun UnauthorizedToken() {
 
 @Composable
 private fun NotExistSchedule() {
+    val busImage = R.drawable.image_graybus
+    val backgroundColor = BusType.지정.color
+    val context = LocalContext.current
+    val intent = Intent().setComponent(
+        ComponentName(context.packageName, "com.example.busschedule.MainActivity")
+    )
     Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(TextColor),
-        contentAlignment = Alignment.Center,
+        modifier = GlanceModifier.fillMaxSize()
+            .background(backgroundColor).padding(bottom = 16.dp),
+        contentAlignment = Alignment.BottomCenter
     ) {
-        Text(text = "오늘 스케줄이 없음", style = sbTitle3.copy(TextBlackColor))
+        Box(
+            modifier = GlanceModifier.fillMaxSize().padding(end = 16.dp, top = 10.dp),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            Image(
+                provider = ImageProvider(busImage),
+                contentDescription = "iamge_bus",
+                modifier = GlanceModifier.size(130.dp)
+            )
+        }
+        Column(
+            modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 16.dp),
+        ) {
+            Row(
+                modifier = GlanceModifier.clickable(
+                    actionStartActivity(
+                        intent = intent,
+                        parameters = actionParametersOf(destinationKey to "Register"),
+                    ),
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "등록 하러 가기", style = rFooter)
+                Spacer(GlanceModifier.width(4.dp))
+                Image(
+                    provider = ImageProvider(R.drawable.ic_next_arrow),
+                    contentDescription = "ic_next_arrow",
+                    modifier = GlanceModifier.size(12.dp)
+                )
+            }
+
+            Spacer(GlanceModifier.height(4.dp))
+            Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
+                Text(text = "예정된 스케줄이\n없습니다.", style = sbTitle3)
+            }
+        }
     }
 }
 

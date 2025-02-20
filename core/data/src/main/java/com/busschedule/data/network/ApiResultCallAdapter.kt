@@ -26,7 +26,6 @@ private class ApiResultCall<R>(
     override fun enqueue(callback: Callback<ApiResult<R>>) = delegate.enqueue(
         object : Callback<R> {
             override fun onResponse(call: Call<R>, response: Response<R>) {
-                Log.d("daeyoung", "Server Response: ${response.body()}")
                 callback.onResponse(this@ApiResultCall, Response.success(response.toApiResult()))
             }
 
@@ -67,7 +66,6 @@ private class ApiResultCall<R>(
             }
 
             override fun onFailure(call: Call<R>, throwable: Throwable) {
-                Log.d("daeyoung", "onFailure, call: ${call}, throwable : ${throwable}")
                 val error = if (throwable is IOException) {
                     ApiResult.Failure.NetworkError(throwable)
                 } else {
