@@ -21,6 +21,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navigateToStart: () -> Unit) {
 
+
     LaunchedEffect(Unit) {
         delay(1500L)
         navigateToStart()
