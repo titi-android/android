@@ -16,6 +16,11 @@ dependencyResolutionManagement {
     }
 }
 
+//  Android build fail - Unable to make progress running work. 오류 해결
+gradle.startParameter.excludedTaskNames.addAll(
+    listOf(":build-logic:testClasses")
+)
+
 rootProject.name = "BusSchedule"
 include(":app")
 include(":feature")

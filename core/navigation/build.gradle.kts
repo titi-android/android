@@ -5,7 +5,6 @@ plugins {
 
 android {
     namespace = "com.busschedule.navigation"
-
 }
 
 dependencies {
