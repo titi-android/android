@@ -76,7 +76,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             )
             SelectBusScreen(
                 appState = appState,
-                registerBusScheduleViewModel = hiltViewModel(backStackEntry),
+                viewModel = hiltViewModel(backStackEntry),
                 busStop = entry.toRoute<Route.RegisterGraph.SelectBusStop>().busStop
             )
         }

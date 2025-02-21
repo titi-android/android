@@ -1,6 +1,5 @@
 package com.busschedule.register.ui
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -71,10 +70,10 @@ import core.designsystem.theme.rFooter
 @Composable
 fun SelectBusScreen(
     appState: ApplicationState,
-    registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
     busStop: BusStop?,
 ) {
-    val uiState by registerBusScheduleViewModel.busStopInput.collectAsStateWithLifecycle()
+    val uiState by viewModel.busStopInput.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
@@ -85,7 +84,11 @@ fun SelectBusScreen(
     LaunchedEffect(busStop) {
         busStop?.let {
             if (it.busStop.isNotEmpty() && it.nodeId.isNotEmpty()) {
-                registerBusScheduleViewModel.fetchFirstReadAllBusStop(it.region, it.busStop) { isLoading = false }
+                viewModel.fetchFirstReadAllBusStop(
+                    it.region,
+                    it.busStop,
+                    changeLoadingState = { isLoading = false }
+                ) {appState.showToastMsg(it)}
             }
         }
     }
@@ -101,10 +104,10 @@ fun SelectBusScreen(
             BackArrowAppBar(title = "버스 정류장 검색") { appState.popBackStack() }
             SearchTextField(
                 value = uiState,
-                onValueChange = { registerBusScheduleViewModel.updateBusStopInput(it) },
+                onValueChange = { viewModel.updateBusStopInput(it) },
                 placeholder = "버스 정류장 검색"
             ) {
-                registerBusScheduleViewModel.fetchReadAllBusStop(uiState)
+                viewModel.fetchReadAllBusStop(uiState) {appState.showToastMsg(it)}
                 isShowBottomSheet = false
             }
             HeightSpacer(height = 16.dp)
@@ -128,7 +131,7 @@ fun SelectBusScreen(
                             object : KakaoMapReadyCallback() {
                                 override fun onMapReady(kakaoMap: KakaoMap) {
                                     val kakaoMapObject =
-                                        registerBusScheduleViewModel.initKakaoMap(kakaoMap)
+                                        viewModel.initKakaoMap(kakaoMap)
 
                                     kakaoMap.setOnLabelClickListener { kakaoMap, labelLayer, label ->
                                         val busStopInfo = kakaoMapObject.findBusStop(
@@ -136,10 +139,11 @@ fun SelectBusScreen(
                                             lat = label.position.latitude,
                                             lng = label.position.longitude
                                         )
-                                        registerBusScheduleViewModel.fetchReadAllBusOfBusStop(
+                                        viewModel.fetchReadAllBusOfBusStop(
                                             busStopName = label.texts.first(),
-                                            nodeId = busStopInfo.nodeId
-                                        ) { isShowBottomSheet = true }
+                                            nodeId = busStopInfo.nodeId,
+                                            onSuccess = { isShowBottomSheet = true }
+                                        ) {appState.showToastMsg(it)}
                                         kakaoMapObject.moveCamera(label.position, isUpCamera = true)
                                         false
                                     }
@@ -151,27 +155,27 @@ fun SelectBusScreen(
         }
         if (isShowBottomSheet) {
             BusesBottomSheet(
-                selectedBusUi = registerBusScheduleViewModel.busStop.collectAsStateWithLifecycle().value,
+                selectedBusUi = viewModel.busStop.collectAsStateWithLifecycle().value,
                 addBus = { isShowDialog = true }) {
-                registerBusScheduleViewModel.addBusStopInSelectBusStopInfo { appState.popBackStackRegister() }
+                viewModel.addBusStopInSelectBusStopInfo { appState.popBackStackRegister() }
             }
         }
         if (isShowDialog) {
-            val dialogUiState by registerBusScheduleViewModel.addBusDialogUiState.collectAsStateWithLifecycle(
+            val dialogUiState by viewModel.addBusDialogUiState.collectAsStateWithLifecycle(
                 initialValue = AddBusDialogUiState()
             )
             BusInputDialog(
                 uiState = dialogUiState,
-                updateInput = { registerBusScheduleViewModel.updateAddBusInput(it) },
-                addBus = { registerBusScheduleViewModel.addDialogAddBus { appState.showToastMsg(it) } },
+                updateInput = { viewModel.updateAddBusInput(it) },
+                addBus = { viewModel.addDialogAddBus { appState.showToastMsg(it) } },
                 onDismissRequest = {
                     isShowDialog = false
-                    registerBusScheduleViewModel.initDialogAddBus()
+                    viewModel.initDialogAddBus()
                 },
                 onCancel = { isShowDialog = false }) {
                 isShowDialog = false
-                registerBusScheduleViewModel.addDialogAddBusInBusStop()
-                registerBusScheduleViewModel.initDialogAddBus()
+                viewModel.addDialogAddBusInBusStop()
+                viewModel.initDialogAddBus()
             }
         }
         if (isLoading) {

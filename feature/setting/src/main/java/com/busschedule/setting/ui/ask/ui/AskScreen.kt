@@ -79,7 +79,7 @@ fun AskScreen(appState: ApplicationState, viewModel: AskViewModel = hiltViewMode
             )
         }
         MainBottomButton(text = "보내기") {
-            viewModel.fetchPostInquiry(showToastMsg = appState::showToastMsg) {
+            viewModel.fetchPostInquiry(showToast = appState::showToastMsg) {
                 appState.navigateToSetting()
             }
         }

@@ -46,6 +46,7 @@ class SignUpViewModel  @Inject constructor(
         viewModelScope.launch {
             signupUseCase(name = id, password = pw).onSuccess {
                 showToast("로그인에 성공했습니다.")
+                navigateToLogin()
             }.onFailure {
                 showToast(it.message!!)
             }

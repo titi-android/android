@@ -47,9 +47,7 @@ fun SignUpScreen(appState: ApplicationState, viewModel: SignUpViewModel = hiltVi
         viewModel.fetchSignup(
             id = uiState.inputId,
             pw = uiState.inputPw,
-            showToast = {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }) { appState.navigateToLogin() }
+            showToast = { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }) { appState.navigateToLogin() }
     }
     val scrollState = rememberScrollState()
 

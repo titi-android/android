@@ -77,29 +77,29 @@ class ScheduleListViewModel @Inject constructor(
         )
     }
 
-    fun fetchReadTodaySchedules() {
+    fun fetchReadTodaySchedules(showToast: (String) -> Unit) {
         viewModelScope.launch {
             readTodaySchedulesUseCase().onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asDomain() } }
                 _isLoading.update { false }
-            }.onFailure {  }
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
-    fun fetchReadDayOfWeekSchedules(dayOfWeek: String) {
+    fun fetchReadDayOfWeekSchedules(dayOfWeek: String, showToast: (String) -> Unit) {
         viewModelScope.launch {
             readDaysSchedulesUseCase(dayOfWeek).onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asDomain() } }
-            }
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
-    fun fetchDeleteSchedules(scheduleId: Int) {
+    fun fetchDeleteSchedules(scheduleId: Int, showToast: (String) -> Unit) {
         viewModelScope.launch {
             deleteScheduleUseCase(scheduleId).onSuccess {
                 _schedules.update { schedule -> schedule.filter { it.id != scheduleId } }
                 updateWidget()
-            }.onFailure {  }
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
@@ -107,9 +107,11 @@ class ScheduleListViewModel @Inject constructor(
         viewModelScope.launch { postFCMTokenUseCase(token) }
     }
 
-    fun fetchPutScheduleAlarm(scheduleId: Int, updateAlarm: () -> Unit) {
+    fun fetchPutScheduleAlarm(scheduleId: Int, updateAlarm: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {
-            putScheduleAlarmUseCase(scheduleId).onSuccess { updateAlarm() }.onFailure {  }
+            putScheduleAlarmUseCase(scheduleId).onSuccess { updateAlarm() }.onFailure {
+                showToast(it.message!!)
+            }
 
         }
     }

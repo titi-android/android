@@ -1,7 +1,7 @@
 package com.busschedule.register
 
 import android.content.Context
-import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -123,7 +123,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
     lateinit var kakaoMap: KakaoMapObject
 
     init {
-        if (scheduleId != null) viewModelScope.launch { fetchReadSchedule(scheduleId) }
+        if (scheduleId != null) viewModelScope.launch {
+            fetchReadSchedule(scheduleId) { showToastMsg(it) }
+        }
     }
 
     fun updateScheduleName(name: String) {
@@ -191,14 +193,17 @@ class RegisterBusScheduleViewModel @Inject constructor(
         return kakaoMap
     }
 
+    fun showToastMsg(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
     private fun updateWidget() {
-        Log.d("daeyoung", "업데이트 위젯")
         WorkManager.getInstance(context).enqueue(
             OneTimeWorkRequestBuilder<ScheduleWorker>().build()
         )
     }
 
-    private fun fetchPostBusSchedule(onSuccess: () -> Unit, onFail: (String) -> Unit) {
+    private fun fetchPostBusSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {
             postScheduleUseCase(
                 name = scheduleName.value,
@@ -213,13 +218,19 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 isAlarmOn = isNotify.value
             ).onSuccess {
                 onSuccess()
+                showToast("스케줄을 등록했습니다.")
                 updateWidget()
-            }.onFailure {}
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
     // 이미 지역이 정해져 있을 때 지도 화면 출력 시 한번 호출하는 함수
-    fun fetchFirstReadAllBusStop(region: String, busStop: String, changeLoadingState: (Boolean) -> Unit) {
+    fun fetchFirstReadAllBusStop(
+        region: String,
+        busStop: String,
+        changeLoadingState: (Boolean) -> Unit,
+        showToast: (String) -> Unit,
+    ) {
         viewModelScope.launch {
             readAllBusStopUseCase(cityName = region, nodeId = busStop).onSuccess {
                 kakaoMap.removeAndAddLabel(
@@ -227,11 +238,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
                     labels = it
                 )
                 changeLoadingState(true)
-            }.onFailure {}
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
-    fun fetchReadAllBusStop(busStopName: String) {
+    fun fetchReadAllBusStop(busStopName: String, showToast: (String) -> Unit) {
         viewModelScope.launch {
             readAllBusStopUseCase(
                 cityName = cityOfRegion.value.getSelectedCityName(),
@@ -243,19 +254,22 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         labels = busStop
                     )
                 }
-            }.onFailure {}
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
-    fun fetchReadAllBusOfBusStop(busStopName: String, nodeId: String, onSuccess: () -> Unit) {
+    fun fetchReadAllBusOfBusStop(
+        busStopName: String,
+        nodeId: String,
+        onSuccess: () -> Unit,
+        showToast: (String) -> Unit,
+    ) {
         viewModelScope.launch {
-            Log.d("daeyoung", "before busstop: ${busStop.value}")
             _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
             readAllBusOfBusStopUseCase(
                 cityName = cityOfRegion.value.getSelectedCityName(),
                 busStopId = nodeId
             ).onSuccess { busInfos ->
-                Log.d("daeyoung", "after busstop: ${busStop.value}")
                 _busStop.update { selectedBusUI ->
                     selectedBusUI.copy(buses = busInfos.map { bus ->
                         Bus(
@@ -266,11 +280,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
                     })
                 }
                 onSuccess()
-            }.onFailure { Log.d("daeyoung", it.message.toString()) }
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
-    private fun fetchReadSchedule(scheduleId: Int) {
+    private fun fetchReadSchedule(scheduleId: Int, showToast: (String) -> Unit) {
         viewModelScope.launch {
             readScheduleUseCase(scheduleId).onSuccess { scheduleRegister ->
                 scheduleRegister.also { res ->
@@ -295,11 +309,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         )
                     }
                 }
-            }.onFailure {}
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
-    private fun fetchPutSchedule(onSuccess: () -> Unit, onFail: (String) -> Unit) {
+    private fun fetchPutSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {
             putScheduleUseCase(
                 scheduleId = scheduleId!!,
@@ -315,21 +329,21 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 isAlarmOn = isNotify.value
             ).onSuccess {
                 onSuccess()
+                showToast("스케줄을 수정했습니다.")
                 updateWidget()
-            }.onFailure { onFail(it.message!!) }
+            }.onFailure { showToast(it.message!!) }
         }
     }
 
     fun putOrPostSchedule(
         onSuccessOfPut: () -> Unit,
-        onFailOfPut: (String) -> Unit,
         onSuccessOfPost: () -> Unit,
-        onFailOfPost: (String) -> Unit,
+        showToast: (String) -> Unit,
     ) {
         if (scheduleId != null) {
-            fetchPutSchedule(onSuccess = { onSuccessOfPut() }) { onFailOfPut(it) }
+            fetchPutSchedule(onSuccess = { onSuccessOfPut() }) { showToast(it) }
             return
         }
-        fetchPostBusSchedule(onSuccess = { onSuccessOfPost() }) { onFailOfPost(it) }
+        fetchPostBusSchedule(onSuccess = { onSuccessOfPost() }) { showToast(it) }
     }
 }

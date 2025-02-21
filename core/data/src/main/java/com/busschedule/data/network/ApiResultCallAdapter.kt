@@ -66,6 +66,7 @@ private class ApiResultCall<R>(
             }
 
             override fun onFailure(call: Call<R>, throwable: Throwable) {
+                Log.d("ApiResultCall", "onFailure: $throwable")
                 val error = if (throwable is IOException) {
                     ApiResult.Failure.NetworkError(throwable)
                 } else {

@@ -38,12 +38,12 @@ class AskViewModel @Inject constructor(
         _content.update { content }
     }
 
-    fun fetchPostInquiry(showToastMsg: (String) -> Unit, navigateToSetting: () -> Unit) {
+    fun fetchPostInquiry(showToast: (String) -> Unit, navigateToSetting: () -> Unit) {
         viewModelScope.launch {
             postInquiryUseCase(title.value, content.value).onSuccess {
-                showToastMsg("메일 보내기 성공")
+                showToast("메일 보내기 성공")
                 navigateToSetting()
-            }.onFailure { showToastMsg(it.message!!) }
+            }.onFailure { showToast(it.message!!) }
         }
     }
 }

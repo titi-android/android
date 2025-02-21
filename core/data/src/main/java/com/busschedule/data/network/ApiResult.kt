@@ -22,8 +22,8 @@ sealed interface ApiResult<out T> {
             when (this) {
                 is HttpError -> handleHttpError(this)
                 is FailError -> handleFailError(this)
-                is NetworkError -> throwable
-                is UnknownApiError -> throwable
+                is NetworkError -> NetworkException()
+                is UnknownApiError -> UnknownException(throwable.message!!)
             }
     }
 

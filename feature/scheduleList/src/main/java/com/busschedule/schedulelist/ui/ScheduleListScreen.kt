@@ -65,13 +65,17 @@ fun ScheduleListScreen(
             async { scheduleListViewModel.initFCMToken() },
             async {
                 while (true) {
-                    scheduleListViewModel.fetchReadTodaySchedules()
+                    scheduleListViewModel.fetchReadTodaySchedules { appState.showToastMsg(it) }
                     delay(com.busschedule.common.constant.Constants.MINUTE_1)
                 }
             }
         ).awaitAll()
     }
-    Surface(modifier = Modifier.fillMaxSize().background(Background)) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Background)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -82,7 +86,7 @@ fun ScheduleListScreen(
             ScheduleListAppBar { appState.navigateToSetting() }
             HeightSpacer(height = 16.dp)
             DayOfWeekSelectArea(dayOfWeekUi = uiState.dayOfWeeks) {
-                scheduleListViewModel.fetchReadDayOfWeekSchedules(it)
+                scheduleListViewModel.fetchReadDayOfWeekSchedules(it) { appState.showToastMsg(it) }
             }
             Box(modifier = Modifier.weight(1f)) {
                 val lazyListState = rememberLazyListState()
@@ -105,17 +109,26 @@ fun ScheduleListScreen(
                             ticketT2Color = color.colorT2,
                             changeNotifyState = {
                                 schedule.updateAlarm()
-                                scheduleListViewModel.fetchPutScheduleAlarm(scheduleId = schedule.id) {
-                                    schedule.updateAlarm()
-                                }
+                                scheduleListViewModel.fetchPutScheduleAlarm(
+                                    scheduleId = schedule.id,
+                                    updateAlarm = { schedule.updateAlarm() }
+                                ) { appState.showToastMsg(it) }
                             },
                             onEdit = { appState.navigateToRegister(schedule.id) }) {
-                            scheduleListViewModel.fetchDeleteSchedules(schedule.id)
+                            scheduleListViewModel.fetchDeleteSchedules(schedule.id) {
+                                appState.showToastMsg(
+                                    it
+                                )
+                            }
                         }
                     }
                 }
                 RefreshIcon(modifier = Modifier.padding(bottom = 16.dp, end = 16.dp)) {
-                    scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek())
+                    scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek()) {
+                        appState.showToastMsg(
+                            it
+                        )
+                    }
                 }
             }
 
