@@ -1,5 +1,6 @@
 package com.busschedule.schedulelist.model
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,8 +19,9 @@ data class BusScheduleUi(
 ) {
     private var isCheckedAlarm by mutableStateOf(alarmInit)
 
-    fun updateAlarm() {
-        isCheckedAlarm = !isCheckedAlarm
+    fun updateAlarm() = apply {
+        Log.d("daeyoung", "BusScheduleUi: ${this.isCheckedAlarm}")
+        this.isCheckedAlarm = !this.isCheckedAlarm
     }
 
     fun getAlarm() = isCheckedAlarm

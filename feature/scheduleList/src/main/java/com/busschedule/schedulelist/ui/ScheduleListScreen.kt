@@ -1,5 +1,6 @@
 package com.busschedule.schedulelist.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -108,10 +109,11 @@ fun ScheduleListScreen(
                             ticketT1Color = color.colorT1,
                             ticketT2Color = color.colorT2,
                             changeNotifyState = {
-                                schedule.updateAlarm()
                                 scheduleListViewModel.fetchPutScheduleAlarm(
                                     scheduleId = schedule.id,
-                                    updateAlarm = { schedule.updateAlarm() }
+                                    updateAlarm = {
+                                        schedule.updateAlarm()
+                                    }
                                 ) { appState.showToastMsg(it) }
                             },
                             onEdit = { appState.navigateToRegister(schedule.id) }) {
