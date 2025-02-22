@@ -14,14 +14,25 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "com.example.busschedule"
+    signingConfigs {
+        create("release") {
+            val keystorePropertiesFile = rootProject.file("./app/keystore/keystore.properties")
+            val keystoreProperties = Properties().apply { load(keystorePropertiesFile.reader()) }
+            storeFile = file(keystoreProperties["storePath"].toString())
+            storePassword = keystoreProperties["storePassword"].toString()
+            keyAlias = keystoreProperties["keyAlias"].toString()
+            keyPassword = keystoreProperties["keyPassword"].toString()
+        }
+    }
 
     defaultConfig {
-        applicationId = "com.example.busschedule.app"
+        applicationId = "com.schedule.notify.app"
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         manifestPlaceholders
         multiDexEnabled = true
+        signingConfig = signingConfigs.getByName("release")
     }
 
     packaging {
@@ -32,11 +43,13 @@ android {
 
     buildTypes {
         debug {
-//            manifestPlaceholders["KAKAO_MAP_KEY"] = localProperties.getProperty("KAKAO_MAP_KEY")
             buildConfigField("String", "KAKAO_MAP_KEY", "\"" + localProperties.getProperty("KAKAO_MAP_KEY") + "\"")
-
+        }
+        release {
+            buildConfigField("String", "KAKAO_MAP_KEY", "\"" + localProperties.getProperty("KAKAO_MAP_KEY") + "\"")
         }
     }
+
 }
 
 dependencies {
