@@ -3,6 +3,8 @@
 
 .DS_Store
 .idea
+app/keystore/keystore.properties
+app/release
 
 ### Kotlin ###
 # Compiled class file
