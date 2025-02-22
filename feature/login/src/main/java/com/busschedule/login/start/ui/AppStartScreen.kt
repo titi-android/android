@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.busschedule.common.R
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.button.MainBottomButton
@@ -53,7 +55,7 @@ fun LogoArea() {
             contentDescription = "image_mainlogo",
             modifier = Modifier.size(150.dp),
         )
-        Text(text = "떠나링", style = bigLogo)
+        Text(text = stringResource(id = R.string.app_name), style = bigLogo)
 
     }
 }

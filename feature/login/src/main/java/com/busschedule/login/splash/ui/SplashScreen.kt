@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcMainlogo
@@ -41,7 +42,7 @@ fun SplashScreen(navigateToStart: () -> Unit) {
                 contentDescription = "ic_mainlogo",
                 modifier = Modifier.size(150.dp)
             )
-            Text(text = "떠나링", style = bigLogo)
+            Text(text = stringResource(id = com.busschedule.common.R.string.app_name), style = bigLogo)
         }
     }
 }
