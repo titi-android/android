@@ -1,5 +1,6 @@
 package com.busschedule.schedulelist.component
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,7 +39,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.busschedule.schedulelist.model.BusScheduleUi
-import com.busschedule.util.ext.toFormatTime
+import com.busschedule.util.ext.toFormatKrTime
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.dialog.CloseDialog
 import core.designsystem.shadow.scheduleShadow
@@ -203,7 +204,7 @@ fun ScheduleTicket(
                             append("${busInfo.routeno} ")
                         }
                         withStyle(SpanStyle(color = ticketT1Color)) {
-                            append("(${busInfo.arrtime.toFormatTime()}분) ")
+                            append("(${busInfo.arrtime.toFormatKrTime()}) ")
                         }
                         withStyle(mBody2.copy(ticketT2Color).toSpanStyle()) {
                             append("${busInfo.arrprevstationcnt}정거장")

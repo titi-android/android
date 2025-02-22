@@ -34,6 +34,7 @@ import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.Text
 import com.busschedule.common.constant.Constants
 import com.busschedule.model.BusType
+import com.busschedule.util.ext.toFormatEnTime
 import com.busschedule.widget.R
 import com.busschedule.widget.designsystem.style.TextBlackColor
 import com.busschedule.widget.designsystem.style.TextColor
@@ -131,7 +132,10 @@ fun Available(
                     return@Row
                 }
                 busArrivalInfo.take(2).forEach {
-                    ArrivalBusContainer(modifier = GlanceModifier.defaultWeight(), it)
+                    ArrivalBusContainer(
+                        modifier = GlanceModifier.defaultWeight(),
+                        busArrivalInfo = it
+                    )
                 }
                 Image(
                     provider = ImageProvider(R.drawable.ic_refresh),
@@ -148,7 +152,7 @@ fun ArrivalBusContainer(modifier: GlanceModifier, busArrivalInfo: BusArrivalData
     Column(modifier = modifier) {
         Text(text = busArrivalInfo.bus, style = sbTitle3)
         Spacer(GlanceModifier.height(3.dp))
-        Text(text = "${busArrivalInfo.arrivalTime.toMinute()}m", style = rFooter)
+        Text(text = busArrivalInfo.arrivalTime.toFormatEnTime(), style = rFooter)
     }
 }
 
@@ -280,6 +284,3 @@ private fun NotExistSchedule() {
         }
     }
 }
-
-fun Int.toMinute() =
-    this / 60
