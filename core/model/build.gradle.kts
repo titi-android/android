@@ -1,7 +1,6 @@
 plugins {
     id("busSchedule.android.compose.library")
     alias(libs.plugins.kotlin.serialization)
-//    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -10,7 +9,6 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.serialization.json)
-//    implementation(projects.core.domain)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

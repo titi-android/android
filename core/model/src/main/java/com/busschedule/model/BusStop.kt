@@ -7,5 +7,4 @@ data class BusStop(
     val region: String = "",
     val busStop: String = "",
     val nodeId: String = "",
-//    val buses: List<BusInfo> = emptyList(),
 )

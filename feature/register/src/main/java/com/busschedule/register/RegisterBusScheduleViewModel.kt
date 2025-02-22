@@ -228,7 +228,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
     fun fetchFirstReadAllBusStop(
         region: String,
         busStop: String,
-        changeLoadingState: (Boolean) -> Unit,
+        changeLoadingState: () -> Unit,
         showToast: (String) -> Unit,
     ) {
         viewModelScope.launch {
@@ -237,12 +237,12 @@ class RegisterBusScheduleViewModel @Inject constructor(
                     icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
                     labels = it
                 )
-                changeLoadingState(true)
+                changeLoadingState()
             }.onFailure { showToast(it.message!!) }
         }
     }
 
-    fun fetchReadAllBusStop(busStopName: String, showToast: (String) -> Unit) {
+    fun fetchReadAllBusStop(busStopName: String, changeLoadingState: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {
             readAllBusStopUseCase(
                 cityName = cityOfRegion.value.getSelectedCityName(),
@@ -253,6 +253,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
                         labels = busStop
                     )
+                    changeLoadingState()
                 }
             }.onFailure { showToast(it.message!!) }
         }

@@ -8,7 +8,7 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.common.android)
 
     implementation(libs.androidx.core.ktx)
