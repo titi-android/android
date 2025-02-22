@@ -88,7 +88,7 @@ fun SelectBusScreen(
                     it.region,
                     it.busStop,
                     changeLoadingState = { isLoading = false }
-                ) {appState.showToastMsg(it)}
+                ) { msg -> appState.showToastMsg(msg) }
             }
         }
     }
@@ -107,7 +107,11 @@ fun SelectBusScreen(
                 onValueChange = { viewModel.updateBusStopInput(it) },
                 placeholder = "버스 정류장 검색"
             ) {
-                viewModel.fetchReadAllBusStop(uiState) {appState.showToastMsg(it)}
+                isLoading = true
+                viewModel.fetchReadAllBusStop(
+                    busStopName = uiState,
+                    changeLoadingState = { isLoading = false }
+                ) { appState.showToastMsg(it) }
                 isShowBottomSheet = false
             }
             HeightSpacer(height = 16.dp)
@@ -143,7 +147,7 @@ fun SelectBusScreen(
                                             busStopName = label.texts.first(),
                                             nodeId = busStopInfo.nodeId,
                                             onSuccess = { isShowBottomSheet = true }
-                                        ) {appState.showToastMsg(it)}
+                                        ) { appState.showToastMsg(it) }
                                         kakaoMapObject.moveCamera(label.position, isUpCamera = true)
                                         false
                                     }
