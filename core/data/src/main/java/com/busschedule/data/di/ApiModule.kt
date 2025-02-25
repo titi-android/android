@@ -3,8 +3,9 @@ package com.busschedule.data.di
 import com.busschedule.data.api.BusApi
 import com.busschedule.data.api.BusStopApi
 import com.busschedule.data.api.FCMApi
-import com.busschedule.data.api.UserApi
+import com.busschedule.data.api.LoginApi
 import com.busschedule.data.api.ScheduleApi
+import com.busschedule.data.api.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +17,11 @@ import retrofit2.Retrofit
 object ApiModule {
 
     @Provides
-    fun provideLoginApi(@NetworkModule.BusScheduleRetrofit retrofit: Retrofit): UserApi {
+    fun provideLoginApi(@NetworkModule.BusScheduleRetrofit retrofit: Retrofit): LoginApi {
+        return retrofit.create(LoginApi::class.java)
+    }
+    @Provides
+    fun provideUserApi(@NetworkModule.BusScheduleRetrofit retrofit: Retrofit): UserApi {
         return retrofit.create(UserApi::class.java)
     }
     @Provides

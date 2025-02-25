@@ -20,8 +20,8 @@ import com.busschedule.navigation.Route
 import com.busschedule.register.ui.RegisterBusScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
-import com.busschedule.setting.ui.SettingScreen
 import com.busschedule.setting.ui.ask.ui.AskScreen
+import com.busschedule.setting.ui.setting.ui.SettingScreen
 import com.busschedule.util.state.ApplicationState
 import kotlin.reflect.typeOf
 

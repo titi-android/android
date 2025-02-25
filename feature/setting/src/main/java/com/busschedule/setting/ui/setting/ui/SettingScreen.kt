@@ -1,4 +1,4 @@
-package com.busschedule.setting.ui
+package com.busschedule.setting.ui.setting.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.busschedule.setting.ui.setting.SettingViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
@@ -41,7 +43,7 @@ import core.designsystem.theme.mTitle
 import core.designsystem.theme.rFooter
 
 @Composable
-fun SettingScreen(appState: ApplicationState) {
+fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hiltViewModel()) {
     var isShowUserDeleteDialog by remember { mutableStateOf(false) }
 
     Box(
@@ -78,6 +80,10 @@ fun SettingScreen(appState: ApplicationState) {
                 title = "‘회원탈퇴’ 하시겠습니까?",
                 content = "탈퇴시, 유저 정보는 복구 되지 않습니다!",
                 onDismissRequest = { isShowUserDeleteDialog = false }) {
+                viewModel.fetchDeleteUser(showToast = {appState.showToastMsg(it)}) {
+                    isShowUserDeleteDialog = false
+                    appState.popBackStackStart()
+                }
             }
         }
     }

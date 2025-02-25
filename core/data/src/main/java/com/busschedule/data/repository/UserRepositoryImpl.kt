@@ -1,5 +1,6 @@
 package com.busschedule.data.repository
 
+import com.busschedule.data.api.LoginApi
 import com.busschedule.data.api.UserApi
 import com.busschedule.data.model.request.InquiryRequest
 import com.busschedule.data.model.request.LoginUserRequest
@@ -10,19 +11,22 @@ import com.busschedule.model.Token
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
+    private val loginApi: LoginApi,
     private val userApi: UserApi,
     private val tokenManager: TokenManager,
 ) : UserRepository {
     override suspend fun login(name: String, password: String): Token {
         val user = LoginUserRequest(name = name, password = password)
-        return userApi.login(user).getOrThrow().data!!.asDomain().also {
+        return loginApi.login(user).getOrThrow().data!!.asDomain().also {
             tokenManager.saveAccessToken(it.accessToken)
         }
     }
     override suspend fun signup(name: String, password: String) {
         val user = LoginUserRequest(name = name, password = password)
-        userApi.signup(user).getOrThrow().data
+        loginApi.signup(user).getOrThrow().data
     }
+
+    override suspend fun delete() { userApi.delete() }
 
     override suspend fun postInquiry(title: String, content: String) {
         val inquiry = InquiryRequest(title = title, content = content)
