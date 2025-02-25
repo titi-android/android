@@ -2,6 +2,7 @@ package core.designsystem.svg
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import core.designsystem.svg.myiconpack.IcBus
+import core.designsystem.svg.myiconpack.IcCancel
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
 import core.designsystem.svg.myiconpack.IcForwardArrow
@@ -29,6 +30,6 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
     }
     __AllIcons= listOf(IcNotify, IcTalk, IcMainlogo, IcClose, IcOffnotify, IcSetting, IcRefresh,
         IcOnCheckbox, IcInfomationCircle, ImageBusOfTicket, IcOffCheckbox, IcSearch, IcBus, IcEdit,
-        IcForwardArrow)
+        IcCancel, IcForwardArrow)
     return __AllIcons!!
   }
