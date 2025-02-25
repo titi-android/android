@@ -2,6 +2,7 @@ package com.busschedule.util.state
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -72,12 +73,15 @@ class ApplicationState(
     }
 
     fun navigateToStart() {
-        navController.navigate(LoginGraph.Start)
+        navController.navigate(route = LoginGraph.Start,) {
+            popUpTo<LoginGraph.Splash> { inclusive = true }
+        }
     }
 
     fun navigateToLogin() {
         navController.navigate(LoginGraph.Login)
     }
+
     fun navigateToSignUp() {
         navController.navigate(LoginGraph.Signup)
     }
@@ -85,6 +89,7 @@ class ApplicationState(
     fun navigateToScheduleList() {
         navController.navigate(Route.ScheduleList)
     }
+
     fun navigateToRegister(id: Int? = null) {
         navController.navigate(Route.RegisterGraph.RegisterSchedule(id))
     }
@@ -92,6 +97,7 @@ class ApplicationState(
     fun navigateToSelectRegion() {
         navController.navigate(Route.RegisterGraph.SelectRegion)
     }
+
     fun navigateToSelectBusStop(busStop: BusStop? = null) {
         if (busStop == null) {
             navController.navigate(Route.RegisterGraph.SelectBusStop())
@@ -99,14 +105,21 @@ class ApplicationState(
         }
         navController.navigate(Route.RegisterGraph.SelectBusStop(busStop))
     }
+
     fun navigateToSetting() {
         navController.navigate(Route.SettingGraph.Setting)
     }
+
     fun navigateToAsk() {
         navController.navigate(Route.SettingGraph.Ask)
     }
+
     fun navigateToEditProfile() {
         navController.navigate(Route.SettingGraph.EditProfile)
+    }
+
+    fun popBackStackStart() {
+        navController.popBackStack<LoginGraph.Start>(inclusive = false)
     }
 
     fun popBackStackRegister() {
