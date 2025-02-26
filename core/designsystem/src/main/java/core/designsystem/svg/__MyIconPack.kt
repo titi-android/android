@@ -1,17 +1,19 @@
 package core.designsystem.svg
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import core.designsystem.svg.myiconpack.IcBan
 import core.designsystem.svg.myiconpack.IcBus
-import core.designsystem.svg.myiconpack.IcCancel
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
 import core.designsystem.svg.myiconpack.IcForwardArrow
 import core.designsystem.svg.myiconpack.IcInfomationCircle
 import core.designsystem.svg.myiconpack.IcMainlogo
+import core.designsystem.svg.myiconpack.IcMinus
 import core.designsystem.svg.myiconpack.IcNotify
 import core.designsystem.svg.myiconpack.IcOffCheckbox
 import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.IcOnCheckbox
+import core.designsystem.svg.myiconpack.IcPlus
 import core.designsystem.svg.myiconpack.IcRefresh
 import core.designsystem.svg.myiconpack.IcSearch
 import core.designsystem.svg.myiconpack.IcSetting
@@ -28,8 +30,8 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(IcNotify, IcTalk, IcMainlogo, IcClose, IcOffnotify, IcSetting, IcRefresh,
-        IcOnCheckbox, IcInfomationCircle, ImageBusOfTicket, IcOffCheckbox, IcSearch, IcBus, IcEdit,
-        IcCancel, IcForwardArrow)
+    __AllIcons= listOf(IcNotify, IcTalk, IcPlus, IcMinus, IcMainlogo, IcClose, IcOffnotify,
+        IcSetting, IcRefresh, IcOnCheckbox, IcInfomationCircle, ImageBusOfTicket, IcOffCheckbox,
+        IcSearch, IcBus, IcEdit, IcBan, IcForwardArrow)
     return __AllIcons!!
   }

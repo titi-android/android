@@ -25,7 +25,7 @@ fun RootNavHost(route: String) {
 //            registerBusScheduleGraph(appState)
 //        }
 //    }
-    val initRoute: Route = when(route) {
+    val initRoute: Route = when (route) {
         "Register" -> Route.RegisterGraph
         "Start" -> LoginGraph.Start
         else -> LoginGraph.Splash
@@ -35,7 +35,6 @@ fun RootNavHost(route: String) {
     NavHost(
         navController = appState.getNavController(),
         startDestination = initRoute,
-//        startDestination = LoginGraph.Start,
         modifier = Modifier
             .fillMaxSize()
     ) {

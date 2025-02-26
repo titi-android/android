@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.model.BusStop
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.constant.City
@@ -40,15 +41,16 @@ import core.designsystem.theme.Background
 @Composable
 fun SelectRegionScreen(
     appState: ApplicationState,
-    registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    id: Int
 ) {
 
-    val selectedRegionUiState by registerBusScheduleViewModel.selectRegionUiState.collectAsStateWithLifecycle(
+    val uiState by viewModel.selectRegionUiState.collectAsStateWithLifecycle(
         SelectRegionUiState()
     )
 
     val btnEnable by remember {
-        derivedStateOf { selectedRegionUiState.region.selectedCityUiState != null }
+        derivedStateOf { uiState.region.selectedCityUiState != null }
     }
 
     Column(
@@ -60,27 +62,29 @@ fun SelectRegionScreen(
     ) {
         BackArrowAppBar(title = "도시 이름 검색") { appState.popBackStack() }
         SearchTextField(
-            value = selectedRegionUiState.input,
-            onValueChange = { registerBusScheduleViewModel.updateRegionInput(it) },
+            value = uiState.input,
+            onValueChange = { viewModel.updateRegionInput(it) },
             placeholder = "도시(지역) 이름 검색"
         ) {
-            if (selectedRegionUiState.region.searchCity(it).not()) {
+            if (uiState.region.searchCity(it).not()) {
                 appState.showToastMsg("일치하는 지역이 없습니다.")
             }
         }
         HeightSpacer(height = 16.dp)
         Row(modifier = Modifier.weight(1f)) {
-            RegionArea(selectedRegionUiState.region.regionUiStates) {
-                selectedRegionUiState.region.selectRegion(it)
+            RegionArea(uiState.region.regionUiStates) {
+                uiState.region.selectRegion(it)
             }
-            CityArea(selectedRegionUiState.region.citiesUiState) {
-                selectedRegionUiState.region.selectCity(
+            CityArea(uiState.region.citiesUiState) {
+                uiState.region.selectCity(
                     it
                 )
             }
         }
         HeightSpacer(height = 16.dp)
-        MainBottomButton(text = "다음", enabled = btnEnable) { appState.navigateToSelectBusStop() }
+        MainBottomButton(text = "다음", enabled = btnEnable) { appState.navigateToSelectBusStop(
+            BusStop(id = id, region = uiState.region.getSelectedCityName())
+        ) }
     }
 }
 

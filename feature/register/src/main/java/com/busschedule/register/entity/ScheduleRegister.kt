@@ -1,5 +1,6 @@
 package com.busschedule.register.entity
 
+import com.busschedule.model.BusStop
 import com.busschedule.util.entity.DayOfWeekUi
 
 data class ScheduleRegister (
@@ -8,6 +9,6 @@ data class ScheduleRegister (
     val startTime: String = "",
     val endTime: String = "",
     val isNotify: Boolean = false,
-    val regionName: String = "",
-    val busStopInfoUI: BusStopInfoUI? = null
+    val routeInfos: List<BusStopInfoUI> = emptyList(),
+    val arriveBusStop: BusStop = BusStop(),
 )

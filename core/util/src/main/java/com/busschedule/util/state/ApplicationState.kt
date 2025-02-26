@@ -2,7 +2,6 @@ package com.busschedule.util.state
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -94,15 +93,11 @@ class ApplicationState(
         navController.navigate(Route.RegisterGraph.RegisterSchedule(id))
     }
 
-    fun navigateToSelectRegion() {
-        navController.navigate(Route.RegisterGraph.SelectRegion)
+    fun navigateToSelectRegion(id: Int) {
+        navController.navigate(Route.RegisterGraph.SelectRegion(id))
     }
 
-    fun navigateToSelectBusStop(busStop: BusStop? = null) {
-        if (busStop == null) {
-            navController.navigate(Route.RegisterGraph.SelectBusStop())
-            return
-        }
+    fun navigateToSelectBusStop(busStop: BusStop) {
         navController.navigate(Route.RegisterGraph.SelectBusStop(busStop))
     }
 

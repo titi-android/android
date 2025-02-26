@@ -33,7 +33,7 @@ import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.dialog.CloseDialog
 import core.designsystem.svg.MyIconPack
-import core.designsystem.svg.myiconpack.IcCancel
+import core.designsystem.svg.myiconpack.IcBan
 import core.designsystem.svg.myiconpack.IcForwardArrow
 import core.designsystem.svg.myiconpack.IcTalk
 import core.designsystem.theme.Primary
@@ -70,7 +70,7 @@ fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hilt
             }
             HeightSpacer(height = 16.dp)
             SettingContentCard(
-                icon = MyIconPack.IcCancel,
+                icon = MyIconPack.IcBan,
                 onClick = { isShowUserDeleteDialog = true }) {
                 Text(text = "회원 탈퇴", style = mTitle.copy(Primary))
             }

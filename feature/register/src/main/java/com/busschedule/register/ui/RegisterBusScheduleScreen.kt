@@ -33,6 +33,8 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -68,11 +70,13 @@ import com.busschedule.model.BusInfo
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusBox
 import com.busschedule.register.constant.TimePickerType
+import com.busschedule.register.entity.BusStopInfoUIFactory
 import com.busschedule.register.entity.NotifyInfo
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.entity.asBusStopInfo
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.util.remember.rememberApplicationState
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
@@ -81,8 +85,10 @@ import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
+import core.designsystem.svg.myiconpack.IcMinus
 import core.designsystem.svg.myiconpack.IcNotify
 import core.designsystem.svg.myiconpack.IcOffnotify
+import core.designsystem.svg.myiconpack.IcPlus
 import core.designsystem.svg.myiconpack.IcSearch
 import core.designsystem.theme.Background
 import core.designsystem.theme.BusScheduleTheme
@@ -102,15 +108,9 @@ import java.util.Locale
 @Composable
 fun RegisterBusScheduleScreen(
     appState: ApplicationState,
-    registerBusScheduleViewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
 ) {
-    val uiState by
-    registerBusScheduleViewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(
-        ScheduleRegister()
-    )
-
-    val focusManager = LocalFocusManager.current
-
+    val uiState by viewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(ScheduleRegister())
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -131,7 +131,7 @@ fun RegisterBusScheduleScreen(
             HeightSpacer(height = 32.dp)
             ScheduleNameTextField(
                 value = uiState.name,
-                onValueChange = { registerBusScheduleViewModel.updateScheduleName(it) },
+                onValueChange = { viewModel.updateScheduleName(it) },
                 placeholder = "스케줄"
             )
             HeightSpacer(height = 32.dp)
@@ -139,27 +139,41 @@ fun RegisterBusScheduleScreen(
                 dayOfWeeks = uiState.dayOfWeeks,
                 startTime = uiState.startTime,
                 endTime = uiState.endTime,
-                updateStartTime = { registerBusScheduleViewModel.updateStartTime(it.convertTimePickerToUiTime()) },
-                updateEndTime = { registerBusScheduleViewModel.updateEndTime(it.convertTimePickerToUiTime()) },
+                updateStartTime = { viewModel.updateStartTime(it.convertTimePickerToUiTime()) },
+                updateEndTime = { viewModel.updateEndTime(it.convertTimePickerToUiTime()) },
                 isNotify = uiState.isNotify
             ) {
-                registerBusScheduleViewModel.updateIsNotify()
+                viewModel.updateIsNotify()
             }
-            HeightSpacer(height = 32.dp)
-            RegionArea(
-                region = uiState.regionName,
-                goRegionScreen = { appState.navigateToSelectRegion() },
-                busStop = uiState.busStopInfoUI?.busStop ?: "버스 정류장",
-                buses = uiState.busStopInfoUI?.getBuses() ?: emptyList(),
-                deleteBus = { uiState.busStopInfoUI?.remove(it) }) {
-                appState.navigateToSelectBusStop(uiState.busStopInfoUI?.asBusStopInfo(uiState.regionName))
+            viewModel.routeInfos.forEachIndexed { index, busStopInfoUI ->
+                RegionArea(
+                    title = if (index == 0) "출발" else "환승",
+                    region = busStopInfoUI.region,
+                    navigateRegionScreen = { appState.navigateToSelectRegion(busStopInfoUI.getID()) },
+                    busStop = busStopInfoUI.busStop,
+                    buses = busStopInfoUI.getBuses(),
+                    isRemoveRegionArea = viewModel.routeInfos.size >= 2,
+                    removeRegionArea = { viewModel.removeBusStopInfoUI(busStopInfoUI.getID()) },
+                    deleteBus = { busStopInfoUI.remove(it) }) {
+                    appState.navigateToSelectBusStop(busStopInfoUI.asBusStopInfo())
+                }
             }
+
+            ArriveArea(
+                region = uiState.arriveBusStop.region,
+                navigateRegionScreen = { appState.navigateToSelectRegion(BusStopInfoUIFactory.ARRIVE_ID) },
+                busStop = uiState.arriveBusStop.busStop
+            ) { appState.navigateToSelectBusStop(uiState.arriveBusStop) }
+            TransferRow {
+                viewModel.addBusStopInfoUI()
+            }
+
         }
         MainBottomButton(text = "완료") {
-            registerBusScheduleViewModel.putOrPostSchedule(
+            viewModel.putOrPostSchedule(
                 onSuccessOfPut = { appState.navigateToScheduleList() },
                 onSuccessOfPost = { appState.navigateToScheduleList() },
-            ) {appState.showToastMsg(it)}
+            ) { appState.showToastMsg(it) }
         }
     }
 }
@@ -220,19 +234,41 @@ fun NotifyArea(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RegionArea(
+    title: String = "출발",
     region: String,
-    goRegionScreen: () -> Unit,
+    navigateRegionScreen: () -> Unit,
     busStop: String,
     buses: List<BusInfo>,
+    isRemoveRegionArea: Boolean = false,
+    removeRegionArea: () -> Unit = {},
     deleteBus: (String) -> Unit,
-    goBusStopScreen: () -> Unit,
+    navigateBusStopScreen: () -> Unit,
 ) {
-    Column {
-        Text(text = "출발", style = sbTitle2.copy(TextColor))
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 32.dp, end = 8.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(text = title, style = sbTitle2.copy(TextColor))
+            if (isRemoveRegionArea) {
+                IconButton(
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = TextWColor,
+                        contentColor = Primary
+                    ), onClick = { removeRegionArea() }) {
+                    Icon(
+                        imageVector = MyIconPack.IcMinus,
+                        contentDescription = "ic_plus",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = region) { goRegionScreen() }
+        SearchBox(text = region.ifBlank { "도시(지역)" }) { navigateRegionScreen() }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = busStop) { goBusStopScreen() }
+        SearchBox(text = busStop.ifBlank { "버스 정류장" }) { navigateBusStopScreen() }
         HeightSpacer(height = 14.dp)
         SearchBox(text = "버스 번호") {}
         FlowRow(
@@ -246,7 +282,50 @@ fun RegionArea(
                 ) { deleteBus(bus.name) }
             }
         }
+    }
+}
 
+@Composable
+fun ArriveArea(
+    region: String,
+    navigateRegionScreen: () -> Unit,
+    busStop: String,
+    navigateBusStopScreen: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 32.dp, end = 8.dp)
+    ) {
+        Text(text = "도착", style = sbTitle2.copy(TextColor))
+        HeightSpacer(height = 14.dp)
+        SearchBox(text = region.ifBlank { "도시(지역)" }) { navigateRegionScreen() }
+        HeightSpacer(height = 14.dp)
+        SearchBox(text = busStop.ifBlank { "버스 정류장" }) { navigateBusStopScreen() }
+    }
+}
+
+@Composable
+fun TransferRow(plusTransferArea: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 32.dp, bottom = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = "환승", style = sbTitle2.copy(TextColor))
+        IconButton(
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = TextWColor,
+                contentColor = Primary
+            ), onClick = { plusTransferArea() }) {
+            Icon(
+                imageVector = MyIconPack.IcPlus,
+                contentDescription = "ic_plus",
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 
@@ -508,11 +587,13 @@ fun SearchBox(text: String, onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 fun TimePickerPreview(modifier: Modifier = Modifier) {
     BusScheduleTheme {
-        TimePickerFieldToModal({}, {})
+        RegisterBusScheduleScreen(
+            appState = rememberApplicationState(),
+            viewModel = hiltViewModel()
+        )
     }
 }

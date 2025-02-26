@@ -52,7 +52,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             )
             RegisterBusScheduleScreen(
                 appState = appState,
-                registerBusScheduleViewModel = hiltViewModel(backStackEntry)
+                viewModel = hiltViewModel(backStackEntry)
             )
         }
         composable<Route.RegisterGraph.SelectRegion> { entry ->
@@ -63,11 +63,12 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
             )
             SelectRegionScreen(
                 appState = appState,
-                registerBusScheduleViewModel = hiltViewModel(backStackEntry)
+                viewModel = hiltViewModel(backStackEntry),
+                id = entry.toRoute<Route.RegisterGraph.SelectRegion>().id
             )
         }
         composable<Route.RegisterGraph.SelectBusStop>(
-            typeMap = mapOf(typeOf<BusStop?>() to serializableType<BusStop?>(isNullableAllowed = true))
+            typeMap = mapOf(typeOf<BusStop>() to serializableType<BusStop>(isNullableAllowed = true))
         ) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,

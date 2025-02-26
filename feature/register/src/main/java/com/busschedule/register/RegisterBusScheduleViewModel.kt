@@ -2,6 +2,7 @@ package com.busschedule.register
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,11 +15,13 @@ import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
 import com.busschedule.model.BusInfo
+import com.busschedule.model.BusStop
 import com.busschedule.model.BusType
 import com.busschedule.navigation.Route
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.Bus
 import com.busschedule.register.entity.BusStopInfoUI
+import com.busschedule.register.entity.BusStopInfoUIFactory
 import com.busschedule.register.entity.CityOfRegion
 import com.busschedule.register.entity.KakaoMapObject
 import com.busschedule.register.entity.ScheduleRegister
@@ -67,35 +70,30 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _isNotify = MutableStateFlow(false)
     val isNotify: StateFlow<Boolean> = _isNotify.asStateFlow()
 
-    private val _cityOfRegion = MutableStateFlow(CityOfRegion())
-    val cityOfRegion: StateFlow<CityOfRegion> = _cityOfRegion.asStateFlow()
-
-    private val _selectBusStopInfoUI = MutableStateFlow<BusStopInfoUI?>(null)
-    val selectBusStopInfoUI: StateFlow<BusStopInfoUI?> = _selectBusStopInfoUI
+    private val _routeInfos = mutableStateListOf(BusStopInfoUIFactory.create())
+    val routeInfos: List<BusStopInfoUI> = _routeInfos
+    
+    private val _arriveBusStop = MutableStateFlow(BusStop())
+    val arriveBusStop: StateFlow<BusStop> = _arriveBusStop
 
     val registerBusScheduleUiState =
-        combine(
-            scheduleName,
-            dayOfWeeks,
-            startTime,
-            endTime,
-            isNotify,
-            cityOfRegion,
-            selectBusStopInfoUI
-        ) {
+        combine(scheduleName, dayOfWeeks, startTime, endTime, isNotify, arriveBusStop)
+        {
             ScheduleRegister(
                 name = scheduleName.value,
                 dayOfWeeks = dayOfWeeks.value,
                 startTime = startTime.value,
                 endTime = endTime.value,
                 isNotify = isNotify.value,
-                regionName = cityOfRegion.value.getSelectedCityName(),
-                busStopInfoUI = selectBusStopInfoUI.value
+                arriveBusStop = arriveBusStop.value
             )
         }
 
     private val _regionInput = MutableStateFlow("")
     val regionInput: StateFlow<String> = _regionInput.asStateFlow()
+
+    private val _cityOfRegion = MutableStateFlow(CityOfRegion())
+    val cityOfRegion: StateFlow<CityOfRegion> = _cityOfRegion.asStateFlow()
 
     val selectRegionUiState = combine(regionInput, cityOfRegion) { input, cityOfRegion ->
         SelectRegionUiState(
@@ -144,6 +142,15 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _isNotify.update { !isNotify.value }
     }
 
+    fun addBusStopInfoUI() {
+        _routeInfos.add(BusStopInfoUIFactory.create())
+    }
+
+    fun removeBusStopInfoUI(id: Int) {
+        _routeInfos.removeIf { it.compareID(id) }
+    }
+
+
     fun updateBusStopInput(input: String) {
         _busStopInput.update { input }
     }
@@ -176,15 +183,23 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _addBus.update { emptyList() }
     }
 
-    fun addBusStopInSelectBusStopInfo(popBackStack: () -> Unit) {
-        _selectBusStopInfoUI.update {
-            val bus = busStop.value
-            BusStopInfoUI(
+    fun addBusStopInSelectBusStopInfo(id: Int, region: String, popBackStack: () -> Unit) {
+        val bus = busStop.value
+        if (id == 0) {
+            _arriveBusStop.update { it.copy(region = region, busStop = bus.busStop, nodeId = bus.nodeId) }
+        } else {
+            val index = _routeInfos.indexOfFirst { it.compareID(id) }
+            _routeInfos[index] = _routeInfos[index].copy(
+                region = region,
                 busStop = bus.busStop,
                 nodeId = bus.nodeId,
                 busesInit = bus.buses.filter { it.isSelected }
-                    .map { BusInfo(name = it.name, type = it.type.name) })
+                    .map { BusInfo(name = it.name, type = it.type.name) }
+            )
         }
+
+        cityOfRegion.value.unAllSelect()
+        _busStop.update { SelectedBusUI() }
         popBackStack()
     }
 
@@ -205,22 +220,22 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     private fun fetchPostBusSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {
-            postScheduleUseCase(
-                name = scheduleName.value,
-                daysList = dayOfWeeks.value.filter { it.isSelected }
-                    .map { "${it.dayOfWeek.value}요일" },
-                startTime = startTime.value,
-                endTime = endTime.value,
-                regionName = cityOfRegion.value.getSelectedCityName(),
-                busStopName = selectBusStopInfoUI.value?.busStop ?: "",
-                nodeId = selectBusStopInfoUI.value?.nodeId ?: "",
-                busInfos = selectBusStopInfoUI.value?.getBuses() ?: emptyList(),
-                isAlarmOn = isNotify.value
-            ).onSuccess {
-                onSuccess()
-                showToast("스케줄을 등록했습니다.")
-                updateWidget()
-            }.onFailure { showToast(it.message!!) }
+//            postScheduleUseCase(
+//                name = scheduleName.value,
+//                daysList = dayOfWeeks.value.filter { it.isSelected }
+//                    .map { "${it.dayOfWeek.value}요일" },
+//                startTime = startTime.value,
+//                endTime = endTime.value,
+//                regionName = cityOfRegion.value.getSelectedCityName(),
+//                busStopName = selectBusStopInfoUI.value?.busStop ?: "",
+//                nodeId = selectBusStopInfoUI.value?.nodeId ?: "",
+//                busInfos = selectBusStopInfoUI.value?.getBuses() ?: emptyList(),
+//                isAlarmOn = isNotify.value
+//            ).onSuccess {
+//                onSuccess()
+//                showToast("스케줄을 등록했습니다.")
+//                updateWidget()
+//            }.onFailure { showToast(it.message!!) }
         }
     }
 
@@ -242,7 +257,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
         }
     }
 
-    fun fetchReadAllBusStop(busStopName: String, changeLoadingState: () -> Unit, showToast: (String) -> Unit) {
+    fun fetchReadAllBusStop(
+        busStopName: String,
+        changeLoadingState: () -> Unit,
+        showToast: (String) -> Unit,
+    ) {
         viewModelScope.launch {
             readAllBusStopUseCase(
                 cityName = cityOfRegion.value.getSelectedCityName(),
@@ -260,9 +279,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
     }
 
     fun fetchReadAllBusOfBusStop(
+        id: Int,
         busStopName: String,
         nodeId: String,
-        onSuccess: () -> Unit,
+        hideBottomSheet: () -> Unit,
         showToast: (String) -> Unit,
     ) {
         viewModelScope.launch {
@@ -276,63 +296,63 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         Bus(
                             name = bus.name,
                             type = BusType.find(bus.type),
-                            selectedInit = selectBusStopInfoUI.value?.getBuses()
+                            selectedInit = routeInfos.find { it.compareID(id) }?.getBuses()
                                 ?.any { it.name == bus.name && it.type == bus.type } ?: false)
                     })
                 }
-                onSuccess()
+                hideBottomSheet()
             }.onFailure { showToast(it.message!!) }
         }
     }
 
     private fun fetchReadSchedule(scheduleId: Int, showToast: (String) -> Unit) {
         viewModelScope.launch {
-            readScheduleUseCase(scheduleId).onSuccess { scheduleRegister ->
-                scheduleRegister.also { res ->
-                    _scheduleName.update { res.name }
-                    _dayOfWeeks.update {
-                        DayOfWeek.entries.map {
-                            DayOfWeekUi(
-                                dayOfWeek = it,
-                                init = res.days.contains("${it.value}요일")
-                            )
-                        }
-                    }
-                    _startTime.update { res.startTime }
-                    _endTime.update { res.endTime }
-                    _isNotify.update { res.isAlarmOn }
-                    _cityOfRegion.update { CityOfRegion(initCity = res.regionName) }
-                    _selectBusStopInfoUI.update {
-                        BusStopInfoUI(
-                            busStop = res.busStopName,
-                            nodeId = res.nodeId,
-                            busesInit = res.busInfos
-                        )
-                    }
-                }
-            }.onFailure { showToast(it.message!!) }
+//            readScheduleUseCase(scheduleId).onSuccess { scheduleRegister ->
+//                scheduleRegister.also { res ->
+//                    _scheduleName.update { res.name }
+//                    _dayOfWeeks.update {
+//                        DayOfWeek.entries.map {
+//                            DayOfWeekUi(
+//                                dayOfWeek = it,
+//                                init = res.days.contains("${it.value}요일")
+//                            )
+//                        }
+//                    }
+//                    _startTime.update { res.startTime }
+//                    _endTime.update { res.endTime }
+//                    _isNotify.update { res.isAlarmOn }
+//                    _cityOfRegion.update { CityOfRegion(initCity = res.regionName) }
+//                    _selectBusStopInfoUI.update {
+//                        BusStopInfoUI(
+//                            busStop = res.busStopName,
+//                            nodeId = res.nodeId,
+//                            busesInit = res.busInfos
+//                        )
+//                    }
+//                }
+//            }.onFailure { showToast(it.message!!) }
         }
     }
 
     private fun fetchPutSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {
-            putScheduleUseCase(
-                scheduleId = scheduleId!!,
-                name = scheduleName.value,
-                daysList = dayOfWeeks.value.filter { it.isSelected }
-                    .map { "${it.dayOfWeek.value}요일" },
-                startTime = startTime.value,
-                endTime = endTime.value,
-                regionName = cityOfRegion.value.getSelectedCityName(),
-                busStopName = selectBusStopInfoUI.value?.busStop ?: "",
-                nodeId = selectBusStopInfoUI.value?.nodeId ?: "",
-                busInfos = selectBusStopInfoUI.value?.getBuses() ?: emptyList(),
-                isAlarmOn = isNotify.value
-            ).onSuccess {
-                onSuccess()
-                showToast("스케줄을 수정했습니다.")
-                updateWidget()
-            }.onFailure { showToast(it.message!!) }
+//            putScheduleUseCase(
+//                scheduleId = scheduleId!!,
+//                name = scheduleName.value,
+//                daysList = dayOfWeeks.value.filter { it.isSelected }
+//                    .map { "${it.dayOfWeek.value}요일" },
+//                startTime = startTime.value,
+//                endTime = endTime.value,
+//                regionName = cityOfRegion.value.getSelectedCityName(),
+//                busStopName = selectBusStopInfoUI.value?.busStop ?: "",
+//                nodeId = selectBusStopInfoUI.value?.nodeId ?: "",
+//                busInfos = selectBusStopInfoUI.value?.getBuses() ?: emptyList(),
+//                isAlarmOn = isNotify.value
+//            ).onSuccess {
+//                onSuccess()
+//                showToast("스케줄을 수정했습니다.")
+//                updateWidget()
+//            }.onFailure { showToast(it.message!!) }
         }
     }
 
@@ -341,10 +361,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
         onSuccessOfPost: () -> Unit,
         showToast: (String) -> Unit,
     ) {
-        if (scheduleId != null) {
-            fetchPutSchedule(onSuccess = { onSuccessOfPut() }) { showToast(it) }
-            return
-        }
-        fetchPostBusSchedule(onSuccess = { onSuccessOfPost() }) { showToast(it) }
+//        if (scheduleId != null) {
+//            fetchPutSchedule(onSuccess = { onSuccessOfPut() }) { showToast(it) }
+//            return
+//        }
+//        fetchPostBusSchedule(onSuccess = { onSuccessOfPost() }) { showToast(it) }
     }
 }

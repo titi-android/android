@@ -28,7 +28,11 @@ class CityOfRegion(
     }
 
     fun selectCity(selectCity: String) = apply{
-        this.citiesUiState.forEach { it.isSelected = (it.city.value == selectCity) }
+        citiesUiState.forEach { it.isSelected = (it.city.value == selectCity) }
+    }
+
+    fun unAllSelect() {
+        citiesUiState.forEach { it.isSelected = false }
     }
 
     private fun getSelectedRegion() = regionUiStates.find { it.isSelected }?.region

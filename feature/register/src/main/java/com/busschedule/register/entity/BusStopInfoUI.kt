@@ -10,9 +10,19 @@ import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStop
 import com.busschedule.model.BusType
 
+object BusStopInfoUIFactory {
+    private var id = 1
+    fun create() = BusStopInfoUI(id++)
+
+    const val ARRIVE_ID = 0
+
+}
+
 
 @Stable
 data class BusStopInfoUI(
+    private val id: Int = 0,
+    val region: String = "",
     val busStop: String = "",
     val nodeId: String = "",
     val busesInit: List<BusInfo> = emptyList(),
@@ -25,10 +35,15 @@ data class BusStopInfoUI(
         Log.d("daeYoung", "buses: $buses")
     }
 
+    fun compareID(id: Int) = this.id == id
+
     fun getBuses() = buses.toList()
+
+    fun getID() = this.id
 }
 
-fun BusStopInfoUI.asBusStopInfo(region: String) = BusStop(
+fun BusStopInfoUI.asBusStopInfo() = BusStop(
+    id = getID(),
     region = region,
     busStop = busStop,
     nodeId = nodeId,

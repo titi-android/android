@@ -71,7 +71,7 @@ import core.designsystem.theme.rFooter
 fun SelectBusScreen(
     appState: ApplicationState,
     viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
-    busStop: BusStop?,
+    busStop: BusStop,
 ) {
     val uiState by viewModel.busStopInput.collectAsStateWithLifecycle()
 
@@ -79,17 +79,15 @@ fun SelectBusScreen(
     val mapView = remember { MapView(context) }
     var isShowBottomSheet by remember { mutableStateOf(false) }
     var isShowDialog by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(busStop != null) }
+    var isLoading by remember { mutableStateOf(busStop.isEmpty()) }
 
     LaunchedEffect(busStop) {
-        busStop?.let {
-            if (it.busStop.isNotEmpty() && it.nodeId.isNotEmpty()) {
-                viewModel.fetchFirstReadAllBusStop(
-                    it.region,
-                    it.busStop,
-                    changeLoadingState = { isLoading = false }
-                ) { msg -> appState.showToastMsg(msg) }
-            }
+        if (busStop.isEmpty()) {
+            viewModel.fetchFirstReadAllBusStop(
+                busStop.region,
+                busStop.busStop,
+                changeLoadingState = { isLoading = false }
+            ) { msg -> appState.showToastMsg(msg) }
         }
     }
     Box(
@@ -144,9 +142,10 @@ fun SelectBusScreen(
                                             lng = label.position.longitude
                                         )
                                         viewModel.fetchReadAllBusOfBusStop(
+                                            id = busStop.id,
                                             busStopName = label.texts.first(),
                                             nodeId = busStopInfo.nodeId,
-                                            onSuccess = { isShowBottomSheet = true }
+                                            hideBottomSheet = { isShowBottomSheet = true }
                                         ) { appState.showToastMsg(it) }
                                         kakaoMapObject.moveCamera(label.position, isUpCamera = true)
                                         false
@@ -161,7 +160,10 @@ fun SelectBusScreen(
             BusesBottomSheet(
                 selectedBusUi = viewModel.busStop.collectAsStateWithLifecycle().value,
                 addBus = { isShowDialog = true }) {
-                viewModel.addBusStopInSelectBusStopInfo { appState.popBackStackRegister() }
+                viewModel.addBusStopInSelectBusStopInfo(
+                    id = busStop.id,
+                    region = busStop.region
+                ) { appState.popBackStackRegister() }
             }
         }
         if (isShowDialog) {
