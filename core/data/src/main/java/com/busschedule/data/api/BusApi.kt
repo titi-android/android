@@ -1,6 +1,6 @@
 package com.busschedule.data.api
 
-import com.busschedule.data.network.ApiResult
+import com.busschedule.data.model.DefaultResponse
 import com.busschedule.model.BusInfo
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -10,5 +10,5 @@ interface BusApi {
     suspend fun readAllBusOfBusStop(
         @Query("cityName") cityName: String,
         @Query("nodeId") busStopId: String,
-    ): ApiResult<List<BusInfo>>
+    ): DefaultResponse<List<BusInfo>>
 }

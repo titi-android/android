@@ -5,7 +5,8 @@ import com.busschedule.data.model.request.ScheduleRegisterRequest
 import com.busschedule.data.model.response.asDomain
 import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.repository.ScheduleRepository
-import com.busschedule.model.BusInfo
+import com.busschedule.model.DestinationInfo
+import com.busschedule.model.RouteInfo
 import com.busschedule.model.ScheduleRegister
 import javax.inject.Inject
 
@@ -29,10 +30,8 @@ class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: Schedu
         daysList: List<String>,
         startTime: String,
         endTime: String,
-        regionName: String,
-        busStopName: String,
-        nodeId: String,
-        busInfos: List<BusInfo>,
+        routeInfos: List<RouteInfo>,
+        destinationInfo: DestinationInfo,
         isAlarmOn: Boolean,
     ) {
         val scheduleRegisterRequest = ScheduleRegisterRequest(
@@ -40,10 +39,8 @@ class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: Schedu
             daysList = daysList,
             startTime = startTime,
             endTime = endTime,
-            regionName = regionName,
-            busStopName = busStopName,
-            nodeId = nodeId,
-            busInfos = busInfos,
+            routeInfos = routeInfos,
+            destinationInfo = destinationInfo,
             isAlarmOn = isAlarmOn
         )
         scheduleApi.postSchedule(scheduleRegisterRequest).getOrThrow()
@@ -60,10 +57,8 @@ class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: Schedu
         daysList: List<String>,
         startTime: String,
         endTime: String,
-        regionName: String,
-        busStopName: String,
-        nodeId: String,
-        busInfos: List<BusInfo>,
+        routeInfos: List<RouteInfo>,
+        destinationInfo: DestinationInfo,
         isAlarmOn: Boolean,
     ) {
         val scheduleRegisterRequest = ScheduleRegisterRequest(
@@ -71,10 +66,8 @@ class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: Schedu
             daysList = daysList,
             startTime = startTime,
             endTime = endTime,
-            regionName = regionName,
-            busStopName = busStopName,
-            nodeId = nodeId,
-            busInfos = busInfos,
+            routeInfos = routeInfos,
+            destinationInfo = destinationInfo,
             isAlarmOn = isAlarmOn
         )
         scheduleApi.putSchedule(scheduleId = scheduleId, schedule = scheduleRegisterRequest)

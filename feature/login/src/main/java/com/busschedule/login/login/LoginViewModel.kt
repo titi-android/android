@@ -1,5 +1,6 @@
 package com.busschedule.login.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.busschedule.domain.usecase.user.LoginUseCase
@@ -48,6 +49,7 @@ class LoginViewModel @Inject constructor(
                 navigationToScheduleList()
             }.onFailure {
                 showToast(it.message!!)
+                Log.d("daeyoung", "${it.message}")
             }
         }
     }

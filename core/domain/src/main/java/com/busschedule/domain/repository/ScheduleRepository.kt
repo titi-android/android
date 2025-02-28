@@ -1,7 +1,8 @@
 package com.busschedule.domain.repository
 
 import com.busschedule.domain.model.response.schedule.BusSchedule
-import com.busschedule.model.BusInfo
+import com.busschedule.model.DestinationInfo
+import com.busschedule.model.RouteInfo
 import com.busschedule.model.ScheduleRegister
 
 interface ScheduleRepository {
@@ -15,10 +16,8 @@ interface ScheduleRepository {
         daysList: List<String> = emptyList(),
         startTime: String = "",
         endTime: String = "",
-        regionName: String = "",
-        busStopName: String = "",
-        nodeId: String = "",
-        busInfos: List<BusInfo> = emptyList(),
+        routeInfos: List<RouteInfo>,
+        destinationInfo: DestinationInfo,
         isAlarmOn: Boolean
     )
 
@@ -30,10 +29,8 @@ interface ScheduleRepository {
         daysList: List<String> = emptyList(),
         startTime: String = "",
         endTime: String = "",
-        regionName: String = "",
-        busStopName: String = "",
-        nodeId: String = "",
-        busInfos: List<BusInfo> = emptyList(),
+        routeInfos: List<RouteInfo>,
+        destinationInfo: DestinationInfo,
         isAlarmOn: Boolean
     )
 

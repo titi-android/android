@@ -11,7 +11,7 @@ class BusStopRepositoryImpl @Inject constructor(private val busStopApi: BusStopA
         cityName: String,
         nodeId: String,
     ): List<BusStopInfo> =
-        busStopApi.readAllBusStop(cityName, nodeId).getOrThrow().data?.busInfoResponses
+        busStopApi.readAllBusStop(cityName, nodeId).getOrThrow().data?.busInfosResponse
             ?: emptyList()
 
 

@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BusInfosResponse(
-    val busInfoResponses: List<BusStopInfo>
+    val busInfosResponse: List<BusStopInfo>
 )

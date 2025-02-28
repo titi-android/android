@@ -7,6 +7,5 @@ import javax.inject.Inject
 
 class BusRepositoryImpl @Inject constructor(private val busApi: BusApi): BusRepository {
     override suspend fun readAllBus(cityName: String, busStopId: String): List<BusInfo> =
-        busApi.readAllBusOfBusStop(cityName, busStopId).getOrThrow()
-
+        busApi.readAllBusOfBusStop(cityName, busStopId).getOrThrow().data?.distinct() ?: emptyList()
 }

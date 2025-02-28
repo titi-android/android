@@ -2,7 +2,8 @@ package com.busschedule.domain.usecase.schedule
 
 import com.busschedule.common.runCatchingIgnoreCancelled
 import com.busschedule.domain.repository.ScheduleRepository
-import com.busschedule.model.BusInfo
+import com.busschedule.model.DestinationInfo
+import com.busschedule.model.RouteInfo
 import javax.inject.Inject
 
 class PutScheduleUseCase @Inject constructor(private val scheduleRepository: ScheduleRepository) {
@@ -12,10 +13,8 @@ class PutScheduleUseCase @Inject constructor(private val scheduleRepository: Sch
         daysList: List<String> = emptyList(),
         startTime: String = "",
         endTime: String = "",
-        regionName: String = "",
-        busStopName: String = "",
-        nodeId: String = "",
-        busInfos: List<BusInfo> = emptyList(),
+        routeInfos: List<RouteInfo>,
+        destinationInfo: DestinationInfo,
         isAlarmOn: Boolean,
     ) = runCatchingIgnoreCancelled {
         scheduleRepository.putSchedule(
@@ -24,10 +23,8 @@ class PutScheduleUseCase @Inject constructor(private val scheduleRepository: Sch
             daysList = daysList,
             startTime = startTime,
             endTime = endTime,
-            regionName = regionName,
-            busStopName = busStopName,
-            nodeId = nodeId,
-            busInfos = busInfos,
+            routeInfos = routeInfos,
+            destinationInfo = destinationInfo,
             isAlarmOn = isAlarmOn,
         )
     }

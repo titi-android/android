@@ -11,3 +11,16 @@ data class BusStop(
 ) {
     fun isEmpty() = busStop.isNotBlank() && nodeId.isNotBlank()
 }
+
+
+fun BusStop.asDestinationInfo() = DestinationInfo(
+    regionName = region,
+    busStopName = busStop,
+    nodeId = nodeId,
+)
+
+fun DestinationInfo.asBusStop() = BusStop(
+    region = regionName,
+    busStop = busStopName,
+    nodeId = nodeId,
+)
