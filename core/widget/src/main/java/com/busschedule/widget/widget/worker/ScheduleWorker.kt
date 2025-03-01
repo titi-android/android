@@ -13,8 +13,8 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.usecase.schedule.ReadNowScheduleUseCase
+import com.busschedule.model.ScheduleTicket
 import com.busschedule.model.exception.AccessTokenExpiredException
 import com.busschedule.model.exception.AccessTokenIllegalArgumentException
 import com.busschedule.widget.widget.ScheduleGlanceWidget
@@ -90,7 +90,7 @@ class ScheduleWorker @AssistedInject constructor(
         }
     }
 
-    private fun getSuccessWidgetState(schedule: BusSchedule?): ScheduleInfo {
+    private fun getSuccessWidgetState(schedule: ScheduleTicket?): ScheduleInfo {
         if (schedule == null) {
             return ScheduleInfo.Unavailable.DataIsNull
         }

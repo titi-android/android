@@ -11,9 +11,9 @@ import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
-import com.busschedule.schedulelist.model.BusScheduleUi
+import com.busschedule.schedulelist.model.ScheduleUI
 import com.busschedule.schedulelist.model.ScheduleListUiState
-import com.busschedule.schedulelist.model.asDomain
+import com.busschedule.schedulelist.model.asStateUI
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.widget.widget.worker.ScheduleWorker
@@ -49,8 +49,8 @@ class ScheduleListViewModel @Inject constructor(
     })
     val dayOfWeeks: StateFlow<List<DayOfWeekUi>> = _dayOfWeeks.asStateFlow()
 
-    private val _schedules = MutableStateFlow(emptyList<BusScheduleUi>())
-    val schedules: StateFlow<List<BusScheduleUi>> = _schedules.asStateFlow()
+    private val _schedules = MutableStateFlow(emptyList<ScheduleUI>())
+    val schedules: StateFlow<List<ScheduleUI>> = _schedules.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -80,7 +80,7 @@ class ScheduleListViewModel @Inject constructor(
     fun fetchReadTodaySchedules(showToast: (String) -> Unit) {
         viewModelScope.launch {
             readTodaySchedulesUseCase().onSuccess { schedules ->
-                _schedules.update { schedules.map { it.asDomain() } }
+                _schedules.update { schedules.map { it.asStateUI() } }
                 _isLoading.update { false }
             }.onFailure { showToast(it.message!!) }
         }
@@ -89,7 +89,7 @@ class ScheduleListViewModel @Inject constructor(
     fun fetchReadDayOfWeekSchedules(dayOfWeek: String, showToast: (String) -> Unit) {
         viewModelScope.launch {
             readDaysSchedulesUseCase(dayOfWeek).onSuccess { schedules ->
-                _schedules.update { schedules.map { it.asDomain() } }
+                _schedules.update { schedules.map { it.asStateUI() } }
             }.onFailure { showToast(it.message!!) }
         }
     }

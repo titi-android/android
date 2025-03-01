@@ -1,25 +1,27 @@
 package com.busschedule.schedulelist.component
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,41 +36,45 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.busschedule.schedulelist.model.BusScheduleUi
+import com.busschedule.model.ArrivingBus
+import com.busschedule.model.BusStopInfo
+import com.busschedule.schedulelist.model.ScheduleUI
 import com.busschedule.util.ext.toFormatKrTime
+import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.dialog.CloseDialog
 import core.designsystem.shadow.scheduleShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
+import core.designsystem.svg.myiconpack.IcForwardArrow
 import core.designsystem.svg.myiconpack.IcNotify
 import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.ImageBusOfTicket
 import core.designsystem.theme.Background
-import core.designsystem.theme.BusBlueM1
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mBody
 import core.designsystem.theme.mBody2
-import core.designsystem.theme.sbTitle
+import core.designsystem.theme.mFooter
+import core.designsystem.theme.sbTitle2
 import core.designsystem.theme.sbTitle4
 
 @Composable
 fun ScheduleTicket(
     ticketColor: Color = Color.Gray,
     holeColor: Color = Color.Transparent,
-    schedule: BusScheduleUi = BusScheduleUi(),
+    schedule: ScheduleUI = ScheduleUI(),
     ticketT1Color: Color = Color.White,
     ticketT2Color: Color = Color.White,
     changeNotifyState: () -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
 ) {
-    val icNotify = if (schedule.getAlarm()) MyIconPack.IcNotify  else MyIconPack.IcOffnotify
+    val icNotify = if (schedule.getAlarm()) MyIconPack.IcNotify else MyIconPack.IcOffnotify
     var isShowCloseDialog by remember { mutableStateOf(false) }
     if (isShowCloseDialog) {
         CloseDialog(
@@ -78,6 +84,8 @@ fun ScheduleTicket(
             onDelete()
         }
     }
+    val busStopInfos = schedule.busStopInfos.take(4)
+    var curStep by remember { mutableIntStateOf(0) }
 
     Box(
         modifier = Modifier
@@ -133,15 +141,16 @@ fun ScheduleTicket(
                 modifier = Modifier
                     .weight(2 / 3f)
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 10.dp, top = 10.dp)
             ) {
-                Row(modifier = Modifier.weight(1f)) {
+                Row(
+                    modifier = Modifier.padding(start = 16.dp, end = 10.dp, top = 10.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
                     Text(
                         text = schedule.name,
                         color = TextWColor,
-                        style = sbTitle,
-                        modifier = Modifier
-                            .weight(1f)
+                        style = sbTitle2,
+                        modifier = Modifier.weight(1f),
                     )
                     Row() {
                         Icon(
@@ -176,18 +185,31 @@ fun ScheduleTicket(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 20.dp, end = 11.dp),
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    StartTextBox(bgColor = TextWColor, contentColor = BusBlueM1)
-                    WidthSpacer(width = 8.dp)
-                    Text(
-                        text = schedule.busStopName,
-                        style = sbTitle4.copy(TextWColor),
-                        textAlign = TextAlign.End,
-                        modifier = Modifier
+                    busStopInfos.forEachIndexed { index, busStopInfo ->
+                        BusStopTextBox(
+                            contentColor = ticketT1Color,
+                            step = if (index == 0) "출발" else "환승",
+                            busStop = busStopInfo.busStopName,
+                            isCurrentStep = curStep == index
+                        )
+                        Icon(
+                            imageVector = MyIconPack.IcForwardArrow,
+                            contentDescription = "ic_next",
+                            modifier = Modifier.size(16.dp),
+                            tint = TextWColor
+                        )
+                    }
+                    BusStopTextBox(
+                        contentColor = ticketT1Color,
+                        step = "도착",
+                        busStop = schedule.desBusStopName,
+                        isCurrentStep = curStep == busStopInfos.size
                     )
+
                 }
 
             }
@@ -198,7 +220,7 @@ fun ScheduleTicket(
                     .padding(start = 16.dp, end = 18.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                schedule.busInfos.forEach { busInfo ->
+                busStopInfos[0].busInfos.forEach { busInfo ->
                     Text(text = buildAnnotatedString {
                         withStyle(SpanStyle(color = TextWColor)) {
                             append("${busInfo.routeno} ")
@@ -219,22 +241,158 @@ fun ScheduleTicket(
 }
 
 @Composable
-fun StartTextBox(bgColor: Color, contentColor: Color) {
-    Box(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(bgColor)
-            .padding(horizontal = 10.5.dp, vertical = 2.dp)
-    ) {
-        Text(text = "출발", style = mBody2, color = contentColor, modifier = Modifier.align(Alignment.Center))
+fun RowScope.BusStopTextBox(
+    contentColor: Color,
+    step: String,
+    isCurrentStep: Boolean,
+    busStop: String,
+) {
+    Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .isCurrentStep(isCurrentStep)
+                .padding(horizontal = 10.5.dp, vertical = 2.dp)
+        ) {
+            Text(
+                text = step,
+                style = mFooter,
+                color = if (isCurrentStep) contentColor else TextWColor,
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+        HeightSpacer(height = 4.dp)
+        Text(text = busStop, style = sbTitle4, color = TextWColor, overflow = TextOverflow.Ellipsis)
     }
 }
+
+fun Modifier.isCurrentStep(isCurrentStep: Boolean) =
+    if (isCurrentStep) this.background(TextWColor)
+    else this.border(width = 1.dp, color = TextWColor, shape = RoundedCornerShape(20.dp))
+
 
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 fun ScheduleTicketPreview() {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        ScheduleTicket()
+    val dummySchedules = ScheduleUI(
+        id = 1,
+        name = "출근 버스",
+        days = listOf("월", "화", "수", "목", "금"),
+        startTime = "07:30",
+        endTime = "08:30",
+        busStopInfos = listOf(
+            BusStopInfo(
+                busStopName = "강남역",
+                busInfos = listOf(
+                    ArrivingBus(
+                        arrprevstationcnt = 2,
+                        arrtime = 300,
+                        nodeid = "1001",
+                        nodenm = "강남역",
+                        routeid = "R100",
+                        routeno = "740",
+                        routetp = "간선",
+                        vehicletp = "저상버스"
+                    ),
+                    ArrivingBus(
+                        arrprevstationcnt = 5,
+                        arrtime = 600,
+                        nodeid = "1002",
+                        nodenm = "강남역",
+                        routeid = "R101",
+                        routeno = "341",
+                        routetp = "지선",
+                        vehicletp = "일반버스"
+                    )
+                )
+            ),
+            BusStopInfo(
+                busStopName = "역삼역",
+                busInfos = listOf(
+                    ArrivingBus(
+                        arrprevstationcnt = 3,
+                        arrtime = 400,
+                        nodeid = "1003",
+                        nodenm = "역삼역",
+                        routeid = "R102",
+                        routeno = "146",
+                        routetp = "간선",
+                        vehicletp = "일반버스"
+                    ),
+                    ArrivingBus(
+                        arrprevstationcnt = 6,
+                        arrtime = 700,
+                        nodeid = "1004",
+                        nodenm = "역삼역",
+                        routeid = "R103",
+                        routeno = "3412",
+                        routetp = "지선",
+                        vehicletp = "저상버스"
+                    )
+                )
+            ),
+            BusStopInfo(
+                busStopName = "삼성역",
+                busInfos = listOf(
+                    ArrivingBus(
+                        arrprevstationcnt = 1,
+                        arrtime = 200,
+                        nodeid = "1005",
+                        nodenm = "삼성역",
+                        routeid = "R104",
+                        routeno = "500-2",
+                        routetp = "광역",
+                        vehicletp = "좌석버스"
+                    ),
+                    ArrivingBus(
+                        arrprevstationcnt = 4,
+                        arrtime = 550,
+                        nodeid = "1006",
+                        nodenm = "삼성역",
+                        routeid = "R105",
+                        routeno = "1100",
+                        routetp = "광역",
+                        vehicletp = "일반버스"
+                    )
+                )
+            ),
+            BusStopInfo(
+                busStopName = "선릉역",
+                busInfos = listOf(
+                    ArrivingBus(
+                        arrprevstationcnt = 2,
+                        arrtime = 350,
+                        nodeid = "1007",
+                        nodenm = "선릉역",
+                        routeid = "R106",
+                        routeno = "8100",
+                        routetp = "광역",
+                        vehicletp = "좌석버스"
+                    ),
+                    ArrivingBus(
+                        arrprevstationcnt = 5,
+                        arrtime = 650,
+                        nodeid = "1008",
+                        nodenm = "선릉역",
+                        routeid = "R107",
+                        routeno = "301",
+                        routetp = "간선",
+                        vehicletp = "일반버스"
+                    )
+                )
+            )
+        )
+    )
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        ScheduleTicket(
+            schedule = dummySchedules
+        )
     }
 }
 

@@ -16,7 +16,7 @@ public val MyIconPack.IcBan: ImageVector
         if (_icBan != null) {
             return _icBan!!
         }
-        _icBan = Builder(name = "IcCancel", defaultWidth = 24.0.dp, defaultHeight = 25.0.dp,
+        _icBan = Builder(name = "IcBan", defaultWidth = 24.0.dp, defaultHeight = 25.0.dp,
                 viewportWidth = 24.0f, viewportHeight = 25.0f).apply {
             path(fill = SolidColor(Color(0xFF2E2E34)), stroke = null, strokeLineWidth = 0.0f,
                     strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,

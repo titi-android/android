@@ -11,7 +11,7 @@ data class ScheduleListUiState(
             init = LocalDate.now().dayOfWeek.name == it.enName
         )
     },
-    val schedules: List<BusScheduleUi> = emptyList(),
+    val schedules: List<ScheduleUI> = emptyList(),
     var isLoading: Boolean = true
 ) {
     fun getSelectedDayOfWeek(): String =

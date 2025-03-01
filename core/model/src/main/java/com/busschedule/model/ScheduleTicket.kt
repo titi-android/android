@@ -1,17 +1,23 @@
-package com.busschedule.domain.model.response.schedule
+package com.busschedule.model
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BusSchedule(
+data class ScheduleTicket(
     val id: Int = 0,
     val name: String = "",
     val daysList: List<String> = emptyList(),
     val startTime: String = "",
     val endTime: String = "",
+    val busStopInfos: List<BusStopInfo> = emptyList(),
+    val desBusStopName: String,
+    val isAlarmOn: Boolean
+)
+
+@Serializable
+data class BusStopInfo(
     val busStopName: String = "",
     val busInfos: List<ArrivingBus> = emptyList(),
-    val isAlarmOn: Boolean
 )
 
 @Serializable

@@ -1,40 +1,36 @@
 package com.busschedule.schedulelist.model
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.busschedule.domain.model.response.schedule.ArrivingBus
-import com.busschedule.domain.model.response.schedule.BusSchedule
+import com.busschedule.model.BusStopInfo
+import com.busschedule.model.ScheduleTicket
 
-data class BusScheduleUi(
+data class ScheduleUI(
     val id: Int = 0,
     val name: String = "",
     val days: List<String> = emptyList(),
     val startTime: String = "",
     val endTime: String = "",
-    val busStopName: String = "",
-    val busInfos: List<ArrivingBus> = emptyList(),
+    val busStopInfos: List<BusStopInfo> = emptyList(),
+    val desBusStopName: String = "",
     private val alarmInit: Boolean = false
 ) {
     private var isCheckedAlarm by mutableStateOf(alarmInit)
 
-    fun updateAlarm() = apply {
-        Log.d("daeyoung", "BusScheduleUi: ${this.isCheckedAlarm}")
-        this.isCheckedAlarm = !this.isCheckedAlarm
-    }
+    fun updateAlarm() = apply { this.isCheckedAlarm = !this.isCheckedAlarm }
 
     fun getAlarm() = isCheckedAlarm
 }
 
-fun BusSchedule.asDomain() =
-    BusScheduleUi(
+fun ScheduleTicket.asStateUI() =
+    ScheduleUI(
         id = id,
         name = name,
         days = daysList,
         startTime = startTime,
         endTime = endTime,
-        busStopName = busStopName,
-        busInfos = busInfos,
+        busStopInfos = busStopInfos,
+        desBusStopName = desBusStopName,
         alarmInit = isAlarmOn
     )

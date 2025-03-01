@@ -1,6 +1,5 @@
 package com.busschedule.schedulelist.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.common.constant.Constants
 import com.busschedule.model.BusType
 import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.component.ScheduleListAppBar
@@ -66,8 +66,10 @@ fun ScheduleListScreen(
             async { scheduleListViewModel.initFCMToken() },
             async {
                 while (true) {
-                    scheduleListViewModel.fetchReadTodaySchedules { appState.showToastMsg(it) }
-                    delay(com.busschedule.common.constant.Constants.MINUTE_1)
+                    if (uiState.dayOfWeeks.find { it.isSelected }?.isToday() == true) {
+                        scheduleListViewModel.fetchReadTodaySchedules { appState.showToastMsg(it) }
+                    }
+                    delay(Constants.MINUTE_1)
                 }
             }
         ).awaitAll()
@@ -101,7 +103,9 @@ fun ScheduleListScreen(
                 ) {
                     items(items = uiState.schedules, key = { it.id }) { schedule ->
                         val color =
-                            if (schedule.busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busInfos[0].routetp)
+                            // TODO: 현재 버스 정류장의 위치에 따라 바뀌어야 함
+                            // schedule.busStopInfos[0].busInfos.isEmpty()
+                            if (schedule.busStopInfos[0].busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busStopInfos[0].busInfos[0].routetp)
                         ScheduleTicket(
                             ticketColor = color.color,
                             holeColor = Background,

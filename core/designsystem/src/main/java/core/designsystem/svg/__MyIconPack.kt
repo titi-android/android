@@ -9,6 +9,7 @@ import core.designsystem.svg.myiconpack.IcForwardArrow
 import core.designsystem.svg.myiconpack.IcInfomationCircle
 import core.designsystem.svg.myiconpack.IcMainlogo
 import core.designsystem.svg.myiconpack.IcMinus
+import core.designsystem.svg.myiconpack.IcNextArrow
 import core.designsystem.svg.myiconpack.IcNotify
 import core.designsystem.svg.myiconpack.IcOffCheckbox
 import core.designsystem.svg.myiconpack.IcOffnotify
@@ -30,8 +31,8 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(IcNotify, IcTalk, IcPlus, IcMinus, IcMainlogo, IcClose, IcOffnotify,
-        IcSetting, IcRefresh, IcOnCheckbox, IcInfomationCircle, ImageBusOfTicket, IcOffCheckbox,
-        IcSearch, IcBus, IcEdit, IcBan, IcForwardArrow)
+    __AllIcons= listOf(IcNotify, IcBan, IcTalk, IcPlus, IcMinus, IcMainlogo, IcClose, IcOffnotify,
+        IcSetting, IcRefresh, IcNextArrow, IcOnCheckbox, IcInfomationCircle, ImageBusOfTicket,
+        IcOffCheckbox, IcSearch, IcBus, IcEdit, IcForwardArrow)
     return __AllIcons!!
   }

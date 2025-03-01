@@ -3,23 +3,23 @@ package com.busschedule.data.repository
 import com.busschedule.data.api.ScheduleApi
 import com.busschedule.data.model.request.ScheduleRegisterRequest
 import com.busschedule.data.model.response.asDomain
-import com.busschedule.domain.model.response.schedule.BusSchedule
 import com.busschedule.domain.repository.ScheduleRepository
 import com.busschedule.model.DestinationInfo
 import com.busschedule.model.RouteInfo
 import com.busschedule.model.ScheduleRegister
+import com.busschedule.model.ScheduleTicket
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: ScheduleApi) :
     ScheduleRepository {
-    override suspend fun readNowSchedule(): BusSchedule? =
-        scheduleApi.readNowSchedules().getOrThrow().data
+    override suspend fun readNowSchedule(): ScheduleTicket? =
+        scheduleApi.readNowSchedules().getOrThrow().data?.asDomain()
 
-    override suspend fun readTodaySchedules(): List<BusSchedule> =
-        scheduleApi.readTodayAllSchedules().getOrThrow().data!!
+    override suspend fun readTodaySchedules(): List<ScheduleTicket> =
+        scheduleApi.readTodayAllSchedules().getOrThrow().data?.map { it.asDomain() } ?: emptyList()
 
-    override suspend fun readDaySchedules(day: String): List<BusSchedule> =
-        scheduleApi.readDaySchedules(day).getOrThrow().data!!
+    override suspend fun readDaySchedules(day: String): List<ScheduleTicket> =
+        scheduleApi.readDaySchedules(day).getOrThrow().data?.map { it.asDomain() } ?: emptyList()
 
     override suspend fun readSchedule(scheduleId: Int): ScheduleRegister =
         scheduleApi.readSchedule(scheduleId).getOrThrow().data!!.asDomain()
