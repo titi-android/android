@@ -75,7 +75,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     private var _routeInfos = mutableStateListOf(BusStopInfoUIFactory.create())
     val routeInfos: List<BusStopInfoUI> = _routeInfos
-    
+
     private val _arriveBusStop = MutableStateFlow(BusStop())
     val arriveBusStop: StateFlow<BusStop> = _arriveBusStop
 
@@ -188,21 +188,30 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     fun addBusStopInSelectBusStopInfo(id: Int, region: String, popBackStack: () -> Unit) {
         val bus = busStop.value
-        if (id == 0) {
-            _arriveBusStop.update { it.copy(region = region, busStop = bus.busStop, nodeId = bus.nodeId) }
-        } else {
-            val index = _routeInfos.indexOfFirst { it.compareID(id) }
-            _routeInfos[index] = _routeInfos[index].copy(
-                region = region,
-                busStop = bus.busStop,
-                nodeId = bus.nodeId,
-                busesInit = bus.buses.filter { it.isSelected }
-                    .map { BusInfo(name = it.name, type = it.type.name) }
-            )
-        }
+        val index = _routeInfos.indexOfFirst { it.compareID(id) }
+        _routeInfos[index] = _routeInfos[index].copy(
+            region = region,
+            busStop = bus.busStop,
+            nodeId = bus.nodeId,
+            busesInit = bus.buses.filter { it.isSelected }
+                .map { BusInfo(name = it.name, type = it.type.name) }
+        )
 
         cityOfRegion.value.unAllSelect()
         _busStop.update { SelectedBusUI() }
+        popBackStack()
+    }
+
+    fun completeOfArriveBusStop(region: String, popBackStack: () -> Unit) {
+        val bus = busStop.value
+        _arriveBusStop.update {
+            it.copy(
+                region = region,
+                busStop = bus.busStop,
+                nodeId = bus.nodeId
+            )
+        }
+        cityOfRegion.value.unAllSelect()
         popBackStack()
     }
 
@@ -224,6 +233,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
         WorkManager.getInstance(context).enqueue(
             OneTimeWorkRequestBuilder<ScheduleWorker>().build()
         )
+    }
+
+    fun updateBusStop(busStopName: String, nodeId: String) {
+        _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
+
     }
 
     private fun fetchPostBusSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
@@ -278,7 +292,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
                         labels = busStop
                     )
-                } else { showToast("버스 정류장을 찾을 수 없습니다.") }
+                } else {
+                    showToast("버스 정류장을 찾을 수 없습니다.")
+                }
                 changeLoadingState()
             }.onFailure { showToast(it.message!!) }
         }
@@ -294,7 +310,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
-            readAllBusOfBusStopUseCase(cityName = region, busStopId = nodeId).onSuccess { busInfos ->
+            readAllBusOfBusStopUseCase(
+                cityName = region,
+                busStopId = nodeId
+            ).onSuccess { busInfos ->
                 _busStop.update { selectedBusUI ->
                     selectedBusUI.copy(buses = busInfos.map { bus ->
                         Bus(

@@ -2,9 +2,6 @@ package com.busschedule.register.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,16 +24,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,7 +37,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,8 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -99,10 +88,7 @@ import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.rTextBox
 import core.designsystem.theme.sbTitle2
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -328,62 +314,6 @@ fun TransferRow(plusTransferArea: () -> Unit) {
         }
     }
 }
-
-fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-    return formatter.format(Date(millis))
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerFieldToModal() {
-    var datePickerState = rememberDatePickerState()
-    var date = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: ""
-//        DatePicker(state = datePickerState)by remember { mutableStateOf("요일") }
-    var isShowDatePickerDialog by remember { mutableStateOf(false) }
-    OutlinedTextField(
-        value = date,
-        onValueChange = { },
-        label = { Text(text = "요일") },
-        readOnly = true,
-        trailingIcon = {
-            Icon(
-                imageVector = Icons.Default.DateRange,
-                contentDescription = "Select date"
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .pointerInput(date) {
-                awaitEachGesture {
-                    awaitFirstDown(pass = PointerEventPass.Initial)
-                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                    if (upEvent != null) {
-                        isShowDatePickerDialog = true
-                    }
-                }
-            }
-    )
-    if (isShowDatePickerDialog) {
-        DatePickerDialog(
-            onDismissRequest = { isShowDatePickerDialog = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    date =
-                        "${datePickerState.selectedDateMillis?.let { convertMillisToDate(it) }}"
-                    isShowDatePickerDialog = false
-                }) { Text(text = "Ok") }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    isShowDatePickerDialog = false
-                }) { Text(text = "Cancel") }
-            }) {
-            DatePicker(state = datePickerState)
-        }
-    }
-}
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

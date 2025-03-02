@@ -141,6 +141,18 @@ fun SelectBusScreen(
                                             lat = label.position.latitude,
                                             lng = label.position.longitude
                                         )
+
+                                        if (busStop.id == 0) {
+                                            kakaoMapObject.moveCamera(label.position, isUpCamera = true)
+                                            isShowBottomSheet = true
+                                            viewModel.updateBusStop(
+                                                busStopName = label.texts.first(),
+                                                nodeId = busStopInfo.nodeId
+                                            )
+                                            viewModel.busStop.value.busStop
+                                            return@setOnLabelClickListener false
+                                        }
+
                                         viewModel.fetchReadAllBusOfBusStop(
                                             id = busStop.id,
                                             region = busStop.region,
@@ -158,14 +170,22 @@ fun SelectBusScreen(
                 })
         }
         if (isShowBottomSheet) {
-            BusesBottomSheet(
-                selectedBusUi = viewModel.busStop.collectAsStateWithLifecycle().value,
-                addBus = { isShowDialog = true }) {
-                viewModel.addBusStopInSelectBusStopInfo(
-                    id = busStop.id,
-                    region = busStop.region
-                ) { appState.popBackStackRegister() }
+            if (busStop.id == 0) {
+                MainBottomButton(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    text = "완료"
+                ) { viewModel.completeOfArriveBusStop(region = busStop.region) { appState.popBackStackRegister() } }
+            } else {
+                BusesBottomSheet(
+                    selectedBusUi = viewModel.busStop.collectAsStateWithLifecycle().value,
+                    addBus = { isShowDialog = true }) {
+                    viewModel.addBusStopInSelectBusStopInfo(
+                        id = busStop.id,
+                        region = busStop.region
+                    ) { appState.popBackStackRegister() }
+                }
             }
+
         }
         if (isShowDialog) {
             val dialogUiState by viewModel.addBusDialogUiState.collectAsStateWithLifecycle(

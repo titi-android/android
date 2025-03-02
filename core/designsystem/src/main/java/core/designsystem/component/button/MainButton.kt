@@ -32,8 +32,8 @@ fun MainButton(modifier: Modifier = Modifier, text: String, enabled: Boolean = t
     }
 }
 @Composable
-fun MainBottomButton(text: String, enabled: Boolean = true, onClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp)) {
+fun MainBottomButton(modifier: Modifier = Modifier, text: String, enabled: Boolean = true, onClick: () -> Unit) {
+    Box(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp)) {
         TextButton(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
