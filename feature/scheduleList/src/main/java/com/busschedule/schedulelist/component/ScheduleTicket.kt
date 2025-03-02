@@ -195,7 +195,7 @@ fun ScheduleTicket(
                             step = if (index == 0) "출발" else "환승",
                             busStop = busStopInfo.busStopName,
                             isCurrentStep = curStep == index
-                        )
+                        ) { curStep = index }
                         Icon(
                             imageVector = MyIconPack.IcForwardArrow,
                             contentDescription = "ic_next",
@@ -208,7 +208,7 @@ fun ScheduleTicket(
                         step = "도착",
                         busStop = schedule.desBusStopName,
                         isCurrentStep = curStep == busStopInfos.size
-                    )
+                    ) { curStep = busStopInfos.size }
 
                 }
 
@@ -220,7 +220,8 @@ fun ScheduleTicket(
                     .padding(start = 16.dp, end = 18.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                busStopInfos[0].busInfos.forEach { busInfo ->
+                val processedStep = if (curStep == busStopInfos.size) curStep - 1 else curStep
+                busStopInfos[processedStep].busInfos.forEach { busInfo ->
                     Text(text = buildAnnotatedString {
                         withStyle(SpanStyle(color = TextWColor)) {
                             append("${busInfo.routeno} ")
@@ -246,8 +247,9 @@ fun RowScope.BusStopTextBox(
     step: String,
     isCurrentStep: Boolean,
     busStop: String,
+    onClick: () -> Unit
 ) {
-    Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.weight(1f).clickable { onClick() }, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
