@@ -143,6 +143,7 @@ fun SelectBusScreen(
                                         )
                                         viewModel.fetchReadAllBusOfBusStop(
                                             id = busStop.id,
+                                            region = busStop.region,
                                             busStopName = label.texts.first(),
                                             nodeId = busStopInfo.nodeId,
                                             hideBottomSheet = { isShowBottomSheet = true }

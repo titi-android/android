@@ -286,6 +286,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     fun fetchReadAllBusOfBusStop(
         id: Int,
+        region: String,
         busStopName: String,
         nodeId: String,
         hideBottomSheet: () -> Unit,
@@ -293,10 +294,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
-            readAllBusOfBusStopUseCase(
-                cityName = cityOfRegion.value.getSelectedCityName(),
-                busStopId = nodeId
-            ).onSuccess { busInfos ->
+            readAllBusOfBusStopUseCase(cityName = region, busStopId = nodeId).onSuccess { busInfos ->
                 _busStop.update { selectedBusUI ->
                     selectedBusUI.copy(buses = busInfos.map { bus ->
                         Bus(
