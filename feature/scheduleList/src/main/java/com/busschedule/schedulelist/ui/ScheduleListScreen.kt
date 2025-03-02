@@ -102,16 +102,9 @@ fun ScheduleListScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(items = uiState.schedules, key = { it.id }) { schedule ->
-                        val color =
-                            // TODO: 현재 버스 정류장의 위치에 따라 바뀌어야 함
-                            // schedule.busStopInfos[0].busInfos.isEmpty()
-                            if (schedule.busStopInfos[0].busInfos.isEmpty()) BusType.지정 else BusType.find(schedule.busStopInfos[0].busInfos[0].routetp)
                         ScheduleTicket(
-                            ticketColor = color.color,
                             holeColor = Background,
                             schedule = schedule,
-                            ticketT1Color = color.colorT1,
-                            ticketT2Color = color.colorT2,
                             changeNotifyState = {
                                 scheduleListViewModel.fetchPutScheduleAlarm(
                                     scheduleId = schedule.id,

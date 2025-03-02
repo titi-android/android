@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.busschedule.model.ArrivingBus
 import com.busschedule.model.BusStopInfo
+import com.busschedule.model.BusType
 import com.busschedule.schedulelist.model.ScheduleUI
+import com.busschedule.util.ext.noRippleClickable
 import com.busschedule.util.ext.toFormatKrTime
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
@@ -65,11 +66,8 @@ import core.designsystem.theme.sbTitle4
 
 @Composable
 fun ScheduleTicket(
-    ticketColor: Color = Color.Gray,
     holeColor: Color = Color.Transparent,
     schedule: ScheduleUI = ScheduleUI(),
-    ticketT1Color: Color = Color.White,
-    ticketT2Color: Color = Color.White,
     changeNotifyState: () -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
@@ -86,6 +84,9 @@ fun ScheduleTicket(
     }
     val busStopInfos = schedule.busStopInfos.take(4)
     var curStep by remember { mutableIntStateOf(0) }
+    val ticketColors =
+        if (schedule.busStopInfos[curStep].busInfos.isEmpty()) BusType.지정
+        else BusType.find(schedule.busStopInfos[curStep].busInfos[0].routetp)
 
     Box(
         modifier = Modifier
@@ -105,7 +106,7 @@ fun ScheduleTicket(
             val topRectHeight = this.size.height * (2 / 3f)
             val holeHeight = topRectHeight * (0.14f)
             drawRoundRect(
-                color = ticketColor,
+                color = ticketColors.color,
                 size = Size(width = this.size.width, height = this.size.height),
                 cornerRadius = CornerRadius(25f),
             )
@@ -159,7 +160,7 @@ fun ScheduleTicket(
                             tint = TextWColor,
                             modifier = Modifier
                                 .size(24.dp)
-                                .clickable { changeNotifyState() }
+                                .noRippleClickable { changeNotifyState() }
                         )
                         WidthSpacer(width = 20.dp)
                         Icon(
@@ -168,7 +169,7 @@ fun ScheduleTicket(
                             tint = TextWColor,
                             modifier = Modifier
                                 .size(24.dp)
-                                .clickable { onEdit() }
+                                .noRippleClickable { onEdit() }
                         )
                         WidthSpacer(width = 20.dp)
                         Icon(
@@ -177,7 +178,7 @@ fun ScheduleTicket(
                             tint = TextWColor,
                             modifier = Modifier
                                 .size(24.dp)
-                                .clickable { isShowCloseDialog = true }
+                                .noRippleClickable { isShowCloseDialog = true }
                         )
                     }
                 }
@@ -191,7 +192,7 @@ fun ScheduleTicket(
                 ) {
                     busStopInfos.forEachIndexed { index, busStopInfo ->
                         BusStopTextBox(
-                            contentColor = ticketT1Color,
+                            contentColor = ticketColors.colorT1,
                             step = if (index == 0) "출발" else "환승",
                             busStop = busStopInfo.busStopName,
                             isCurrentStep = curStep == index
@@ -204,11 +205,11 @@ fun ScheduleTicket(
                         )
                     }
                     BusStopTextBox(
-                        contentColor = ticketT1Color,
+                        contentColor = ticketColors.colorT1,
                         step = "도착",
                         busStop = schedule.desBusStopName,
                         isCurrentStep = curStep == busStopInfos.size
-                    ) { curStep = busStopInfos.size }
+                    ) {}
 
                 }
 
@@ -220,16 +221,15 @@ fun ScheduleTicket(
                     .padding(start = 16.dp, end = 18.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val processedStep = if (curStep == busStopInfos.size) curStep - 1 else curStep
-                busStopInfos[processedStep].busInfos.forEach { busInfo ->
+                busStopInfos[curStep].busInfos.forEach { busInfo ->
                     Text(text = buildAnnotatedString {
                         withStyle(SpanStyle(color = TextWColor)) {
                             append("${busInfo.routeno} ")
                         }
-                        withStyle(SpanStyle(color = ticketT1Color)) {
+                        withStyle(SpanStyle(color = ticketColors.colorT1)) {
                             append("(${busInfo.arrtime.toFormatKrTime()}) ")
                         }
-                        withStyle(mBody2.copy(ticketT2Color).toSpanStyle()) {
+                        withStyle(mBody2.copy(ticketColors.colorT2).toSpanStyle()) {
                             append("${busInfo.arrprevstationcnt}정거장")
                         }
                     }, style = mBody)
@@ -247,9 +247,14 @@ fun RowScope.BusStopTextBox(
     step: String,
     isCurrentStep: Boolean,
     busStop: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
-    Column(modifier = Modifier.weight(1f).clickable { onClick() }, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .noRippleClickable { onClick() },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
