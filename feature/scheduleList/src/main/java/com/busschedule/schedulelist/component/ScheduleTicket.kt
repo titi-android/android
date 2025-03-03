@@ -103,7 +103,7 @@ fun ScheduleTicket(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            val topRectHeight = this.size.height * (2 / 3f)
+            val topRectHeight = this.size.height * (2.1f / 3f)
             val holeHeight = topRectHeight * (0.14f)
             drawRoundRect(
                 color = ticketColors.color,
@@ -140,7 +140,7 @@ fun ScheduleTicket(
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
-                    .weight(2 / 3f)
+                    .weight(2.1f / 3f)
                     .fillMaxWidth()
             ) {
                 Row(
