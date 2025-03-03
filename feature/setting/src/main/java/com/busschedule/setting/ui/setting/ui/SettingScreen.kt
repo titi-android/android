@@ -36,6 +36,7 @@ import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBan
 import core.designsystem.svg.myiconpack.IcForwardArrow
 import core.designsystem.svg.myiconpack.IcTalk
+import core.designsystem.svg.myiconpack.IcVersionInfo
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
@@ -73,6 +74,16 @@ fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hilt
                 icon = MyIconPack.IcBan,
                 onClick = { isShowUserDeleteDialog = true }) {
                 Text(text = "회원 탈퇴", style = mTitle.copy(Primary))
+            }
+            HeightSpacer(height = 16.dp)
+            SettingContentCard(icon = MyIconPack.IcVersionInfo, hideForwardIcon = true) {
+                Column {
+                    Text(text = "버전 정보", style = mTitle.copy(Primary))
+                    HeightSpacer(height = 4.dp)
+                    Text(
+                        text = "1.0.1", style = rFooter.copy(TextMColor)
+                    )
+                }
             }
         }
         if (isShowUserDeleteDialog) {
@@ -119,7 +130,8 @@ fun WhiteRoundedCard(
 @Composable
 fun SettingContentCard(
     icon: ImageVector,
-    onClick: () -> Unit,
+    onClick: () -> Unit = {},
+    hideForwardIcon: Boolean = false,
     content: @Composable RowScope.() -> Unit,
 ) {
     WhiteRoundedCard(
@@ -135,13 +147,14 @@ fun SettingContentCard(
             WidthSpacer(width = 16.dp)
             content()
         }
-
-        Icon(
-            imageVector = MyIconPack.IcForwardArrow,
-            contentDescription = "ic_forward",
-            modifier = Modifier.size(24.dp),
-            tint = Primary
-        )
+        if (hideForwardIcon) {
+            Icon(
+                imageVector = MyIconPack.IcForwardArrow,
+                contentDescription = "ic_forward",
+                modifier = Modifier.size(24.dp),
+                tint = Primary
+            )
+        }
     }
 }
 
