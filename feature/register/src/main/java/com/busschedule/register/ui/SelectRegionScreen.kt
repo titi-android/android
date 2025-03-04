@@ -62,6 +62,7 @@ fun SelectRegionScreen(
     ) {
         BackArrowAppBar(title = "도시 이름 검색") { appState.popBackStack() }
         SearchTextField(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             value = uiState.input,
             onValueChange = { viewModel.updateRegionInput(it) },
             placeholder = "도시(지역) 이름 검색"

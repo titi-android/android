@@ -1,7 +1,6 @@
 package com.busschedule.register.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,13 +15,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SearchTextField(value: String, onValueChange: (String) -> Unit, placeholder: String, onSearch: (String) -> Unit) {
+fun SearchTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    onSearch: (String) -> Unit,
+) {
     val focusManager = LocalFocusManager.current
     TextField(
         value = value,
         onValueChange = { onValueChange(it) },
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = modifier
+//            .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth(),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,

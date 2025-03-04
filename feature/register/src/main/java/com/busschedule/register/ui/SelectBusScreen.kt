@@ -20,9 +20,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,11 +57,10 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
-import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
-import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
 import core.designsystem.component.loading.LoadingOfCoilDialog
+import core.designsystem.shadow.scheduleShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
 import core.designsystem.theme.Background
@@ -94,80 +97,74 @@ fun SelectBusScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
-            .statusBarsPadding()
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            BackArrowAppBar(title = "버스 정류장 검색") { appState.popBackStack() }
-            SearchTextField(
-                value = uiState,
-                onValueChange = { viewModel.updateBusStopInput(it) },
-                placeholder = "버스 정류장 검색"
-            ) {
-                isLoading = true
-                viewModel.fetchReadAllBusStop(
-                    busStopName = uiState,
-                    changeLoadingState = { isLoading = false }
-                ) { appState.showToastMsg(it) }
-                isShowBottomSheet = false
-            }
-            HeightSpacer(height = 16.dp)
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { context ->
+                mapView.apply { ->
 
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { context ->
-                    mapView.apply { ->
+                    mapView.start(
+                        object : MapLifeCycleCallback() {
+                            override fun onMapDestroy() {
+                                appState.showToastMsg("지도를 불러오는데 실패했습니다.")
+                            }
 
-                        mapView.start(
-                            object : MapLifeCycleCallback() {
-                                override fun onMapDestroy() {
-                                    appState.showToastMsg("지도를 불러오는데 실패했습니다.")
-                                }
+                            override fun onMapError(e: Exception?) {
+                                appState.showToastMsg("지도를 불러오는 중 알 수 없는 에러가 발생했습니다.\n onMapError: $e")
+                            }
 
-                                override fun onMapError(e: Exception?) {
-                                    appState.showToastMsg("지도를 불러오는 중 알 수 없는 에러가 발생했습니다.\n onMapError: $e")
-                                }
+                        },
+                        object : KakaoMapReadyCallback() {
+                            override fun onMapReady(kakaoMap: KakaoMap) {
+                                val kakaoMapObject =
+                                    viewModel.initKakaoMap(kakaoMap)
 
-                            },
-                            object : KakaoMapReadyCallback() {
-                                override fun onMapReady(kakaoMap: KakaoMap) {
-                                    val kakaoMapObject =
-                                        viewModel.initKakaoMap(kakaoMap)
+                                kakaoMap.setOnLabelClickListener { kakaoMap, labelLayer, label ->
+                                    val busStopInfo = kakaoMapObject.findBusStop(
+                                        name = label.texts.first(),
+                                        lat = label.position.latitude,
+                                        lng = label.position.longitude
+                                    )
 
-                                    kakaoMap.setOnLabelClickListener { kakaoMap, labelLayer, label ->
-                                        val busStopInfo = kakaoMapObject.findBusStop(
-                                            name = label.texts.first(),
-                                            lat = label.position.latitude,
-                                            lng = label.position.longitude
+                                    if (busStop.id == 0) {
+                                        kakaoMapObject.moveCamera(
+                                            label.position,
+                                            isUpCamera = true
                                         )
-
-                                        if (busStop.id == 0) {
-                                            kakaoMapObject.moveCamera(label.position, isUpCamera = true)
-                                            isShowBottomSheet = true
-                                            viewModel.updateBusStop(
-                                                busStopName = label.texts.first(),
-                                                nodeId = busStopInfo.nodeId
-                                            )
-                                            viewModel.busStop.value.busStop
-                                            return@setOnLabelClickListener false
-                                        }
-
-                                        viewModel.fetchReadAllBusOfBusStop(
-                                            id = busStop.id,
-                                            region = busStop.region,
+                                        isShowBottomSheet = true
+                                        viewModel.updateBusStop(
                                             busStopName = label.texts.first(),
-                                            nodeId = busStopInfo.nodeId,
-                                            hideBottomSheet = { isShowBottomSheet = true }
-                                        ) { appState.showToastMsg(it) }
-                                        kakaoMapObject.moveCamera(label.position, isUpCamera = true)
-                                        false
+                                            nodeId = busStopInfo.nodeId
+                                        )
+                                        viewModel.busStop.value.busStop
+                                        return@setOnLabelClickListener false
                                     }
+
+                                    viewModel.fetchReadAllBusOfBusStop(
+                                        id = busStop.id,
+                                        region = busStop.region,
+                                        busStopName = label.texts.first(),
+                                        nodeId = busStopInfo.nodeId,
+                                        hideBottomSheet = { isShowBottomSheet = true }
+                                    ) { appState.showToastMsg(it) }
+                                    kakaoMapObject.moveCamera(label.position, isUpCamera = true)
+                                    false
                                 }
                             }
-                        )
-                    }
-                })
+                        }
+                    )
+                }
+            })
+        SelectBusAppBar(
+            value = uiState,
+            onValueChange = { viewModel.updateBusStopInput(it) },
+            popBackStack = { appState.popBackStack() }) {
+            isLoading = true
+            viewModel.fetchReadAllBusStop(
+                busStopName = uiState,
+                changeLoadingState = { isLoading = false }
+            ) { appState.showToastMsg(it) }
+            isShowBottomSheet = false
         }
         if (isShowBottomSheet) {
             if (busStop.id == 0) {
@@ -277,7 +274,6 @@ fun BoxScope.BusesBottomSheet(
         LazyColumn(
             state = lazyListState,
             modifier = Modifier.weight(1f),
-//            contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             stickyHeader {
                 Box(
@@ -310,6 +306,55 @@ fun BoxScope.BusesBottomSheet(
             }
         }
         MainBottomButton(text = "완료", enabled = btnEnable) { onCompleted() }
+    }
+}
+
+@Composable
+fun BoxScope.SelectBusAppBar(
+    value: String,
+    onValueChange: (String) -> Unit,
+    popBackStack: () -> Unit,
+    onSearch: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(start = 16.dp, end = 16.dp, top = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = TextWColor,
+                contentColor = Primary
+            ), onClick = { popBackStack() }) {
+            Icon(
+                imageVector = Icons.Rounded.ArrowBackIosNew,
+                contentDescription = "ic_back_arrow",
+                modifier = Modifier.size(16.dp)
+            )
+        }
+
+        SearchTextField(
+            modifier = Modifier.padding(start = 8.dp).scheduleShadow(
+                color = Color.Black.copy(alpha = 0.18f),
+                blurRadius = 4.dp,
+                borderRadius = 12.dp
+            ),
+            value = value,
+            onValueChange = { onValueChange(it) },
+            placeholder = "버스 정류장 검색"
+        ) { onSearch() }
+
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun TTT(modifier: Modifier = Modifier) {
+    Box(modifier = Modifier){
+        SelectBusAppBar("", {}, {}, {})
     }
 }
 
