@@ -1,7 +1,7 @@
 package com.busschedule.data.repository
 
-import com.busschedule.data.api.FCMApi
-import com.busschedule.data.model.request.FCMTokenRequest
+import com.busschedule.data.remote.api.FCMApi
+import com.busschedule.data.remote.model.request.FCMTokenRequest
 import com.busschedule.domain.repository.FCMRepository
 import javax.inject.Inject
 

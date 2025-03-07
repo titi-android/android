@@ -1,6 +1,6 @@
 package com.busschedule.data.repository
 
-import com.busschedule.data.api.BusStopApi
+import com.busschedule.data.remote.api.BusStopApi
 import com.busschedule.domain.repository.BusStopRepository
 import com.busschedule.model.exception.BusStopInfo
 import javax.inject.Inject

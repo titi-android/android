@@ -1,8 +1,8 @@
 package com.busschedule.data.repository
 
-import com.busschedule.data.api.ScheduleApi
-import com.busschedule.data.model.request.ScheduleRegisterRequest
-import com.busschedule.data.model.response.asDomain
+import com.busschedule.data.remote.api.ScheduleApi
+import com.busschedule.data.remote.model.request.ScheduleRegisterRequest
+import com.busschedule.data.remote.model.response.asDomain
 import com.busschedule.domain.repository.ScheduleRepository
 import com.busschedule.model.DestinationInfo
 import com.busschedule.model.RouteInfo

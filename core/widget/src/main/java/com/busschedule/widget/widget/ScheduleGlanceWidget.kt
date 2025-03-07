@@ -4,6 +4,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -16,6 +19,7 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
@@ -32,13 +36,16 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.Text
+import androidx.glance.unit.ColorProvider
 import com.busschedule.common.constant.Constants
 import com.busschedule.model.BusType
 import com.busschedule.util.ext.toFormatEnTime
 import com.busschedule.widget.R
 import com.busschedule.widget.designsystem.style.TextBlackColor
+import com.busschedule.widget.designsystem.style.TextBlackColor2
 import com.busschedule.widget.designsystem.style.TextColor
 import com.busschedule.widget.designsystem.style.rFooter
+import com.busschedule.widget.designsystem.style.rTextLabel
 import com.busschedule.widget.designsystem.style.sbTitle3
 
 private val destinationKey = ActionParameters.Key<String>(
@@ -88,6 +95,136 @@ fun Available(
     busStop: String = "",
     busArrivalInfo: List<BusArrivalData> = emptyList(),
 ) {
+    if (busArrivalInfo.isEmpty()) {
+        NotExistArrivalBus(
+            scheduleName = scheduleName,
+            busStop = busStop,
+            busArrivalInfo = busArrivalInfo,
+            backgroundColor = BusType.지정.color
+        )
+    } else {
+        ExistArrivalBus(
+            scheduleName = scheduleName,
+            busStop = busStop,
+            busArrivalInfo = busArrivalInfo,
+            backgroundColor = BusType.find(busArrivalInfo.first().type).color
+        )
+    }
+}
+
+@Composable
+fun TitleOfAvailable(
+    scheduleName: String = "",
+    busStop: String = "",
+    contentColor: ColorProvider = TextColor,
+) {
+    val busImage = R.drawable.image_graybus
+    Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            provider = ImageProvider(busImage),
+            contentDescription = "iamge_bus",
+            modifier = GlanceModifier.size(32.dp)
+        )
+        Spacer(GlanceModifier.width(8.dp))
+        Column {
+            Text(text = scheduleName, style = sbTitle3.copy(contentColor))
+//            Spacer(GlanceModifier.height(4.dp))
+            Text(text = busStop, style = rFooter.copy(contentColor))
+        }
+    }
+}
+
+@Composable
+fun BusArrivalCard(busArrivalInfo: BusArrivalData) {
+    val type = BusType.find(busArrivalInfo.type)
+    val busImage = when (type) {
+        BusType.간선 -> R.drawable.image_bluebus
+        in listOf(BusType.마을, BusType.지선, BusType.일반) -> R.drawable.image_greenbus
+        BusType.순환 -> R.drawable.image_yellowbus
+        in listOf(BusType.급행, BusType.광역, BusType.직행, BusType.인천) -> R.drawable.image_redbus
+        else -> R.drawable.image_graybus
+    }
+    Row(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .cornerRadius(8.dp)
+            .background(TextColor)
+            .padding(horizontal = 8.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            provider = ImageProvider(busImage),
+            contentDescription = "iamge_bus",
+            modifier = GlanceModifier.size(16.dp)
+        )
+        Spacer(GlanceModifier.width(8.dp))
+        Text(
+            text = busArrivalInfo.bus,
+            style = sbTitle3.copy(TextBlackColor2),
+            modifier = GlanceModifier.defaultWeight()
+        )
+        Text(
+            text = busArrivalInfo.arrivalTime.toFormatEnTime(),
+            style = rTextLabel.copy(TextBlackColor2)
+        )
+
+    }
+}
+
+@Composable
+fun ExistArrivalBus(
+    scheduleName: String = "",
+    busStop: String = "",
+    busArrivalInfo: List<BusArrivalData> = emptyList(),
+    backgroundColor: Color,
+) {
+    Column(
+        modifier = GlanceModifier.fillMaxSize()
+            .background(backgroundColor).padding(16.dp),
+    ) {
+        TitleOfAvailable(
+            scheduleName = scheduleName,
+            busStop = busStop,
+            contentColor = TextColor
+        )
+        Spacer(modifier = GlanceModifier.height(15.dp))
+
+        busArrivalInfo.take(2).forEachIndexed { index, busArrivalData ->
+            BusArrivalCard(busArrivalInfo = busArrivalData)
+            if (index != 1) {
+                Spacer(modifier = GlanceModifier.height(8.dp))
+            }
+        }
+
+        Spacer(modifier = GlanceModifier.height(15.dp))
+
+        Row(modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+            Image(
+                provider = ImageProvider(R.drawable.ic_next_arrow),
+                contentDescription = "ic_previous_arrow",
+                modifier = GlanceModifier.defaultWeight().size(24.dp)
+            )
+            Image(
+                provider = ImageProvider(R.drawable.ic_refresh),
+                contentDescription = "ic_refresh",
+                modifier = GlanceModifier.defaultWeight().clickable(actionRunCallback<UpdateScheduleAction>())
+            )
+            Image(
+                provider = ImageProvider(R.drawable.ic_next_arrow),
+                contentDescription = "ic_previous_arrow",
+                modifier = GlanceModifier.defaultWeight().size(24.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun NotExistArrivalBus(
+    scheduleName: String = "",
+    busStop: String = "",
+    busArrivalInfo: List<BusArrivalData> = emptyList(),
+    backgroundColor: Color,
+) {
     val busImage = if (busArrivalInfo.isEmpty()) {
         R.drawable.image_graybus
     } else {
@@ -100,8 +237,6 @@ fun Available(
             else -> R.drawable.image_graybus
         }
     }
-    val backgroundColor =
-        if (busArrivalInfo.isEmpty()) BusType.지정.color else BusType.find(busArrivalInfo.first().type).color
     Box(
         modifier = GlanceModifier.fillMaxSize()
             .background(backgroundColor).padding(bottom = 16.dp),
@@ -283,4 +418,10 @@ private fun NotExistSchedule() {
             }
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun TestWidget(modifier: Modifier = Modifier) {
+    Available()
 }

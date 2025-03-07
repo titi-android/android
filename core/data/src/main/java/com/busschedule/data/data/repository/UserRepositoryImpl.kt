@@ -1,10 +1,10 @@
 package com.busschedule.data.repository
 
-import com.busschedule.data.api.LoginApi
-import com.busschedule.data.api.UserApi
-import com.busschedule.data.model.request.InquiryRequest
-import com.busschedule.data.model.request.LoginUserRequest
-import com.busschedule.data.model.response.asDomain
+import com.busschedule.data.remote.api.LoginApi
+import com.busschedule.data.remote.api.UserApi
+import com.busschedule.data.remote.model.request.InquiryRequest
+import com.busschedule.data.remote.model.request.LoginUserRequest
+import com.busschedule.data.remote.model.response.asDomain
 import com.busschedule.datastore.TokenManager
 import com.busschedule.domain.repository.UserRepository
 import com.busschedule.model.Token
