@@ -1,6 +1,7 @@
-package com.busschedule.data.network
+package com.busschedule.data.remote.network
 
 import android.util.Log
+import com.busschedule.data.remote.model.ApiResult
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Retrofit

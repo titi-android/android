@@ -1,4 +1,4 @@
-package com.busschedule.datastore
+package com.busschedule.data.local.datastore
 
 import android.util.Log
 import androidx.datastore.core.DataStore

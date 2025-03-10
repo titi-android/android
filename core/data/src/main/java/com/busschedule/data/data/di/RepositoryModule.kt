@@ -1,15 +1,15 @@
-package com.busschedule.data.di
+package com.busschedule.data.data.di
 
-import com.busschedule.data.repository.BusRepositoryImpl
-import com.busschedule.data.repository.BusStopRepositoryImpl
-import com.busschedule.data.repository.FCMRepositoryImpl
-import com.busschedule.data.repository.UserRepositoryImpl
-import com.busschedule.data.repository.ScheduleRepositoryImpl
+import com.busschedule.data.data.repository.BusRepositoryImpl
+import com.busschedule.data.data.repository.BusStopRepositoryImpl
+import com.busschedule.data.data.repository.FCMRepositoryImpl
+import com.busschedule.data.data.repository.ScheduleRepositoryImpl
+import com.busschedule.data.data.repository.UserRepositoryImpl
 import com.busschedule.domain.repository.BusRepository
 import com.busschedule.domain.repository.BusStopRepository
 import com.busschedule.domain.repository.FCMRepository
-import com.busschedule.domain.repository.UserRepository
 import com.busschedule.domain.repository.ScheduleRepository
+import com.busschedule.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

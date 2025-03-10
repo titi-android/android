@@ -1,7 +1,5 @@
-package com.busschedule.data
+package com.busschedule.data.remote.model
 
-import com.busschedule.data.network.ScheduleErrorResponse
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 object Json {

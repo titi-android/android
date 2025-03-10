@@ -1,6 +1,7 @@
-package com.busschedule.data.network
+package com.busschedule.data.remote.network
 
 import android.util.Log
+import com.busschedule.data.remote.model.ApiResult
 import com.busschedule.domain.model.ApiResponse
 import okhttp3.Request
 import okio.Timeout

@@ -1,7 +1,7 @@
-package com.busschedule.data.api
+package com.busschedule.data.remote.api
 
-import com.busschedule.data.model.DefaultResponse
-import com.busschedule.data.model.request.FCMTokenRequest
+import com.busschedule.data.remote.model.DefaultResponse
+import com.busschedule.data.remote.model.request.FCMTokenRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 

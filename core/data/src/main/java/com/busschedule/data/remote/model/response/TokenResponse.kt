@@ -1,4 +1,4 @@
-package com.busschedule.data.model.response
+package com.busschedule.data.remote.model.response
 
 import com.busschedule.model.Token
 import kotlinx.serialization.Serializable

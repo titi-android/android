@@ -1,8 +1,8 @@
-package com.busschedule.data.api
+package com.busschedule.data.remote.api
 
-import com.busschedule.data.model.DefaultResponse
-import com.busschedule.data.model.request.LoginUserRequest
-import com.busschedule.data.model.response.TokenResponse
+import com.busschedule.data.remote.model.DefaultResponse
+import com.busschedule.data.remote.model.request.LoginUserRequest
+import com.busschedule.data.remote.model.response.TokenResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 

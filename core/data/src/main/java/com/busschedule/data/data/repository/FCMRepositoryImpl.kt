@@ -1,4 +1,4 @@
-package com.busschedule.data.repository
+package com.busschedule.data.data.repository
 
 import com.busschedule.data.remote.api.FCMApi
 import com.busschedule.data.remote.model.request.FCMTokenRequest

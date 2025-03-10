@@ -1,6 +1,6 @@
-package com.busschedule.data.di.auth
+package com.busschedule.data.remote.di.auth
 
-import com.busschedule.datastore.TokenManager
+import com.busschedule.data.local.datastore.TokenManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator

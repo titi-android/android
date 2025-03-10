@@ -1,4 +1,4 @@
-package com.busschedule.data.network
+package com.busschedule.data.remote.model
 
 import kotlinx.serialization.Serializable
 

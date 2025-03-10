@@ -1,9 +1,9 @@
-package com.busschedule.data.api
+package com.busschedule.data.remote.api
 
-import com.busschedule.data.model.DefaultResponse
-import com.busschedule.data.model.request.ScheduleRegisterRequest
-import com.busschedule.data.model.response.ScheduleRegisterResponse
-import com.busschedule.data.model.response.ScheduleTicketResponse
+import com.busschedule.data.remote.model.DefaultResponse
+import com.busschedule.data.remote.model.request.ScheduleRegisterRequest
+import com.busschedule.data.remote.model.response.ScheduleRegisterResponse
+import com.busschedule.data.remote.model.response.ScheduleTicketResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

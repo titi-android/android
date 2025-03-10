@@ -1,4 +1,4 @@
-package com.busschedule.data.network
+package com.busschedule.data.remote.model
 
 import com.busschedule.model.exception.AccessTokenIllegalArgumentException
 import com.busschedule.model.exception.ForbiddenException
@@ -85,7 +85,7 @@ internal fun ApiResult<*>.throwFailure() {
 }
 
 private fun handleHttpError(httpError: ApiResult.Failure.HttpError): Exception = runCatching {
-    com.busschedule.data.Json.getScheduleErrorBody(httpError.body)
+    Json.getScheduleErrorBody(httpError.body)
 }.getOrNull()?.run {
     handleScheduleError(httpStatusCode = httpError.code, scheduleErrorResponse = this)
 } ?: handleNonScheduleError(httpError.code)

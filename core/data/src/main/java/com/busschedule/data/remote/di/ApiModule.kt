@@ -1,4 +1,4 @@
-package com.busschedule.data.di
+package com.busschedule.data.remote.di
 
 import com.busschedule.data.remote.api.BusApi
 import com.busschedule.data.remote.api.BusStopApi
