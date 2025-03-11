@@ -16,4 +16,7 @@ interface NotifyScheduleDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM ${EntityTable.NOTIFY_SCHEDULE} WHERE scheduleId = :scheduleId)")
     fun isExist(scheduleId: String): Boolean
-}
+
+    @Query("SELECT * FROM ${EntityTable.NOTIFY_SCHEDULE} WHERE scheduleId = :scheduleId")
+    fun read(scheduleId: String): NotifyScheduleEntity
+}g

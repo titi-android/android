@@ -42,7 +42,7 @@ class TokenManager @Inject constructor(
         dataStore.edit { prefs ->
             prefs[ACCESS_TOKEN_KEY] = token
         }
-        Log.d("daeyoung", "AccessToken: $token")
+//        Log.d("daeyoung", "AccessToken: $token")
     }
 
     suspend fun saveRefreshToken(token: String) {
@@ -55,16 +55,19 @@ class TokenManager @Inject constructor(
         dataStore.edit { prefs ->
             prefs[FCM_TOKEN_KEY] = token
         }
-        Log.d("daeyoung", "FCMToken: $token")
+//        Log.d("daeyoung", "FCMToken: $token")
     }
 
-    suspend fun isExistAccessToken(): Boolean {
-        return dataStore.data.map { prefs ->
-            prefs[ACCESS_TOKEN_KEY] != null
-        }.first()
+    suspend fun isExistAccessToken(accessToken: String): Boolean {
+        return getAccessToken().first() == accessToken
     }
 
-    suspend fun isExistFCMToken(): Boolean {
+    suspend fun isExistFCMToken(accessToken: String): Boolean {
+        Log.d("daeyoung", "access to local: ${getAccessToken().first() }")
+        Log.d("daeyoung", "access to server: ${accessToken}")
+        if (getAccessToken().first() == accessToken) {
+            return true
+        }
         return dataStore.data.map { prefs ->
             prefs[FCM_TOKEN_KEY] != null
         }.first()

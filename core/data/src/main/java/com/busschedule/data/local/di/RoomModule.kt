@@ -24,5 +24,5 @@ object RoomModule {
         context,
         RoomDataBase::class.java,
         DB_NAME,
-    ).build()
+    ).fallbackToDestructiveMigration().build()
 }

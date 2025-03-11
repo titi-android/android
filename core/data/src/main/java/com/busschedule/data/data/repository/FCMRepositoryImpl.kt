@@ -11,4 +11,6 @@ class FCMRepositoryImpl @Inject constructor(private val fcmApi: FCMApi) : FCMRep
         fcmApi.postFCMToken(fcmTokenRequest).getOrThrow()
     }
 
+    override suspend fun sendNotification() { fcmApi.sendNotification().getOrThrow() }
+
 }

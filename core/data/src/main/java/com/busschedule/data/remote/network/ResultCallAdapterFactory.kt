@@ -1,6 +1,5 @@
 package com.busschedule.data.remote.network
 
-import android.util.Log
 import com.busschedule.data.remote.model.ApiResult
 import retrofit2.Call
 import retrofit2.CallAdapter
@@ -31,14 +30,14 @@ class ResultCallAdapterFactory : CallAdapter.Factory() {
         returnType: ParameterizedType,
     ): CallAdapter<Type, out Call<out Any>>? {
         val wrapperType = getParameterUpperBound(0, returnType)
-        Log.d("daeyoung", "returnType : $returnType")
-        Log.d("daeyoung", "wrapperType : $wrapperType")
+//        Log.d("daeyoung", "returnType : $returnType")
+//        Log.d("daeyoung", "wrapperType : $wrapperType")
         return when (getRawType(wrapperType)) {
             ApiResult::class.java -> {
                 val bodyType = extractReturnType(wrapperType, returnType)
                 val dataType = extractReturnType(bodyType, returnType)
-                Log.d("daeyoung", "bodyType : $bodyType")
-                Log.d("daeyoung", "dataType : $dataType")
+//                Log.d("daeyoung", "bodyType : $bodyType")
+//                Log.d("daeyoung", "dataType : $dataType")
                 ApiResultCallAdapter(bodyType)
             }
 
