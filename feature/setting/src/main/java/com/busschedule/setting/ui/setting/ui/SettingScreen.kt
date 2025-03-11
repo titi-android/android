@@ -81,7 +81,7 @@ fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hilt
                     Text(text = "버전 정보", style = mTitle.copy(Primary))
                     HeightSpacer(height = 4.dp)
                     Text(
-                        text = "1.0.1", style = rFooter.copy(TextMColor)
+                        text = "1.0.2", style = rFooter.copy(TextMColor)
                     )
                 }
             }

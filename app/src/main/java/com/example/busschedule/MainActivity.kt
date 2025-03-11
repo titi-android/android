@@ -1,6 +1,7 @@
 package com.example.busschedule
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,5 +26,17 @@ class MainActivity : ComponentActivity() {
                 RootNavHost(route = route)
             }
         }
+    }
+
+    override fun onDestroy() {
+        Log.d("daeyoung", "onDestroy()")
+//        FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {
+//            if (it.isSuccessful) {
+//                Log.d("daeyoung", "deleteToken: success")
+//            } else {
+//                Log.d("daeyoung", "deleteToken: fail")
+//            }
+//        }
+        super.onDestroy()
     }
 }

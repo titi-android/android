@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.busschedule.data.local.room.model.EntityTable
 import com.busschedule.data.local.room.model.NotifyScheduleEntity
+import com.busschedule.model.BusStopInfo
 
 @Dao
 interface NotifyScheduleDao {
@@ -19,4 +20,18 @@ interface NotifyScheduleDao {
 
     @Query("SELECT * FROM ${EntityTable.NOTIFY_SCHEDULE} WHERE scheduleId = :scheduleId")
     fun read(scheduleId: String): NotifyScheduleEntity
-}g
+
+    @Query("""
+        UPDATE ${EntityTable.NOTIFY_SCHEDULE} 
+        SET busStopInfos = :busStopInfos
+        WHERE scheduleId = :scheduleId
+    """)
+    fun update(scheduleId: String, busStopInfos: List<BusStopInfo>)
+
+    @Query("""
+        UPDATE ${EntityTable.NOTIFY_SCHEDULE} 
+        SET busStopIndex = :busStopIndex
+        WHERE scheduleId = :scheduleId
+    """)
+    fun updateBusStopIndex(scheduleId: String, busStopIndex: Int)
+}

@@ -14,6 +14,10 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.navigation)
     implementation(projects.core.common)
+    implementation(projects.core.data)
+    implementation(project(":core:model"))
+    implementation(project(":core:widget"))
+
 
     // hiltViewModel 사용
     implementation(libs.androidx.hilt.compose)
@@ -24,11 +28,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(project(":core:datastore"))
     implementation(libs.firebase.messaging.ktx)
-    implementation(project(":core:model"))
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(project(":core:widget"))
 //    implementation(project(":feature:navigate"))
 
     testImplementation(libs.junit4)

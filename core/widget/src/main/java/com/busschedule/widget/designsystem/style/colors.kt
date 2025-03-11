@@ -6,6 +6,9 @@ import androidx.glance.unit.ColorProvider
 
 val TextColor = ColorProvider(Color(0xFFFFFFFF))
 val TextBlackColor = ColorProvider(Color(0xFF2E2E34))
+val TextBlackColor2 = ColorProvider(Color(0xFF232527))
+
+
 
 @Stable
 val BusBlue = ColorProvider(Color(0xFF3C89F5))

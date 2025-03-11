@@ -33,4 +33,4 @@
 
 # ClassCastException: java.lang.Class cannot be cast to java.lang.reflect.ParameterizedType
 -keep,allowobfuscation,allowshrinking class kotlinx.coroutines.flow.Flow
--keep class com.busschedule.data.network.ApiResult
+-keep class com.busschedule.data.remote.model.ApiResult

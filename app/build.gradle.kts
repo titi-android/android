@@ -29,7 +29,7 @@ android {
         applicationId = "com.schedule.notify.app"
         targetSdk = 35
         versionCode = 2
-        versionName = "1.01"
+        versionName = "1.02"
         manifestPlaceholders
         multiDexEnabled = true
         signingConfig = signingConfigs.getByName("release")
@@ -58,15 +58,16 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
-    implementation(projects.core.datastore)
     implementation(projects.core.notification)
     implementation(projects.core.widget)
     implementation(projects.core.common)
-    implementation(libs.firebase.messaging.ktx)
 
     // work
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
+
+    // fcm
+    implementation(libs.firebase.messaging.ktx)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -4,15 +4,59 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import com.busschedule.data.local.room.dao.NotifyScheduleDao
+import com.busschedule.model.FCMMessage
 import com.busschedule.model.NotificationBuilder
+import com.busschedule.notification.constant.NotifyAction
+import com.busschedule.notification.service.MyFirebaseMessagingService
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NotificationReceiver: BroadcastReceiver() {
+
+    @Inject
+    lateinit var dao: NotifyScheduleDao
+
+    private val receiverScope = CoroutineScope(Dispatchers.IO)
     override fun onReceive(context: Context, intent: Intent?) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        // Notification 취소
-        val notificationId = intent?.getIntExtra(NotificationBuilder.NOTIFYCODE_KEY, -1)!!
-        Log.d("daeyoung", "알림 확인 버튼 클릭, notificationId: ${notificationId}")
-        notificationManager.cancel(notificationId)
+        receiverScope.launch {
+            val scheduleId = intent?.getStringExtra("scheduleId") ?: ""
+            val notifyScheduleEntity = dao.read(scheduleId)
+            var nextBusStopIndex = notifyScheduleEntity.busStopIndex
+            if (intent?.action == NotifyAction.CLICK_NEXT_BUTTON.value) {
+                dao.updateBusStopIndex(scheduleId, ++nextBusStopIndex)
+            }
+            else if (intent?.action == NotifyAction.CLICK_PREVIOUS_BUTTON.value) {
+                dao.updateBusStopIndex(scheduleId, --nextBusStopIndex)
+            }
+
+            val fcmMessage = FCMMessage(
+                scheduleId = scheduleId,
+                scheduleName = notifyScheduleEntity.scheduleName,
+                busStopInfos = notifyScheduleEntity.busStopInfos[nextBusStopIndex]
+            )
+
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val notificationBuilder = NotificationBuilder(notificationManager)
+            val notification = notificationBuilder.makeNotification(
+                MyFirebaseMessagingService.CHANNEL_ID,
+                MyFirebaseMessagingService.CHANNEL_NAME,
+                context,
+                scheduleId = scheduleId,
+                maxBusStopSize = notifyScheduleEntity.busStopInfos.size,
+                scheduleIndex = nextBusStopIndex,
+                title = fcmMessage.getTitle(),
+                body = fcmMessage.getContent()
+            )
+
+            // 알림 생성
+            notificationManager.notify(NotificationBuilder.NOTIFYCODE, notification)
+        }
     }
 }

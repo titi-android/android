@@ -20,13 +20,14 @@ lottie = "6.6.2"
 coil = "2.5.0"
 coil3 = "3.1.0"
 accompanistPermission = "0.37.1"
+room = "2.6.1"
 
 androidGradlePlugin = "8.1.4"
 androidDesugarJdkLibs = "2.1.4"
 androidxCore = "1.9.0"
 androidxComposeCompiler = "1.4.7"
 
-hilt = "2.48.1"
+hilt = "2.51.1"
 junitVersion = "1.2.1"
 navigationCommonKtx = "2.8.5"
 navigationCompose = "2.8.5"
@@ -90,7 +91,6 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icon =  { group = "androidx.compose.material", name = "material-icons-extended"}
 
-kotlinx-serialization-json-v163 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -158,6 +158,12 @@ coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil"}
 
 # permission
 accompanist-permission = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermission"}
+
+# room
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room"}
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room"}
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

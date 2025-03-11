@@ -5,19 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.busschedule.datastore.TokenManager
+import com.busschedule.data.local.datastore.TokenManager
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
-import com.busschedule.schedulelist.model.ScheduleUI
 import com.busschedule.schedulelist.model.ScheduleListUiState
+import com.busschedule.schedulelist.model.ScheduleUI
 import com.busschedule.schedulelist.model.asStateUI
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.widget.widget.worker.ScheduleWorker
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +25,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -60,15 +58,19 @@ class ScheduleListViewModel @Inject constructor(
     }
 
     suspend fun initFCMToken() {
-        try {
-            if (tokenManager.isExistFCMToken().not()) {
-                val token = FirebaseMessaging.getInstance().token.await()
-                tokenManager.saveFCMToken(token)
-                fetchPostFCMToken(token)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        try {
+//            if (tokenManager.isExistFCMToken().not()) {
+//                val token = FirebaseMessaging.getInstance().token.await()
+//                tokenManager.saveFCMToken(token)
+//                fetchPostFCMToken(token)
+//            }
+//            else {
+//                Log.d("daeyoung", "fcm token: ${FirebaseMessaging.getInstance().token.await()}")
+//                Log.d("daeyoung", "already fcm token: ${tokenManager.getFCMToken().first() }")
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
     }
 
     private fun updateWidget() {

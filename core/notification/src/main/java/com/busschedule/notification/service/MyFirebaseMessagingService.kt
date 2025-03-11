@@ -3,59 +3,100 @@ package com.busschedule.notification.service
 import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
+import com.busschedule.data.local.datastore.TokenManager
+import com.busschedule.data.local.room.dao.NotifyScheduleDao
+import com.busschedule.data.local.room.model.NotifyScheduleEntity
+import com.busschedule.model.BusStopInfo
 import com.busschedule.model.FCMMessage
 import com.busschedule.model.NotificationBuilder
 import com.busschedule.notification.constant.FCMMsgData
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
+
+@AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private val TAG = "FirebaseService"
 
-    override fun onNewToken(token: String) {
-        Log.d(TAG, "new Token: $token")
+    val serviceScope = CoroutineScope(Dispatchers.IO)
 
-//        // 토큰 값을 따로 저장해둔다.
-//        val pref = this.getSharedPreferences("token", Context.MODE_PRIVATE)
-//        val editor = pref.edit()
-//        editor.putString("token", token).apply()
-//        editor.commit()
-//
-//        Log.i("로그: ", "성공적으로 토큰을 저장함")
+    @Inject
+    lateinit var tokenManager: TokenManager
+
+    @Inject
+    lateinit var dao: NotifyScheduleDao
+
+    override fun onNewToken(token: String) {
+        serviceScope.launch {
+            tokenManager.saveFCMToken(token)
+        }
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         try {
             Log.d(TAG, "FCM DATA: ${message.data}")
+            val busStopInfosJson = message.data[FCMMsgData.BUSSTOP_INFOS.value] ?: "[]"
+            val busStopInfos = Json.decodeFromString<List<BusStopInfo>>(busStopInfosJson)
+            val scheduleId = message.data[FCMMsgData.SCHEDULE_ID.value] ?: ""
+            val scheduleName = message.data[FCMMsgData.SCHEDULENAME.value] ?: ""
+            if (dao.isExist(scheduleId)) {
+                dao.update( scheduleId = scheduleId, busStopInfos = busStopInfos )
+            } else {
+                dao.insert(
+                    NotifyScheduleEntity(
+                        scheduleId = scheduleId,
+                        scheduleName = scheduleName,
+                        busStopInfos = busStopInfos
+                    )
+                )
+            }
+            val notifyScheduleEntity = dao.read(scheduleId)
+            val curBusStop = notifyScheduleEntity.busStopInfos[notifyScheduleEntity.busStopIndex]
             val notificationMessage = FCMMessage(
-                scheduleName = message.data[FCMMsgData.SCHEDULENAME.value] ?: "",
-                days = message.data[FCMMsgData.DAYS.value] ?: "",
-                busStopName = message.data[FCMMsgData.BUSSTOPNAME.value] ?: "",
-                firstBusName = message.data[FCMMsgData.FIRST_BUS_NAME.value] ?: "",
-                firstArrPrevStCnt = message.data[FCMMsgData.FIRST_ARR_PRESTCNT.value] ?: "",
-                firstArrTime = message.data[FCMMsgData.FIRST_ARR_TIME.value] ?: "",
-                secondBusName = message.data[FCMMsgData.SECOND_BUS_NAME.value] ?: "",
-                secondArrPrevStCnt = message.data[FCMMsgData.SECOND_ARR_PRESTCNT.value] ?: "",
-                secondArrTime = message.data[FCMMsgData.SECOND_ARR_TIME.value] ?: "",
+                scheduleId = notifyScheduleEntity.scheduleId,
+                scheduleName = notifyScheduleEntity.scheduleName,
+                busStopInfos = curBusStop
             )
-            Log.d(TAG, "FCM DATA: ${notificationMessage}")
-            sendNotification(title = notificationMessage.getTitle(), body = notificationMessage.getContent(), icon = 1)
+            sendNotification(
+                scheduleId = notificationMessage.scheduleId,
+                maxBusStopSize = notifyScheduleEntity.busStopInfos.size,
+                scheduleIndex = notifyScheduleEntity.busStopIndex,
+                title = notificationMessage.getTitle(),
+                body = notificationMessage.getContent()
+            )
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.e(TAG, "FCM 메시지 처리 중 오류 발생: ${e.message}")
         }
     }
 
-    private fun sendNotification(title: String, body: String, icon: Int) {
+    private fun sendNotification(scheduleId: String, maxBusStopSize: Int, scheduleIndex: Int, title: String, body: String) {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notificationBuilder = NotificationBuilder(notificationManager)
-        val notification = notificationBuilder.makeNotification(CHANNEL_ID, CHANNEL_NAME, this, title = title, body = body)
+        val notification = notificationBuilder.makeNotification(
+            CHANNEL_ID,
+            CHANNEL_NAME,
+            this,
+            scheduleId = scheduleId,
+            maxBusStopSize = maxBusStopSize,
+            scheduleIndex = scheduleIndex,
+            title = title,
+            body = body
+        )
 
         // 알림 생성
         notificationManager.notify(NotificationBuilder.NOTIFYCODE, notification)
     }
+
     companion object {
         const val CHANNEL_ID = "channel_id1"
         const val CHANNEL_NAME = "channel_name"

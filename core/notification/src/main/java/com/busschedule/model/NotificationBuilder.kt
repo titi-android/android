@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.busschedule.notification.constant.NotifyAction
 import com.busschedule.notification.receiver.NotificationReceiver
 
 class NotificationBuilder(private val notificationManager: NotificationManager) {
@@ -30,10 +31,22 @@ class NotificationBuilder(private val notificationManager: NotificationManager) 
             vibrationPattern = longArrayOf(100, 200, 100, 200)
         }
 
-    private fun actionPendingIntent(context: Context): PendingIntent {
-        val actionIntent =
-            Intent(context, NotificationReceiver::class.java).putExtra(NOTIFYCODE_KEY, NOTIFYCODE)
-        return PendingIntent.getBroadcast(context, 20, actionIntent, PendingIntent.FLAG_IMMUTABLE)
+    private fun actionPendingIntent(
+        context: Context,
+        actionFlag: String,
+        scheduleId: String,
+    ): PendingIntent {
+        val intent = Intent(context, NotificationReceiver::class.java).apply {
+            action = actionFlag
+            putExtra("scheduleId", scheduleId)
+        }
+
+        return PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
     }
 
 
@@ -42,6 +55,9 @@ class NotificationBuilder(private val notificationManager: NotificationManager) 
         channelId: String,
         channelName: String,
         context: Context,
+        scheduleId: String,
+        maxBusStopSize: Int,
+        scheduleIndex: Int,
         title: String,
         body: String,
     ): Notification {
@@ -61,6 +77,13 @@ class NotificationBuilder(private val notificationManager: NotificationManager) 
         }
         // 알림 소리
         val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val actionCount = when (scheduleIndex) {
+            0 -> listOf(NotifyAction.CLICK_NEXT_BUTTON)
+            maxBusStopSize - 1 -> listOf(NotifyAction.CLICK_PREVIOUS_BUTTON)
+            else -> {
+                listOf(NotifyAction.CLICK_PREVIOUS_BUTTON, NotifyAction.CLICK_NEXT_BUTTON)
+            }
+        }
 
         notification = builder.run {
             setOngoing(true)
@@ -70,9 +93,19 @@ class NotificationBuilder(private val notificationManager: NotificationManager) 
             setContentText(body) // 메시지 내용
             setWhen(System.currentTimeMillis()) // 알림 발생 시간
             setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // 잠금 화면에서 알림 보임
-            addAction(
-                NotificationCompat.Action.Builder(null, "확인", actionPendingIntent(context)).build()
-            )
+            actionCount.forEach {
+                addAction(
+                    NotificationCompat.Action.Builder(
+                        null, it.text,
+                        actionPendingIntent(
+                            context = context,
+                            actionFlag = it.value,
+                            scheduleId = scheduleId
+                        )
+                    ).build()
+                )
+            }
+
 //            setAutoCancel(true)
             setSound(soundUri) // 알림 소리
             build()

@@ -11,5 +11,6 @@ data class NotifyScheduleEntity(
     val id: Int = 0,
     val scheduleId: String,
     val scheduleName: String,
-    val busStopInfos: List<BusStopInfo>
+    val busStopIndex: Int = 0,
+    val busStopInfos: List<BusStopInfo> = emptyList()
 )
