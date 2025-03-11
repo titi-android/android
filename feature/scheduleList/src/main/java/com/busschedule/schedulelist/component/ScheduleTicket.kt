@@ -71,6 +71,7 @@ fun ScheduleTicket(
     changeNotifyState: () -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
+    changeBusStopStateOfNotify:  (String, String, Int) -> Unit = { _, _, _ -> },
 ) {
     val icNotify = if (schedule.getAlarm()) MyIconPack.IcNotify else MyIconPack.IcOffnotify
     var isShowCloseDialog by remember { mutableStateOf(false) }
@@ -196,7 +197,10 @@ fun ScheduleTicket(
                             step = if (index == 0) "출발" else "환승",
                             busStop = busStopInfo.busStopName,
                             isCurrentStep = curStep == index
-                        ) { curStep = index }
+                        ) {
+                            // TODO:
+                            changeBusStopStateOfNotify(schedule.id.toString(), schedule.name, index)
+                            curStep = index }
                         Icon(
                             imageVector = MyIconPack.IcForwardArrow,
                             contentDescription = "ic_next",

@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.busschedule.data.local.datastore.TokenManager
+import com.busschedule.data.local.room.dao.NotifyScheduleDao
+import com.busschedule.data.local.room.model.NotifyScheduleEntity
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
@@ -19,6 +20,7 @@ import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,7 +38,7 @@ class ScheduleListViewModel @Inject constructor(
     private val deleteScheduleUseCase: DeleteScheduleUseCase,
     private val postFCMTokenUseCase: PostFCMTokenUseCase,
     private val putScheduleAlarmUseCase: PutScheduleAlarmUseCase,
-    private val tokenManager: TokenManager,
+    private val dao: NotifyScheduleDao,
 ) : ViewModel() {
 
     private val _dayOfWeeks = MutableStateFlow(DayOfWeek.entries.map {
@@ -53,25 +55,10 @@ class ScheduleListViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    val scheduleListUiState = combine(dayOfWeeks, schedules, isLoading) { dayOfWeeks, schedules, isLoading ->
-        ScheduleListUiState(dayOfWeeks, schedules, isLoading)
-    }
-
-    suspend fun initFCMToken() {
-//        try {
-//            if (tokenManager.isExistFCMToken().not()) {
-//                val token = FirebaseMessaging.getInstance().token.await()
-//                tokenManager.saveFCMToken(token)
-//                fetchPostFCMToken(token)
-//            }
-//            else {
-//                Log.d("daeyoung", "fcm token: ${FirebaseMessaging.getInstance().token.await()}")
-//                Log.d("daeyoung", "already fcm token: ${tokenManager.getFCMToken().first() }")
-//            }
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
-    }
+    val scheduleListUiState =
+        combine(dayOfWeeks, schedules, isLoading) { dayOfWeeks, schedules, isLoading ->
+            ScheduleListUiState(dayOfWeeks, schedules, isLoading)
+        }
 
     private fun updateWidget() {
         WorkManager.getInstance(context).enqueue(
@@ -109,12 +96,32 @@ class ScheduleListViewModel @Inject constructor(
         viewModelScope.launch { postFCMTokenUseCase(token) }
     }
 
-    fun fetchPutScheduleAlarm(scheduleId: Int, updateAlarm: () -> Unit, showToast: (String) -> Unit) {
+    fun fetchPutScheduleAlarm(
+        scheduleId: Int,
+        updateAlarm: () -> Unit,
+        showToast: (String) -> Unit,
+    ) {
         viewModelScope.launch {
             putScheduleAlarmUseCase(scheduleId).onSuccess { updateAlarm() }.onFailure {
                 showToast(it.message!!)
             }
-
         }
     }
+
+    fun fetchUpdateBusStopStateOfNotify(scheduleId: String, scheduleName: String, state: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (dao.isExist(scheduleId)) {
+                dao.updateBusStopIndex(scheduleId, state)
+                return@launch
+            }
+            dao.insert(
+                NotifyScheduleEntity(
+                    scheduleId = scheduleId,
+                    scheduleName = scheduleName,
+                    busStopIndex = state
+                )
+            )
+        }
+    }
+
 }

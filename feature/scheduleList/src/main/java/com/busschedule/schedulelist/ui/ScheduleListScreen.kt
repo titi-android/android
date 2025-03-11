@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.common.constant.Constants
-import com.busschedule.model.BusType
 import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.component.ScheduleListAppBar
 import com.busschedule.schedulelist.component.ScheduleTicket
@@ -46,8 +45,6 @@ import core.designsystem.svg.myiconpack.IcRefresh
 import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextWColor
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 
 @Composable
@@ -62,17 +59,12 @@ fun ScheduleListScreen(
     CheckNotifyPermission()
 
     LaunchedEffect(Unit) {
-        listOf(
-            async { scheduleListViewModel.initFCMToken() },
-            async {
-                while (true) {
-                    if (uiState.dayOfWeeks.find { it.isSelected }?.isToday() == true) {
-                        scheduleListViewModel.fetchReadTodaySchedules { appState.showToastMsg(it) }
-                    }
-                    delay(Constants.MINUTE_1)
-                }
+        while (true) {
+            if (uiState.dayOfWeeks.find { it.isSelected }?.isToday() == true) {
+                scheduleListViewModel.fetchReadTodaySchedules { appState.showToastMsg(it) }
             }
-        ).awaitAll()
+            delay(Constants.MINUTE_1)
+        }
     }
     Surface(
         modifier = Modifier
@@ -113,12 +105,12 @@ fun ScheduleListScreen(
                                     }
                                 ) { appState.showToastMsg(it) }
                             },
-                            onEdit = { appState.navigateToRegister(schedule.id) }) {
-                            scheduleListViewModel.fetchDeleteSchedules(schedule.id) {
-                                appState.showToastMsg(
-                                    it
-                                )
-                            }
+                            onEdit = { appState.navigateToRegister(schedule.id) },
+                            onDelete = {scheduleListViewModel.fetchDeleteSchedules(schedule.id) {
+                                appState.showToastMsg(it)
+                            }}
+                        ) { scheduleId, scheduleName, notifyState ->
+                            scheduleListViewModel.fetchUpdateBusStopStateOfNotify(scheduleId, scheduleName, notifyState)
                         }
                     }
                 }
