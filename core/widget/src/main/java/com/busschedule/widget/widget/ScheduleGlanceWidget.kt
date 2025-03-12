@@ -181,6 +181,7 @@ fun ExistArrivalBus(
     Column(
         modifier = GlanceModifier.fillMaxSize()
             .background(backgroundColor).padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         TitleOfAvailable(
             scheduleName = scheduleName,
@@ -200,17 +201,17 @@ fun ExistArrivalBus(
 
         Row(modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 8.dp)) {
             Image(
-                provider = ImageProvider(R.drawable.ic_next_arrow),
+                provider = ImageProvider(R.drawable.ic_previoud_arrow_semibold),
                 contentDescription = "ic_previous_arrow",
                 modifier = GlanceModifier.defaultWeight().size(24.dp)
             )
             Image(
-                provider = ImageProvider(R.drawable.ic_refresh),
+                provider = ImageProvider(R.drawable.ic_refresh_semibold),
                 contentDescription = "ic_refresh",
                 modifier = GlanceModifier.defaultWeight().clickable(actionRunCallback<UpdateScheduleAction>())
             )
             Image(
-                provider = ImageProvider(R.drawable.ic_next_arrow),
+                provider = ImageProvider(R.drawable.ic_forward_arrow_semibold),
                 contentDescription = "ic_previous_arrow",
                 modifier = GlanceModifier.defaultWeight().size(24.dp)
             )
