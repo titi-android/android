@@ -4,7 +4,7 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.busschedule.data.local.room.dao.NotifyScheduleDao
+import com.busschedule.domain.repository.NotifyRepository
 import com.busschedule.model.FCMMessage
 import com.busschedule.model.NotificationBuilder
 import com.busschedule.notification.constant.NotifyAction
@@ -19,19 +19,19 @@ import javax.inject.Inject
 class NotificationReceiver: BroadcastReceiver() {
 
     @Inject
-    lateinit var dao: NotifyScheduleDao
+    lateinit var repository: NotifyRepository
 
     private val receiverScope = CoroutineScope(Dispatchers.IO)
     override fun onReceive(context: Context, intent: Intent?) {
         receiverScope.launch {
             val scheduleId = intent?.getStringExtra("scheduleId") ?: ""
-            val notifyScheduleEntity = dao.read(scheduleId)
+            val notifyScheduleEntity = repository.read(scheduleId)
             var nextBusStopIndex = notifyScheduleEntity.busStopIndex
             if (intent?.action == NotifyAction.CLICK_NEXT_BUTTON.value) {
-                dao.updateBusStopIndex(scheduleId, ++nextBusStopIndex)
+                repository.updateBusStopIndex(scheduleId, ++nextBusStopIndex)
             }
             else if (intent?.action == NotifyAction.CLICK_PREVIOUS_BUTTON.value) {
-                dao.updateBusStopIndex(scheduleId, --nextBusStopIndex)
+                repository.updateBusStopIndex(scheduleId, --nextBusStopIndex)
             }
 
             val fcmMessage = FCMMessage(

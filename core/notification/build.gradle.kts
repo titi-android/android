@@ -18,7 +18,6 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:util"))
     implementation(project(":core:domain"))
-    implementation(project(":core:data"))
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

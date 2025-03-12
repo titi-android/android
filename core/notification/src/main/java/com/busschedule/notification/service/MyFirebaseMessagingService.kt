@@ -3,9 +3,7 @@ package com.busschedule.notification.service
 import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
-import com.busschedule.data.local.datastore.TokenManager
-import com.busschedule.data.local.room.dao.NotifyScheduleDao
-import com.busschedule.data.local.room.model.NotifyScheduleEntity
+import com.busschedule.domain.repository.NotifyRepository
 import com.busschedule.model.BusStopInfo
 import com.busschedule.model.FCMMessage
 import com.busschedule.model.NotificationBuilder
@@ -28,14 +26,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     val serviceScope = CoroutineScope(Dispatchers.IO)
 
     @Inject
-    lateinit var tokenManager: TokenManager
-
-    @Inject
-    lateinit var dao: NotifyScheduleDao
+    lateinit var repository: NotifyRepository
 
     override fun onNewToken(token: String) {
         serviceScope.launch {
-            tokenManager.saveFCMToken(token)
+            repository.saveFCMToken(token)
         }
     }
 
@@ -46,18 +41,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val busStopInfos = Json.decodeFromString<List<BusStopInfo>>(busStopInfosJson)
             val scheduleId = message.data[FCMMsgData.SCHEDULE_ID.value] ?: ""
             val scheduleName = message.data[FCMMsgData.SCHEDULENAME.value] ?: ""
-            if (dao.isExist(scheduleId)) {
-                dao.update( scheduleId = scheduleId, busStopInfos = busStopInfos )
+            if (repository.isExist(scheduleId)) {
+                repository.update(scheduleId = scheduleId, busStopInfos = busStopInfos)
             } else {
-                dao.insert(
-                    NotifyScheduleEntity(
-                        scheduleId = scheduleId,
-                        scheduleName = scheduleName,
-                        busStopInfos = busStopInfos
-                    )
+                repository.insert(
+                    scheduleId = scheduleId,
+                    scheduleName = scheduleName,
+                    busStopInfos = busStopInfos
                 )
             }
-            val notifyScheduleEntity = dao.read(scheduleId)
+            val notifyScheduleEntity = repository.read(scheduleId)
             val curBusStop = notifyScheduleEntity.busStopInfos[notifyScheduleEntity.busStopIndex]
             val notificationMessage = FCMMessage(
                 scheduleId = notifyScheduleEntity.scheduleId,
@@ -77,7 +70,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendNotification(scheduleId: String, maxBusStopSize: Int, scheduleIndex: Int, title: String, body: String) {
+    private fun sendNotification(
+        scheduleId: String,
+        maxBusStopSize: Int,
+        scheduleIndex: Int,
+        title: String,
+        body: String,
+    ) {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
