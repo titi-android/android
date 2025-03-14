@@ -52,7 +52,7 @@ import core.designsystem.shadow.scheduleShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
-import core.designsystem.svg.myiconpack.IcForwardArrow
+import core.designsystem.svg.myiconpack.IcForwardArrow2
 import core.designsystem.svg.myiconpack.IcNotify
 import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.ImageBusOfTicket
@@ -202,7 +202,7 @@ fun ScheduleTicket(
                             changeBusStopStateOfNotify(schedule.id.toString(), schedule.name, index)
                             curStep = index }
                         Icon(
-                            imageVector = MyIconPack.IcForwardArrow,
+                            imageVector = MyIconPack.IcForwardArrow2,
                             contentDescription = "ic_next",
                             modifier = Modifier.size(16.dp),
                             tint = TextWColor
