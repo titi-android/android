@@ -18,6 +18,7 @@ import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -47,6 +48,8 @@ import com.busschedule.widget.designsystem.style.TextColor
 import com.busschedule.widget.designsystem.style.rFooter
 import com.busschedule.widget.designsystem.style.rTextLabel
 import com.busschedule.widget.designsystem.style.sbTitle3
+import com.busschedule.widget.widget.receiver.ActionReceiver
+import com.busschedule.widget.widget.receiver.WidgetAction
 
 private val destinationKey = ActionParameters.Key<String>(
     Constants.WIDGET_NAVIGATE_ROUTE_OF_MAINACTIVITY
@@ -69,6 +72,7 @@ class ScheduleGlanceWidget : GlanceAppWidget() {
 fun ScheduleWidget() {
     when (val state = currentState<ScheduleInfo>()) {
         is ScheduleInfo.Available -> Available(
+            state.scheduleId,
             state.scheduleName,
             state.busStop,
             state.busArrivalInfo
@@ -91,6 +95,7 @@ fun ScheduleWidget() {
 
 @Composable
 fun Available(
+    scheduleId: String = "",
     scheduleName: String = "",
     busStop: String = "",
     busArrivalInfo: List<BusArrivalData> = emptyList(),
@@ -104,6 +109,7 @@ fun Available(
         )
     } else {
         ExistArrivalBus(
+            scheduleId = scheduleId,
             scheduleName = scheduleName,
             busStop = busStop,
             busArrivalInfo = busArrivalInfo,
@@ -173,11 +179,13 @@ fun BusArrivalCard(busArrivalInfo: BusArrivalData) {
 
 @Composable
 fun ExistArrivalBus(
+    scheduleId: String,
     scheduleName: String = "",
     busStop: String = "",
     busArrivalInfo: List<BusArrivalData> = emptyList(),
     backgroundColor: Color,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = GlanceModifier.fillMaxSize()
             .background(backgroundColor).padding(16.dp),
@@ -204,16 +212,35 @@ fun ExistArrivalBus(
                 provider = ImageProvider(R.drawable.ic_previoud_arrow_semibold),
                 contentDescription = "ic_previous_arrow",
                 modifier = GlanceModifier.defaultWeight().size(24.dp)
+                    .clickable(
+                        actionSendBroadcast(
+                            intent = sendBroadCast(
+                                context,
+                                WidgetAction.CLICK_PREVIOUS_BUTTON.value,
+                                scheduleId
+                            )
+                        )
+                    )
             )
             Image(
                 provider = ImageProvider(R.drawable.ic_refresh_semibold),
                 contentDescription = "ic_refresh",
-                modifier = GlanceModifier.defaultWeight().clickable(actionRunCallback<UpdateScheduleAction>())
+                modifier = GlanceModifier.defaultWeight()
+                    .clickable(actionRunCallback<UpdateScheduleAction>())
             )
             Image(
                 provider = ImageProvider(R.drawable.ic_forward_arrow_semibold),
                 contentDescription = "ic_previous_arrow",
                 modifier = GlanceModifier.defaultWeight().size(24.dp)
+                    .clickable(
+                        actionSendBroadcast(
+                            intent = sendBroadCast(
+                                context = context,
+                                actionFlag = WidgetAction.CLICK_NEXT_BUTTON.value,
+                                scheduleId = scheduleId
+                            )
+                        )
+                    )
             )
         }
     }
@@ -425,4 +452,11 @@ private fun NotExistSchedule() {
 @Preview(showBackground = true)
 fun TestWidget(modifier: Modifier = Modifier) {
     Available()
+}
+
+fun sendBroadCast(context: Context, actionFlag: String, scheduleId: String): Intent {
+    return Intent(context, ActionReceiver::class.java).apply {
+        action = actionFlag
+        putExtra("scheduleId", scheduleId)
+    }
 }

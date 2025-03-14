@@ -2,6 +2,7 @@
 
 package com.busschedule.widget.widget
 
+import com.busschedule.model.ArrivingBus
 import com.busschedule.model.ScheduleTicket
 import kotlinx.serialization.Serializable
 
@@ -12,6 +13,7 @@ sealed interface ScheduleInfo {
 
     @Serializable
     data class Available(
+        val scheduleId: String,
         val scheduleName: String,
         val busStop: String,
         val busArrivalInfo: List<BusArrivalData>,
@@ -38,10 +40,17 @@ data class BusArrivalData(
     val arrivalTime: Int,
 )
 
-fun ScheduleTicket.toWidgetState() = ScheduleInfo.Available(
+fun ArrivingBus.toBusArrivalData() = BusArrivalData(
+    bus = this.routeno,
+    type = this.routetp,
+    arrivalTime = this.arrtime
+)
+
+fun ScheduleTicket.toWidgetState(index: Int) = ScheduleInfo.Available(
+    scheduleId = this.id.toString(),
     scheduleName = this.name,
-    busStop = this.busStopInfos[0].busStopName,
-    busArrivalInfo = this.busStopInfos[0].busInfos.map {
+    busStop = this.busStopInfos[index].busStopName,
+    busArrivalInfo = this.busStopInfos[index].busInfos.map {
         BusArrivalData(
             bus = it.routeno,
             type = it.routetp,

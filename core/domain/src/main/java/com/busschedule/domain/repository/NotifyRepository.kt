@@ -13,9 +13,11 @@ interface NotifyRepository {
 
     fun read(scheduleId: String): NotifySchedule
 
+    fun readBusStopIndex(scheduleId: String): Int
+
     fun isExist(scheduleId: String): Boolean
 
-    fun update(scheduleId: String, busStopInfos: List<BusStopInfo>)
+    fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>)
 
     fun updateBusStopIndex(scheduleId: String, busStopIndex: Int)
 

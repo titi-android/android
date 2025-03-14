@@ -21,12 +21,16 @@ interface NotifyScheduleDao {
     @Query("SELECT * FROM ${EntityTable.NOTIFY_SCHEDULE} WHERE scheduleId = :scheduleId")
     fun read(scheduleId: String): NotifyScheduleEntity
 
+    @Query("SELECT busStopIndex FROM ${EntityTable.NOTIFY_SCHEDULE} WHERE scheduleId = :scheduleId")
+    fun readBusStopIndex(scheduleId: String): Int
+
     @Query("""
         UPDATE ${EntityTable.NOTIFY_SCHEDULE} 
-        SET busStopInfos = :busStopInfos
+        SET scheduleName = :scheduleName,
+        busStopInfos = :busStopInfos
         WHERE scheduleId = :scheduleId
     """)
-    fun update(scheduleId: String, busStopInfos: List<BusStopInfo>)
+    fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>)
 
     @Query("""
         UPDATE ${EntityTable.NOTIFY_SCHEDULE} 

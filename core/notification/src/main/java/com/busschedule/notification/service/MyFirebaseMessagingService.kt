@@ -42,7 +42,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val scheduleId = message.data[FCMMsgData.SCHEDULE_ID.value] ?: ""
             val scheduleName = message.data[FCMMsgData.SCHEDULENAME.value] ?: ""
             if (repository.isExist(scheduleId)) {
-                repository.update(scheduleId = scheduleId, busStopInfos = busStopInfos)
+                repository.update(scheduleId = scheduleId, scheduleName = scheduleName, busStopInfos = busStopInfos)
             } else {
                 repository.insert(
                     scheduleId = scheduleId,

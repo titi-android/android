@@ -13,6 +13,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.busschedule.domain.repository.NotifyRepository
 import com.busschedule.domain.usecase.schedule.ReadNowScheduleUseCase
 import com.busschedule.model.ScheduleTicket
 import com.busschedule.model.exception.AccessTokenExpiredException
@@ -30,6 +31,7 @@ class ScheduleWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val readNowScheduleUseCase: ReadNowScheduleUseCase,
+    private val notifyRepository: NotifyRepository,
 ) : CoroutineWorker(context, workerParameters) {
     companion object {
         private val uniqueWorkName = ScheduleWorker::class.java.simpleName
@@ -70,7 +72,21 @@ class ScheduleWorker @AssistedInject constructor(
         setWidgetState(glanceIds, ScheduleInfo.Loading)
         var resultState = Result.success()
         readNowScheduleUseCase().onSuccess { schedule ->
-            val scheduleInfo = getSuccessWidgetState(schedule)
+            val index = schedule?.id?.let {
+                if (notifyRepository.isExist(it.toString())) {
+                    notifyRepository.readBusStopIndex(it.toString())
+                } else {
+                    notifyRepository.insert(
+                        scheduleId = schedule.id.toString(),
+                        scheduleName = schedule.name,
+                        busStopIndex = 0,
+                        busStopInfos = schedule.busStopInfos
+                    )
+                    0
+                }
+            }
+
+            val scheduleInfo = getSuccessWidgetState(schedule = schedule, index = index)
             setWidgetState(glanceIds, scheduleInfo)
             resultState = Result.success()
         }.onFailure {
@@ -82,7 +98,6 @@ class ScheduleWorker @AssistedInject constructor(
     }
 
     private fun getExceptionWidgetState(e: Throwable): ScheduleInfo.Unavailable {
-        Log.d("daeyoung", "e: ${e}")
         return when (e) {
             is AccessTokenExpiredException -> ScheduleInfo.Unavailable.JWT401
             is AccessTokenIllegalArgumentException -> ScheduleInfo.Unavailable.JWT401
@@ -90,11 +105,11 @@ class ScheduleWorker @AssistedInject constructor(
         }
     }
 
-    private fun getSuccessWidgetState(schedule: ScheduleTicket?): ScheduleInfo {
+    private fun getSuccessWidgetState(schedule: ScheduleTicket?, index: Int? = 0): ScheduleInfo {
         if (schedule == null) {
             return ScheduleInfo.Unavailable.DataIsNull
         }
-        return schedule.toWidgetState()
+        return schedule.toWidgetState(index!!)
     }
 
 
@@ -112,5 +127,4 @@ class ScheduleWorker @AssistedInject constructor(
         }
         ScheduleGlanceWidget().updateAll(context)
     }
-
 }

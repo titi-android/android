@@ -31,11 +31,13 @@ class NotifyRepositoryImpl @Inject constructor(
     override fun read(scheduleId: String): NotifySchedule =
         dao.read(scheduleId).toModel()
 
+    override fun readBusStopIndex(scheduleId: String): Int = dao.readBusStopIndex(scheduleId)
+
     override fun isExist(scheduleId: String): Boolean = dao.isExist(scheduleId)
 
 
-    override fun update(scheduleId: String, busStopInfos: List<BusStopInfo>) {
-        dao.update(scheduleId, busStopInfos)
+    override fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>) {
+        dao.update(scheduleId, scheduleName, busStopInfos)
     }
 
     override fun updateBusStopIndex(scheduleId: String, busStopIndex: Int) {
