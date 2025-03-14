@@ -296,7 +296,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
                     showToast("버스 정류장을 찾을 수 없습니다.")
                 }
                 changeLoadingState()
-            }.onFailure { showToast(it.message!!) }
+            }.onFailure {
+                changeLoadingState()
+                showToast(it.message!!)
+            }
         }
     }
 

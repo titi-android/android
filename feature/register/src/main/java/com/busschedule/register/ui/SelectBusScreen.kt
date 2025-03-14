@@ -1,9 +1,9 @@
 package com.busschedule.register.ui
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -58,14 +59,17 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
+import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.button.MainBottomButton
 import core.designsystem.component.loading.LoadingOfCoilDialog
 import core.designsystem.shadow.scheduleShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
+import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
+import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mTitle
 import core.designsystem.theme.rFooter
@@ -156,17 +160,46 @@ fun SelectBusScreen(
                     )
                 }
             })
-        SelectBusAppBar(
-            value = uiState,
-            onValueChange = { viewModel.updateBusStopInput(it) },
-            popBackStack = { appState.popBackStack() }) {
-            isLoading = true
-            viewModel.fetchReadAllBusStop(
-                busStopName = uiState,
-                changeLoadingState = { isLoading = false }
-            ) { appState.showToastMsg(it) }
-            isShowBottomSheet = false
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(start = 16.dp, end = 16.dp, top = 20.dp)
+                .fillMaxWidth()
+        ) {
+            SelectBusAppBar(
+                value = uiState,
+                onValueChange = { viewModel.updateBusStopInput(it) },
+                popBackStack = { appState.popBackStack() }) {
+                isLoading = true
+                viewModel.fetchReadAllBusStop(
+                    busStopName = uiState,
+                    changeLoadingState = { isLoading = false }
+                ) { appState.showToastMsg(it) }
+                isShowBottomSheet = false
+            }
+            HeightSpacer(height = 8.dp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = MyIconPack.IcBus,
+                    contentDescription = "ic_clock",
+                    modifier = Modifier.size(18.dp),
+                    tint = TextMColor
+                )
+                WidthSpacer(width = 8.dp)
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(items = listOf("대학교", "성당", "아파트").take(3)) {
+                        RecentSearchCard(text = it, onClick = { /*TODO*/ }) {
+
+                        }
+                    }
+                }
+            }
         }
+
         if (isShowBottomSheet) {
             if (busStop.id == 0) {
                 MainBottomButton(
@@ -311,7 +344,7 @@ fun BoxScope.BusesBottomSheet(
 }
 
 @Composable
-fun BoxScope.SelectBusAppBar(
+fun SelectBusAppBar(
     value: String,
     onValueChange: (String) -> Unit,
     popBackStack: () -> Unit,
@@ -319,10 +352,7 @@ fun BoxScope.SelectBusAppBar(
 ) {
     Row(
         modifier = Modifier
-            .align(Alignment.TopCenter)
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(start = 16.dp, end = 16.dp, top = 20.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
@@ -338,11 +368,13 @@ fun BoxScope.SelectBusAppBar(
         }
 
         SearchTextField(
-            modifier = Modifier.padding(start = 8.dp).scheduleShadow(
-                color = Color.Black.copy(alpha = 0.18f),
-                blurRadius = 4.dp,
-                borderRadius = 12.dp
-            ),
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .scheduleShadow(
+                    color = Color.Black.copy(alpha = 0.18f),
+                    blurRadius = 4.dp,
+                    borderRadius = 12.dp
+                ),
             value = value,
             onValueChange = { onValueChange(it) },
             placeholder = "버스 정류장 검색"
@@ -352,10 +384,41 @@ fun BoxScope.SelectBusAppBar(
 }
 
 @Composable
-@Preview(showBackground = true)
+fun RecentSearchCard(text: String, onClick: () -> Unit, onDelete: () -> Unit) {
+    Card(
+        colors = CardDefaults.cardColors(contentColor = TextMColor, containerColor = TextWColor),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.scheduleShadow(
+            color = Color.Black.copy(alpha = 0.18f),
+            blurRadius = 8.dp,
+            borderRadius = 8.dp,
+//            spread = 8.dp
+        ),
+        onClick = { /*TODO*/ }) {
+        Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = text, style = mTitle)
+            WidthSpacer(width = 4.dp)
+            Icon(
+                imageVector = MyIconPack.IcClose,
+                contentDescription = "ic_close",
+                modifier = Modifier.size(14.dp)
+            )
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true, backgroundColor = 0xFFFFffff)
 fun TTT(modifier: Modifier = Modifier) {
-    Box(modifier = Modifier){
-        SelectBusAppBar("", {}, {}, {})
+    Box(modifier = Modifier) {
+        Row {
+            RecentSearchCard("asd", {}, {})
+            core.designsystem.component.WidthSpacer(width = 4.dp)
+            RecentSearchCard("asd", {}, {})
+            core.designsystem.component.WidthSpacer(width = 4.dp)
+
+            RecentSearchCard("asd", {}, {})
+        }
     }
 }
 

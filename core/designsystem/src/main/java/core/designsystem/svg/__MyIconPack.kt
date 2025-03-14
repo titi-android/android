@@ -3,6 +3,7 @@ package core.designsystem.svg
 import androidx.compose.ui.graphics.vector.ImageVector
 import core.designsystem.svg.myiconpack.IcBan
 import core.designsystem.svg.myiconpack.IcBus
+import core.designsystem.svg.myiconpack.IcClock
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
 import core.designsystem.svg.myiconpack.IcForwardArrow
@@ -33,9 +34,9 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(IcNotify, IcBan, IcTalk, IcPlus, IcVersionInfo, IcMinus, IcForwardArrow2,
-        IcMainlogo, IcClose, IcOffnotify, IcSetting, IcRefresh, IcNextArrow, IcOnCheckbox,
-        IcInfomationCircle, ImageBusOfTicket, IcOffCheckbox, IcSearch, IcBus, IcEdit,
+    __AllIcons= listOf(IcClock, IcNotify, IcBan, IcTalk, IcPlus, IcVersionInfo, IcMinus,
+        IcForwardArrow2, IcMainlogo, IcClose, IcOffnotify, IcSetting, IcRefresh, IcNextArrow,
+        IcOnCheckbox, IcInfomationCircle, ImageBusOfTicket, IcOffCheckbox, IcSearch, IcBus, IcEdit,
         IcForwardArrow)
     return __AllIcons!!
   }
