@@ -271,6 +271,14 @@ class RegisterBusScheduleViewModel @Inject constructor(
         }
     }
 
+    fun isBiggerStartTime(time: String): Boolean {
+        val eTime = time.split(":").map { it.toInt() }
+        val sTime = startTime.value.split(":").map { it.toInt() }
+        if (eTime[0] < sTime[0]) return false
+        if (eTime[0] == sTime[0] && eTime[1] <= sTime[1]) return false
+        return true
+    }
+
     // 이미 지역이 정해져 있을 때 지도 화면 출력 시 한번 호출하는 함수
     fun fetchFirstReadAllBusStop(
         region: String,
@@ -397,6 +405,14 @@ class RegisterBusScheduleViewModel @Inject constructor(
         onSuccessOfPost: () -> Unit,
         showToast: (String) -> Unit,
     ) {
+        try {
+            if (isBiggerStartTime(endTime.value).not()) {
+                showToast("종료 시간이 시작 시간보다 늦습니다.")
+                return
+            }
+        } catch (e: Exception) {
+            showToast("시간이 입력되지 않았습니다.")
+        }
         if (scheduleId != null) {
             fetchPutSchedule(onSuccess = { onSuccessOfPut() }) { showToast(it) }
             return
