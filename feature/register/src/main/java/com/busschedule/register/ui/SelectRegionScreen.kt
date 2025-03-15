@@ -42,7 +42,7 @@ import core.designsystem.theme.Background
 fun SelectRegionScreen(
     appState: ApplicationState,
     viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
-    id: Int
+    id: Int,
 ) {
 
     val uiState by viewModel.selectRegionUiState.collectAsStateWithLifecycle(
@@ -83,9 +83,11 @@ fun SelectRegionScreen(
             }
         }
         HeightSpacer(height = 16.dp)
-        MainBottomButton(text = "다음", enabled = btnEnable) { appState.navigateToSelectBusStop(
-            BusStop(id = id, region = uiState.region.getSelectedCityName())
-        ) }
+        MainBottomButton(text = "다음", enabled = btnEnable) {
+            appState.navigateToSelectBusStop(
+                BusStop(id = id, region = uiState.region.getSelectedCityName())
+            )
+        }
     }
 }
 

@@ -9,11 +9,13 @@ data class RecentlySearchBusStopEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val createdAt: Long = System.currentTimeMillis(),
+    val region: String = "",
     val search: String = "",
 )
 
 
 fun RecentlySearchBusStopEntity.toModel() = RecentlySearchBusStop(
     id = id,
+    region = region,
     search = search
 )

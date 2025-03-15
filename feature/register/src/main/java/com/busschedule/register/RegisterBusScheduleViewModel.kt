@@ -113,7 +113,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
     val busStopInput: StateFlow<String> = _busStopInput.asStateFlow()
 
     private val _recentlySearchBusStop = MutableStateFlow(emptyList<RecentlySearchBusStop>())
-    val recentlySearchBusStop: StateFlow<List<RecentlySearchBusStop>> = _recentlySearchBusStop.asStateFlow()
+    val recentlySearchBusStop: StateFlow<List<RecentlySearchBusStop>> =
+        _recentlySearchBusStop.asStateFlow()
 
     private val _busStop = MutableStateFlow(SelectedBusUI())
     val busStop: StateFlow<SelectedBusUI> = _busStop.asStateFlow()
@@ -127,7 +128,6 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     private val _addBus = MutableStateFlow(emptyList<Bus>())
     val addBus: StateFlow<List<Bus>> = _addBus.asStateFlow()
-
 
 
     val addBusDialogUiState = combine(addBusInput, addBus) { input, addBus ->
@@ -199,18 +199,18 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _addBus.update { emptyList() }
     }
 
-    fun addBusStopInSelectBusStopInfo(id: Int, region: String, popBackStack: () -> Unit) {
+    fun addBusStopInSelectBusStopInfo(id: Int, popBackStack: () -> Unit) {
         val bus = busStop.value
         val index = _routeInfos.indexOfFirst { it.compareID(id) }
         _routeInfos[index] = _routeInfos[index].copy(
-            region = region,
+            region = bus.region,
             busStop = bus.busStop,
             nodeId = bus.nodeId,
             busesInit = bus.buses.filter { it.isSelected }
                 .map { BusInfo(name = it.name, type = it.type.name) }
         )
-
         cityOfRegion.value.unAllSelect()
+        _busStopInput.update {""}
         _busStop.update { SelectedBusUI() }
         popBackStack()
     }
@@ -219,7 +219,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
         val bus = busStop.value
         _arriveBusStop.update {
             it.copy(
-                region = region,
+                region = bus.region,
                 busStop = bus.busStop,
                 nodeId = bus.nodeId
             )
@@ -248,9 +248,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
         )
     }
 
-    fun updateBusStop(busStopName: String, nodeId: String) {
-        _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
-
+    fun updateBusStop(region: String, busStopName: String, nodeId: String) {
+        _busStop.update { it.copy(region = region, busStop = busStopName, nodeId = nodeId) }
     }
 
     private fun fetchPostBusSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
@@ -283,7 +282,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
             readAllBusStopUseCase(cityName = region, nodeId = busStop).onSuccess {
                 kakaoMap.removeAndAddLabel(
                     icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
-                    labels = it
+                    labels = it,
+                    region = region
                 )
                 changeLoadingState()
             }.onFailure { showToast(it.message!!) }
@@ -291,25 +291,27 @@ class RegisterBusScheduleViewModel @Inject constructor(
     }
 
     fun fetchReadAllBusStop(
+        region: String,
         busStopName: String,
         changeLoadingState: () -> Unit,
         showToast: (String) -> Unit,
     ) {
         viewModelScope.launch {
             readAllBusStopUseCase(
-                cityName = cityOfRegion.value.getSelectedCityName(),
+                cityName = region,
                 nodeId = busStopName
             ).onSuccess { busStop ->
                 if (busStop.isNotEmpty()) {
                     kakaoMap.removeAndAddLabel(
                         icon = com.busschedule.designsystem.R.drawable.image_busstop_label,
-                        labels = busStop
+                        labels = busStop,
+                        region = region
                     )
+                    fetchInsertRecentlySearchBusStop(region, busStopName)
                 } else {
                     showToast("버스 정류장을 찾을 수 없습니다.")
                 }
                 changeLoadingState()
-                fetchInsertRecentlySearchBusStop(busStopName)
             }.onFailure {
                 changeLoadingState()
                 showToast(it.message!!)
@@ -319,26 +321,28 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     fun fetchReadAllBusOfBusStop(
         id: Int,
-        region: String,
         busStopName: String,
         nodeId: String,
         hideBottomSheet: () -> Unit,
         showToast: (String) -> Unit,
     ) {
         viewModelScope.launch {
-            _busStop.update { it.copy(busStop = busStopName, nodeId = nodeId) }
             readAllBusOfBusStopUseCase(
-                cityName = region,
+                cityName = kakaoMap.region,
                 busStopId = nodeId
             ).onSuccess { busInfos ->
                 _busStop.update { selectedBusUI ->
-                    selectedBusUI.copy(buses = busInfos.map { bus ->
-                        Bus(
-                            name = bus.name,
-                            type = BusType.find(bus.type),
-                            selectedInit = routeInfos.find { it.compareID(id) }?.getBuses()
-                                ?.any { it.name == bus.name && it.type == bus.type } ?: false)
-                    })
+                    selectedBusUI.copy(
+                        region = kakaoMap.region,
+                        busStop = busStopName,
+                        nodeId = nodeId,
+                        buses = busInfos.map { bus ->
+                            Bus(
+                                name = bus.name,
+                                type = BusType.find(bus.type),
+                                selectedInit = routeInfos.find { it.compareID(id) }?.getBuses()
+                                    ?.any { it.name == bus.name && it.type == bus.type } ?: false)
+                        })
                 }
                 hideBottomSheet()
             }.onFailure { showToast(it.message!!) }
@@ -404,14 +408,14 @@ class RegisterBusScheduleViewModel @Inject constructor(
         return busStop.value.busStop == c
     }
 
-    fun fetchInsertRecentlySearchBusStop(search: String) {
+    fun fetchInsertRecentlySearchBusStop(region: String, search: String) {
         viewModelScope.launch {
             if (recentlySearchBusStopRepository.existsBySearch(search))
                 return@launch
             if (recentlySearchBusStopRepository.getCount() == 3) {
                 recentlySearchBusStopRepository.deleteOldestSearch()
             }
-            recentlySearchBusStopRepository.insert(search)
+            recentlySearchBusStopRepository.insert(region, search)
         }
     }
 

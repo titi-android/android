@@ -10,8 +10,8 @@ import javax.inject.Inject
 class RecentlySearchBusStopRepositoryImpl @Inject constructor(
     private val recentlySearchBusStopDao: RecentlySearchBusStopDao
 ) : RecentlySearchBusStopRepository {
-    override suspend fun insert(search: String) {
-        recentlySearchBusStopDao.insert(RecentlySearchBusStopEntity(search = search))
+    override suspend fun insert(region: String, search: String) {
+        recentlySearchBusStopDao.insert(RecentlySearchBusStopEntity(region = region, search = search))
     }
 
     override suspend fun deleteOldestSearch(): Boolean = try {

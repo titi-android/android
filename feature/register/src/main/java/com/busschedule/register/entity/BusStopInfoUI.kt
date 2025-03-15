@@ -69,6 +69,7 @@ fun RouteInfo.asBusStopInfoUI(id: Int) = BusStopInfoUI(
 
 @Stable
 data class SelectedBusUI(
+    val region: String = "",
     val busStop: String = "",
     val nodeId: String = "",
     val buses: List<Bus> = emptyList(),

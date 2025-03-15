@@ -1,5 +1,6 @@
 package com.busschedule.register.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -145,6 +146,7 @@ fun SelectBusScreen(
                                         )
                                         isShowBottomSheet = true
                                         viewModel.updateBusStop(
+                                            region = busStop.region,
                                             busStopName = label.texts.first(),
                                             nodeId = busStopInfo.nodeId
                                         )
@@ -154,7 +156,6 @@ fun SelectBusScreen(
 
                                     viewModel.fetchReadAllBusOfBusStop(
                                         id = busStop.id,
-                                        region = busStop.region,
                                         busStopName = label.texts.first(),
                                         nodeId = busStopInfo.nodeId,
                                         hideBottomSheet = { isShowBottomSheet = true }
@@ -180,6 +181,7 @@ fun SelectBusScreen(
                 popBackStack = { appState.popBackStack() }) {
                 isLoading = true
                 viewModel.fetchReadAllBusStop(
+                    region = busStop.region,
                     busStopName = uiState.input,
                     changeLoadingState = { isLoading = false }
                 ) { appState.showToastMsg(it) }
@@ -206,6 +208,7 @@ fun SelectBusScreen(
                             }
                             isLoading = true
                             viewModel.fetchReadAllBusStop(
+                                region = recently.region,
                                 busStopName = recently.search,
                                 changeLoadingState = { isLoading = false }
                             ) { appState.showToastMsg(it) }
@@ -228,10 +231,9 @@ fun SelectBusScreen(
                 BusesBottomSheet(
                     selectedBusUi = viewModel.busStop.collectAsStateWithLifecycle().value,
                     addBus = { isShowDialog = true }) {
-                    viewModel.addBusStopInSelectBusStopInfo(
-                        id = busStop.id,
-                        region = busStop.region
-                    ) { appState.popBackStackRegister() }
+                    viewModel.addBusStopInSelectBusStopInfo(id = busStop.id) {
+                        appState.popBackStackRegister()
+                    }
                 }
             }
 

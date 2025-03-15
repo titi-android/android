@@ -1,5 +1,6 @@
 package com.busschedule.register.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -141,6 +142,7 @@ fun RegisterBusScheduleScreen(
                     isRemoveRegionArea = viewModel.routeInfos.size >= 2,
                     removeRegionArea = { viewModel.removeBusStopInfoUI(busStopInfoUI.getID()) },
                     deleteBus = { busStopInfoUI.remove(it) }) {
+                    Log.d("daeyoung", "busStopInfoUI: $busStopInfoUI")
                     appState.navigateToSelectBusStop(busStopInfoUI.asBusStopInfo())
                 }
             }

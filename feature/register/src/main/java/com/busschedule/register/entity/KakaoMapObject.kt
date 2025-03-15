@@ -15,6 +15,7 @@ class KakaoMapObject(val map: KakaoMap) {
 
     private fun removeAllLabels() = map.labelManager?.removeAllLabelLayer()
     private var labels: List<BusStopInfo> = emptyList()
+    var region: String = ""
 
     private fun addLabel(icon: Int, text: String, lat: Double, lng: Double) {
         val styles = map.labelManager?.addLabelStyles(
@@ -30,8 +31,9 @@ class KakaoMapObject(val map: KakaoMap) {
         layer?.addLabel(options)
     }
 
-    fun removeAndAddLabel(icon: Int, labels: List<BusStopInfo>) {
+    fun removeAndAddLabel(icon: Int, labels: List<BusStopInfo>, region: String) {
         removeAllLabels()
+        this.region = region
         this.labels = labels
         this.labels.forEach {
             addLabel(icon, it.name, it.tmX, it.tmY)

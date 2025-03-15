@@ -11,7 +11,7 @@ import com.busschedule.data.local.room.model.RecentlySearchBusStopEntity
 
 @Database(
     entities = [NotifyScheduleEntity::class, RecentlySearchBusStopEntity::class],
-    version = 4
+    version = 5
 )
 @TypeConverters(Converters::class)
 abstract class RoomDataBase: RoomDatabase() {
