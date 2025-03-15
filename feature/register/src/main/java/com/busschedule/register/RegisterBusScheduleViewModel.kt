@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.busschedule.domain.repository.RecentlySearchBusStopRepository
 import com.busschedule.domain.usecase.bus.ReadAllBusOfBusStopUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
@@ -17,6 +18,7 @@ import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
 import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStop
 import com.busschedule.model.BusType
+import com.busschedule.model.RecentlySearchBusStop
 import com.busschedule.model.asBusStop
 import com.busschedule.model.asDestinationInfo
 import com.busschedule.navigation.Route
@@ -27,6 +29,7 @@ import com.busschedule.register.entity.BusStopInfoUIFactory
 import com.busschedule.register.entity.CityOfRegion
 import com.busschedule.register.entity.KakaoMapObject
 import com.busschedule.register.entity.ScheduleRegister
+import com.busschedule.register.entity.SelectBusStopUiState
 import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.SelectedBusUI
 import com.busschedule.register.entity.asRouteInfo
@@ -52,6 +55,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val readAllBusOfBusStopUseCase: ReadAllBusOfBusStopUseCase,
     private val readScheduleUseCase: ReadScheduleUseCase,
     private val putScheduleUseCase: PutScheduleUseCase,
+    private val recentlySearchBusStopRepository: RecentlySearchBusStopRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -108,14 +112,23 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _busStopInput = MutableStateFlow("")
     val busStopInput: StateFlow<String> = _busStopInput.asStateFlow()
 
+    private val _recentlySearchBusStop = MutableStateFlow(emptyList<RecentlySearchBusStop>())
+    val recentlySearchBusStop: StateFlow<List<RecentlySearchBusStop>> = _recentlySearchBusStop.asStateFlow()
+
     private val _busStop = MutableStateFlow(SelectedBusUI())
     val busStop: StateFlow<SelectedBusUI> = _busStop.asStateFlow()
+
+    val selectBusStopUiState = combine(busStopInput, recentlySearchBusStop) { input, search ->
+        SelectBusStopUiState(input = input, recentlySearchBusStop = search)
+    }
 
     private val _addBusInput = MutableStateFlow("")
     val addBusInput: StateFlow<String> = _addBusInput.asStateFlow()
 
     private val _addBus = MutableStateFlow(emptyList<Bus>())
     val addBus: StateFlow<List<Bus>> = _addBus.asStateFlow()
+
+
 
     val addBusDialogUiState = combine(addBusInput, addBus) { input, addBus ->
         AddBusDialogUiState(input = input, bus = addBus)
@@ -296,6 +309,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                     showToast("버스 정류장을 찾을 수 없습니다.")
                 }
                 changeLoadingState()
+                fetchInsertRecentlySearchBusStop(busStopName)
             }.onFailure {
                 changeLoadingState()
                 showToast(it.message!!)
@@ -384,5 +398,34 @@ class RegisterBusScheduleViewModel @Inject constructor(
             return
         }
         fetchPostBusSchedule(onSuccess = { onSuccessOfPost() }) { showToast(it) }
+    }
+
+    fun isEqualBusStop(c: String): Boolean {
+        return busStop.value.busStop == c
+    }
+
+    fun fetchInsertRecentlySearchBusStop(search: String) {
+        viewModelScope.launch {
+            if (recentlySearchBusStopRepository.existsBySearch(search))
+                return@launch
+            if (recentlySearchBusStopRepository.getCount() == 3) {
+                recentlySearchBusStopRepository.deleteOldestSearch()
+            }
+            recentlySearchBusStopRepository.insert(search)
+        }
+    }
+
+    fun fetchReadAllRecentlySearchBusStop() {
+        viewModelScope.launch {
+            _recentlySearchBusStop.update { recentlySearchBusStopRepository.realAll() }
+        }
+    }
+
+    fun fetchDeleteRecentlySearchBusStop(search: String) {
+        viewModelScope.launch {
+            if (recentlySearchBusStopRepository.delete(search)) {
+                _recentlySearchBusStop.update { recentlySearchBusStopRepository.realAll() }
+            }
+        }
     }
 }

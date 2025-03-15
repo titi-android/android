@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,7 +54,9 @@ import com.busschedule.register.component.BusInputDialog
 import com.busschedule.register.component.CheckBoxIcon
 import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.entity.AddBusDialogUiState
+import com.busschedule.register.entity.SelectBusStopUiState
 import com.busschedule.register.entity.SelectedBusUI
+import com.busschedule.util.ext.noRippleClickable
 import com.busschedule.util.state.ApplicationState
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -73,6 +76,8 @@ import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mTitle
 import core.designsystem.theme.rFooter
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 
 
 @Composable
@@ -81,7 +86,7 @@ fun SelectBusScreen(
     viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
     busStop: BusStop,
 ) {
-    val uiState by viewModel.busStopInput.collectAsStateWithLifecycle()
+    val uiState by viewModel.selectBusStopUiState.collectAsStateWithLifecycle(SelectBusStopUiState())
 
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
@@ -90,13 +95,15 @@ fun SelectBusScreen(
     var isLoading by remember { mutableStateOf(busStop.isEmpty()) }
 
     LaunchedEffect(busStop) {
-        if (busStop.isEmpty()) {
-            viewModel.fetchFirstReadAllBusStop(
-                busStop.region,
-                busStop.busStop,
-                changeLoadingState = { isLoading = false }
-            ) { msg -> appState.showToastMsg(msg) }
-        }
+        listOf( async { viewModel.fetchReadAllRecentlySearchBusStop() }, async {
+            if (busStop.isEmpty()) {
+                viewModel.fetchFirstReadAllBusStop(
+                    busStop.region,
+                    busStop.busStop,
+                    changeLoadingState = { isLoading = false }
+                ) { msg -> appState.showToastMsg(msg) }
+            }
+        }).awaitAll()
     }
     Box(
         modifier = Modifier
@@ -168,12 +175,12 @@ fun SelectBusScreen(
                 .fillMaxWidth()
         ) {
             SelectBusAppBar(
-                value = uiState,
+                value = uiState.input,
                 onValueChange = { viewModel.updateBusStopInput(it) },
                 popBackStack = { appState.popBackStack() }) {
                 isLoading = true
                 viewModel.fetchReadAllBusStop(
-                    busStopName = uiState,
+                    busStopName = uiState.input,
                     changeLoadingState = { isLoading = false }
                 ) { appState.showToastMsg(it) }
                 isShowBottomSheet = false
@@ -186,14 +193,25 @@ fun SelectBusScreen(
                     modifier = Modifier.size(18.dp),
                     tint = TextMColor
                 )
-                WidthSpacer(width = 8.dp)
+                WidthSpacer(width = 4.dp)
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(items = listOf("대학교", "성당", "아파트").take(3)) {
-                        RecentSearchCard(text = it, onClick = { /*TODO*/ }) {
-
+                    items(items = uiState.recentlySearchBusStop.take(3)) { recently ->
+                        RecentSearchCard(text = recently.search, onClick = {
+                            if (viewModel.isEqualBusStop(recently.search)) {
+                                return@RecentSearchCard
+                            }
+                            isLoading = true
+                            viewModel.fetchReadAllBusStop(
+                                busStopName = recently.search,
+                                changeLoadingState = { isLoading = false }
+                            ) { appState.showToastMsg(it) }
+                            isShowBottomSheet = false
+                        }) {
+                            viewModel.fetchDeleteRecentlySearchBusStop(recently.search)
                         }
                     }
                 }
@@ -394,14 +412,14 @@ fun RecentSearchCard(text: String, onClick: () -> Unit, onDelete: () -> Unit) {
             borderRadius = 8.dp,
 //            spread = 8.dp
         ),
-        onClick = { /*TODO*/ }) {
+        onClick = { onClick() }) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(text = text, style = mTitle)
             WidthSpacer(width = 4.dp)
             Icon(
                 imageVector = MyIconPack.IcClose,
                 contentDescription = "ic_close",
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(14.dp).noRippleClickable { onDelete() }
             )
         }
     }
