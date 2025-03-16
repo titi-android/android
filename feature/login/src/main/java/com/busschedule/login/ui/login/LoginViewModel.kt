@@ -1,4 +1,4 @@
-package com.busschedule.login.login
+package com.busschedule.login.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

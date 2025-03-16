@@ -1,4 +1,4 @@
-package com.busschedule.login.splash.ui
+package com.busschedule.login.ui.splash
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

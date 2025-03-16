@@ -1,4 +1,4 @@
-package com.busschedule.login.signup.ui
+package com.busschedule.login.ui.signup.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.login.entity.SignupUiState
-import com.busschedule.login.signup.SignUpViewModel
+import com.busschedule.login.ui.signup.SignUpViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer

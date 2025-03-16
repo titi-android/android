@@ -1,4 +1,4 @@
-package com.busschedule.login.start.ui
+package com.busschedule.login.ui.start
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

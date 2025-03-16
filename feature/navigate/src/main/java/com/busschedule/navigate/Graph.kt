@@ -9,10 +9,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.busschedule.login.login.ui.LoginScreen
-import com.busschedule.login.signup.ui.SignUpScreen
-import com.busschedule.login.splash.ui.SplashScreen
-import com.busschedule.login.start.ui.AppStartScreen
+import com.busschedule.login.ui.login.ui.LoginScreen
+import com.busschedule.login.ui.signup.ui.SignUpScreen
+import com.busschedule.login.ui.splash.SplashScreen
+import com.busschedule.login.ui.start.AppStartScreen
 import com.busschedule.model.BusStop
 import com.busschedule.model.navtype.serializableType
 import com.busschedule.navigation.LoginGraph

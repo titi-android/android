@@ -1,4 +1,4 @@
-package com.busschedule.schedulelist.model
+package com.busschedule.schedulelist.entity
 
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi

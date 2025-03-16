@@ -11,9 +11,9 @@ import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
-import com.busschedule.schedulelist.model.ScheduleListUiState
-import com.busschedule.schedulelist.model.ScheduleUI
-import com.busschedule.schedulelist.model.asStateUI
+import com.busschedule.schedulelist.entity.ScheduleListUiState
+import com.busschedule.schedulelist.entity.ScheduleUI
+import com.busschedule.schedulelist.entity.asStateUI
 import com.busschedule.util.entity.DayOfWeek
 import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.widget.widget.worker.ScheduleWorker

@@ -1,4 +1,4 @@
-package com.busschedule.login.login.ui
+package com.busschedule.login.ui.login.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.login.entity.LoginUiState
-import com.busschedule.login.login.LoginViewModel
+import com.busschedule.login.ui.login.LoginViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton

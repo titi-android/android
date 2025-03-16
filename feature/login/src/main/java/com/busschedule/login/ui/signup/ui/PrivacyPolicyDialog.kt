@@ -1,4 +1,4 @@
-package com.busschedule.login.signup.ui
+package com.busschedule.login.ui.signup.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

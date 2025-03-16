@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.busschedule.model.ArrivingBus
 import com.busschedule.model.BusStopInfo
 import com.busschedule.model.BusType
-import com.busschedule.schedulelist.model.ScheduleUI
+import com.busschedule.schedulelist.entity.ScheduleUI
 import com.busschedule.util.ext.noRippleClickable
 import com.busschedule.util.ext.toFormatKrTime
 import core.designsystem.component.HeightSpacer
