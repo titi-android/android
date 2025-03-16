@@ -10,11 +10,11 @@ import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
+import com.busschedule.model.DayOfWeekUi
+import com.busschedule.model.constant.DayOfWeek
 import com.busschedule.schedulelist.entity.ScheduleListUiState
 import com.busschedule.schedulelist.entity.ScheduleUI
 import com.busschedule.schedulelist.entity.asStateUI
-import com.busschedule.model.constant.DayOfWeek
-import com.busschedule.model.DayOfWeekUi
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -72,10 +72,11 @@ class ScheduleListViewModel @Inject constructor(
         }
     }
 
-    fun fetchReadDayOfWeekSchedules(dayOfWeek: String, showToast: (String) -> Unit) {
+    fun fetchReadDayOfWeekSchedules(dayOfWeek: String, changeLoadingState: () -> Unit = {}, showToast: (String) -> Unit) {
         viewModelScope.launch {
             readDaysSchedulesUseCase(dayOfWeek).onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asStateUI() } }
+                changeLoadingState()
             }.onFailure { showToast(it.message!!) }
         }
     }

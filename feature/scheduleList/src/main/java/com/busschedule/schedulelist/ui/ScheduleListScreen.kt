@@ -18,18 +18,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.common.constant.Constants
+import com.busschedule.model.DayOfWeekUi
 import com.busschedule.schedulelist.ScheduleListViewModel
 import com.busschedule.schedulelist.component.RefreshIcon
 import com.busschedule.schedulelist.component.ScheduleListAppBar
 import com.busschedule.schedulelist.component.ScheduleTicket
 import com.busschedule.schedulelist.entity.ScheduleListUiState
 import com.busschedule.schedulelist.permission.CheckNotifyPermission
-import com.busschedule.model.DayOfWeekUi
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
@@ -47,6 +50,8 @@ fun ScheduleListScreen(
     val uiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle(
         ScheduleListUiState()
     )
+    var isRefreshLoading by remember { mutableStateOf(false) }
+
     CheckNotifyPermission()
 
     LaunchedEffect(Unit) {
@@ -97,20 +102,29 @@ fun ScheduleListScreen(
                                 ) { appState.showToastMsg(it) }
                             },
                             onEdit = { appState.navigateToRegister(schedule.id) },
-                            onDelete = {scheduleListViewModel.fetchDeleteSchedules(schedule.id) {
-                                appState.showToastMsg(it)
-                            }}
+                            onDelete = {
+                                scheduleListViewModel.fetchDeleteSchedules(schedule.id) {
+                                    appState.showToastMsg(it)
+                                }
+                            }
                         ) { scheduleId, scheduleName, notifyState ->
-                            scheduleListViewModel.fetchUpdateBusStopStateOfNotify(scheduleId, scheduleName, notifyState)
+                            scheduleListViewModel.fetchUpdateBusStopStateOfNotify(
+                                scheduleId,
+                                scheduleName,
+                                notifyState
+                            )
                         }
                     }
                 }
-                RefreshIcon(modifier = Modifier.padding(bottom = 16.dp, end = 16.dp)) {
-                    scheduleListViewModel.fetchReadDayOfWeekSchedules(uiState.getSelectedDayOfWeek()) {
-                        appState.showToastMsg(
-                            it
-                        )
-                    }
+                RefreshIcon(
+                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
+                    isLoading = isRefreshLoading
+                ) {
+                    isRefreshLoading = true
+                    scheduleListViewModel.fetchReadDayOfWeekSchedules(
+                        dayOfWeek = uiState.getSelectedDayOfWeek(),
+                        changeLoadingState = {isRefreshLoading = false}
+                    ) { appState.showToastMsg(it) }
                 }
             }
 
