@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -20,10 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -33,8 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
@@ -48,9 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -59,14 +50,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.model.BusInfo
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusBox
+import com.busschedule.register.component.NotifyIcon
+import com.busschedule.register.component.ScheduleNameTextField
+import com.busschedule.register.component.WhiteContentBox
 import com.busschedule.register.constant.TimePickerType
 import com.busschedule.register.entity.BusStopInfoUIFactory
-import com.busschedule.register.entity.NotifyInfo
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.entity.asBusStopInfo
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.util.entity.DayOfWeekUi
-import com.busschedule.util.remember.rememberApplicationState
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
@@ -76,18 +68,12 @@ import core.designsystem.component.button.MainBottomButton
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
 import core.designsystem.svg.myiconpack.IcMinus
-import core.designsystem.svg.myiconpack.IcNotify
-import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.IcPlus
-import core.designsystem.svg.myiconpack.IcSearch
 import core.designsystem.theme.Background
-import core.designsystem.theme.BusScheduleTheme
 import core.designsystem.theme.Primary
 import core.designsystem.theme.Primary2
 import core.designsystem.theme.TextColor
-import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
-import core.designsystem.theme.rTextBox
 import core.designsystem.theme.sbTitle2
 import java.util.Calendar
 
@@ -166,29 +152,6 @@ fun RegisterBusScheduleScreen(
     }
 }
 
-@Composable
-fun ScheduleNameTextField(value: String, onValueChange: (String) -> Unit, placeholder: String) {
-    val focusManager = LocalFocusManager.current
-    TextField(
-        value = value,
-        onValueChange = { onValueChange(it) },
-        textStyle = rTextBox.copy(TextMColor),
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
-        placeholder = { Text(text = placeholder, color = Color(0xFF808991)) },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-        ),
-        maxLines = 1,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-        keyboardActions = KeyboardActions { focusManager.clearFocus() }
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotifyArea(
@@ -254,11 +217,11 @@ fun RegionArea(
             }
         }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = region.ifBlank { "도시(지역)" }) { navigateRegionScreen() }
+        WhiteContentBox(text = region.ifBlank { "도시(지역)" }) { navigateRegionScreen() }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = busStop.ifBlank { "버스 정류장" }) { navigateBusStopScreen() }
+        WhiteContentBox(text = busStop.ifBlank { "버스 정류장" }) { navigateBusStopScreen() }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = "버스 번호") {}
+        WhiteContentBox(text = "버스 번호") {}
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -287,9 +250,9 @@ fun ArriveArea(
     ) {
         Text(text = "도착", style = sbTitle2.copy(TextColor))
         HeightSpacer(height = 14.dp)
-        SearchBox(text = region.ifBlank { "도시(지역)" }) { navigateRegionScreen() }
+        WhiteContentBox(text = region.ifBlank { "도시(지역)" }) { navigateRegionScreen() }
         HeightSpacer(height = 14.dp)
-        SearchBox(text = busStop.ifBlank { "버스 정류장" }) { navigateBusStopScreen() }
+        WhiteContentBox(text = busStop.ifBlank { "버스 정류장" }) { navigateBusStopScreen() }
     }
 }
 
@@ -439,44 +402,6 @@ fun TimePickerFieldToModal(
 }
 
 @Composable
-fun NotifyIcon(isCheck: Boolean = false, onCheck: (Boolean) -> Unit) {
-    val notifyInfo = if (isCheck) {
-        NotifyInfo(
-            icon = MyIconPack.IcNotify,
-            containerColor = Primary,
-            iconColor = TextWColor,
-            content = "알림 ON"
-        )
-    } else {
-        NotifyInfo(
-            icon = MyIconPack.IcOffnotify,
-            containerColor = TextWColor,
-            iconColor = Primary,
-            content = "알림 OFF"
-        )
-    }
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier
-            .clip(CircleShape)
-            .size(44.dp)
-            .background(notifyInfo.containerColor)
-            .clickable { onCheck(!isCheck) }) {
-            Icon(
-                imageVector = notifyInfo.icon,
-                contentDescription = "ic_notify",
-                tint = notifyInfo.iconColor,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxSize(0.6f)
-            )
-        }
-        WidthSpacer(width = 8.dp)
-        Text(text = notifyInfo.content, style = rTextBox)
-    }
-}
-
-
-@Composable
 fun MultiSelectDayOfWeek(
     dayOfWeeks: List<DayOfWeekUi> = emptyList(),
 ) {
@@ -494,38 +419,5 @@ fun MultiSelectDayOfWeek(
                 day.updateSelected(!day.isSelected)
             }
         }
-    }
-}
-
-@Composable
-fun SearchBox(text: String, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(Color.White)
-            .clickable { onClick() }
-            .padding(start = 16.dp, end = 18.5.dp, top = 14.dp, bottom = 14.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = text, style = rTextBox.copy(TextMColor))
-        Icon(
-            imageVector = MyIconPack.IcSearch,
-            contentDescription = "ic_search",
-            tint = TextMColor,
-            modifier = Modifier.size(24.dp)
-        )
-    }
-}
-
-@Composable
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-fun TimePickerPreview(modifier: Modifier = Modifier) {
-    BusScheduleTheme {
-        RegisterBusScheduleScreen(
-            appState = rememberApplicationState(),
-            viewModel = hiltViewModel()
-        )
     }
 }

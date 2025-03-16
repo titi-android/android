@@ -85,9 +85,3 @@ fun AskScreen(appState: ApplicationState, viewModel: AskViewModel = hiltViewMode
         }
     }
 }
-
-//@Composable
-//@Preview(showBackground = true)
-//fun AskScreenPreview() {
-//    AskScreen(rememberApplicationState())
-//}

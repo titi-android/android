@@ -35,7 +35,6 @@ class ScheduleListViewModel @Inject constructor(
     private val readTodaySchedulesUseCase: ReadTodaySchedulesUseCase,
     private val readDaysSchedulesUseCase: ReadDaysSchedulesUseCase,
     private val deleteScheduleUseCase: DeleteScheduleUseCase,
-    private val postFCMTokenUseCase: PostFCMTokenUseCase,
     private val putScheduleAlarmUseCase: PutScheduleAlarmUseCase,
     private val notifyRepository: NotifyRepository,
 ) : ViewModel() {

@@ -13,37 +13,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import core.designsystem.theme.TextMColor
+import core.designsystem.theme.rTextBox
 
 @Composable
-fun SearchTextField(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    onSearch: (String) -> Unit,
-) {
+fun ScheduleNameTextField(value: String, onValueChange: (String) -> Unit, placeholder: String) {
     val focusManager = LocalFocusManager.current
     TextField(
         value = value,
         onValueChange = { onValueChange(it) },
-        modifier = modifier
-            .fillMaxWidth(),
+        textStyle = rTextBox.copy(TextMColor),
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        placeholder = { Text(text = placeholder, color = Color(0xFF808991)) },
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
-            focusedPlaceholderColor = Color(0xFF8991B3),
-            unfocusedPlaceholderColor = Color(0xFF8991B3),
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
         maxLines = 1,
         singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        placeholder = { Text(text = placeholder) },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions {
-            onSearch(value)
-            focusManager.clearFocus()
-        }
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions { focusManager.clearFocus() }
     )
 }
