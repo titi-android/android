@@ -1,7 +1,7 @@
 package com.busschedule.register.entity
 
 import com.busschedule.model.BusStop
-import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.model.DayOfWeekUi
 
 data class ScheduleRegister (
     val name: String = "",

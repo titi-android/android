@@ -28,8 +28,8 @@ fun rememberApplicationState(
             bottomBarState = bottomBarState,
             navController = navController,
             context = context,
-            snackbarHostState = snackbarHostState,
-            coroutineScope = coroutineScope,
+//            snackbarHostState = snackbarHostState,
+//            coroutineScope = coroutineScope,
         )
     }
     return appState

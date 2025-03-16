@@ -1,7 +1,7 @@
 package com.busschedule.schedulelist.entity
 
-import com.busschedule.util.entity.DayOfWeek
-import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.model.constant.DayOfWeek
+import com.busschedule.model.DayOfWeekUi
 import java.time.LocalDate
 
 data class ScheduleListUiState(

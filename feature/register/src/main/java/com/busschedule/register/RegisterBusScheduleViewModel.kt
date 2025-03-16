@@ -17,10 +17,12 @@ import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
 import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStop
-import com.busschedule.model.BusType
+import com.busschedule.model.DayOfWeekUi
 import com.busschedule.model.RecentlySearchBusStop
 import com.busschedule.model.asBusStop
 import com.busschedule.model.asDestinationInfo
+import com.busschedule.model.constant.BusType
+import com.busschedule.model.constant.DayOfWeek
 import com.busschedule.navigation.Route
 import com.busschedule.register.entity.AddBusDialogUiState
 import com.busschedule.register.entity.Bus
@@ -33,8 +35,6 @@ import com.busschedule.register.entity.SelectBusStopUiState
 import com.busschedule.register.entity.SelectRegionUiState
 import com.busschedule.register.entity.SelectedBusUI
 import com.busschedule.register.entity.asRouteInfo
-import com.busschedule.util.entity.DayOfWeek
-import com.busschedule.util.entity.DayOfWeekUi
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import com.kakao.vectormap.KakaoMap
 import dagger.hilt.android.lifecycle.HiltViewModel

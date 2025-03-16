@@ -1,4 +1,4 @@
-package com.busschedule.util.entity
+package com.busschedule.model.constant
 
 enum class DayOfWeek(val value: String, val enName: String) {
     MONDAY("월", "MONDAY"),
@@ -8,5 +8,4 @@ enum class DayOfWeek(val value: String, val enName: String) {
     FRIDAY("금", "FRIDAY"),
     SATURDAY("토", "SATURDAY"),
     SUNDAY("일", "SUNDAY");
-
 }

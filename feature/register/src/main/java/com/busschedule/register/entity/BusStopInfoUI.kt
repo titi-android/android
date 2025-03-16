@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStop
-import com.busschedule.model.BusType
+import com.busschedule.model.constant.BusType
 import com.busschedule.model.RouteInfo
 
 object BusStopInfoUIFactory {

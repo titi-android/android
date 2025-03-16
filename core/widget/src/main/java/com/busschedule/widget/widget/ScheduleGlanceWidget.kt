@@ -39,7 +39,7 @@ import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
 import com.busschedule.common.constant.Constants
-import com.busschedule.model.BusType
+import com.busschedule.model.constant.BusType
 import com.busschedule.util.ext.toFormatEnTime
 import com.busschedule.widget.R
 import com.busschedule.widget.designsystem.style.TextBlackColor

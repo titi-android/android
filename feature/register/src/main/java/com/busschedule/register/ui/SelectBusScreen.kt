@@ -1,6 +1,5 @@
 package com.busschedule.register.ui
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,7 +48,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.model.BusStop
-import com.busschedule.model.BusType
+import com.busschedule.model.constant.BusType
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusInputDialog
 import com.busschedule.register.component.CheckBoxIcon

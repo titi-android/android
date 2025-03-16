@@ -58,7 +58,7 @@ import com.busschedule.register.entity.BusStopInfoUIFactory
 import com.busschedule.register.entity.ScheduleRegister
 import com.busschedule.register.entity.asBusStopInfo
 import com.busschedule.register.util.convertTimePickerToUiTime
-import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.model.DayOfWeekUi
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer

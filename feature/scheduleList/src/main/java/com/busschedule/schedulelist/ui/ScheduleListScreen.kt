@@ -29,7 +29,7 @@ import com.busschedule.schedulelist.component.ScheduleListAppBar
 import com.busschedule.schedulelist.component.ScheduleTicket
 import com.busschedule.schedulelist.entity.ScheduleListUiState
 import com.busschedule.schedulelist.permission.CheckNotifyPermission
-import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.model.DayOfWeekUi
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer

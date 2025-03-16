@@ -1,4 +1,4 @@
-package com.busschedule.model
+package com.busschedule.model.constant
 
 import androidx.compose.ui.graphics.Color
 

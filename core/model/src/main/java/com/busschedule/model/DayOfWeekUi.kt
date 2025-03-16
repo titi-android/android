@@ -1,8 +1,9 @@
-package com.busschedule.util.entity
+package com.busschedule.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.busschedule.model.constant.DayOfWeek
 import java.time.LocalDate
 
 data class DayOfWeekUi(

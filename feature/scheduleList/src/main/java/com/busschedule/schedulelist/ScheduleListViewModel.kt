@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.busschedule.domain.repository.NotifyRepository
-import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
@@ -14,8 +13,8 @@ import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
 import com.busschedule.schedulelist.entity.ScheduleListUiState
 import com.busschedule.schedulelist.entity.ScheduleUI
 import com.busschedule.schedulelist.entity.asStateUI
-import com.busschedule.util.entity.DayOfWeek
-import com.busschedule.util.entity.DayOfWeekUi
+import com.busschedule.model.constant.DayOfWeek
+import com.busschedule.model.DayOfWeekUi
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
