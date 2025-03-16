@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
@@ -71,7 +72,7 @@ fun ScheduleTicket(
     changeNotifyState: () -> Unit = {},
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
-    changeBusStopStateOfNotify:  (String, String, Int) -> Unit = { _, _, _ -> },
+    changeBusStopStateOfNotify: (String, String, Int) -> Unit = { _, _, _ -> },
 ) {
     val icNotify = if (schedule.getAlarm()) MyIconPack.IcNotify else MyIconPack.IcOffnotify
     var isShowCloseDialog by remember { mutableStateOf(false) }
@@ -200,7 +201,8 @@ fun ScheduleTicket(
                         ) {
                             // TODO:
                             changeBusStopStateOfNotify(schedule.id.toString(), schedule.name, index)
-                            curStep = index }
+                            curStep = index
+                        }
                         Icon(
                             imageVector = MyIconPack.IcForwardArrow2,
                             contentDescription = "ic_next",
@@ -218,29 +220,7 @@ fun ScheduleTicket(
                 }
 
             }
-            Row(
-                modifier = Modifier
-                    .weight(1 / 3f)
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 18.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                busStopInfos[curStep].busInfos.forEach { busInfo ->
-                    Text(text = buildAnnotatedString {
-                        withStyle(SpanStyle(color = TextWColor)) {
-                            append("${busInfo.routeno} ")
-                        }
-                        withStyle(SpanStyle(color = ticketColors.colorT1)) {
-                            append("(${busInfo.arrtime.toFormatKrTime()}) ")
-                        }
-                        withStyle(mBody2.copy(ticketColors.colorT2).toSpanStyle()) {
-                            append("${busInfo.arrprevstationcnt}정거장")
-                        }
-                    }, style = mBody)
-                    WidthSpacer(width = 8.dp)
-                }
-
-            }
+            ArrivingBusContainer(busInfo = busStopInfos[curStep].busInfos, ticketColors = ticketColors)
         }
     }
 }
@@ -280,6 +260,40 @@ fun RowScope.BusStopTextBox(
 fun Modifier.isCurrentStep(isCurrentStep: Boolean) =
     if (isCurrentStep) this.background(TextWColor)
     else this.border(width = 1.dp, color = TextWColor, shape = RoundedCornerShape(20.dp))
+
+@Composable
+fun ColumnScope.ArrivingBusContainer(
+    busInfo: List<ArrivingBus>,
+    ticketColors: BusType,
+) {
+    Row(
+        modifier = Modifier
+            .weight(1 / 3f)
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 18.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (busInfo.isEmpty()) {
+            Text(text = "도착 예정인 버스가 없습니다.", style = mBody, color = TextWColor)
+            return@Row
+        }
+        busInfo.forEach { busInfo ->
+            Text(text = buildAnnotatedString {
+                withStyle(SpanStyle(color = TextWColor)) {
+                    append("${busInfo.routeno} ")
+                }
+                withStyle(SpanStyle(color = ticketColors.colorT1)) {
+                    append("(${busInfo.arrtime.toFormatKrTime()}) ")
+                }
+                withStyle(mBody2.copy(ticketColors.colorT2).toSpanStyle()) {
+                    append("${busInfo.arrprevstationcnt}정거장")
+                }
+            }, style = mBody)
+            WidthSpacer(width = 8.dp)
+        }
+
+    }
+}
 
 
 @Composable
