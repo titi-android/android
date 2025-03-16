@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.busschedule.data.local.room.dao.NotifyScheduleDao
-import com.busschedule.data.local.room.model.NotifyScheduleEntity
+import com.busschedule.domain.repository.NotifyRepository
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
@@ -38,7 +37,7 @@ class ScheduleListViewModel @Inject constructor(
     private val deleteScheduleUseCase: DeleteScheduleUseCase,
     private val postFCMTokenUseCase: PostFCMTokenUseCase,
     private val putScheduleAlarmUseCase: PutScheduleAlarmUseCase,
-    private val dao: NotifyScheduleDao,
+    private val notifyRepository: NotifyRepository,
 ) : ViewModel() {
 
     private val _dayOfWeeks = MutableStateFlow(DayOfWeek.entries.map {
@@ -92,10 +91,6 @@ class ScheduleListViewModel @Inject constructor(
         }
     }
 
-    private fun fetchPostFCMToken(token: String) {
-        viewModelScope.launch { postFCMTokenUseCase(token) }
-    }
-
     fun fetchPutScheduleAlarm(
         scheduleId: Int,
         updateAlarm: () -> Unit,
@@ -108,18 +103,16 @@ class ScheduleListViewModel @Inject constructor(
         }
     }
 
-    fun fetchUpdateBusStopStateOfNotify(scheduleId: String, scheduleName: String, state: Int) {
+    fun fetchUpdateBusStopStateOfNotify(scheduleId: String, scheduleName: String, index: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (dao.isExist(scheduleId)) {
-                dao.updateBusStopIndex(scheduleId, state)
+            if (notifyRepository.isExist(scheduleId)) {
+                notifyRepository.updateBusStopIndex(scheduleId, index)
                 return@launch
             }
-            dao.insert(
-                NotifyScheduleEntity(
-                    scheduleId = scheduleId,
-                    scheduleName = scheduleName,
-                    busStopIndex = state
-                )
+            notifyRepository.insert(
+                scheduleId = scheduleId,
+                scheduleName = scheduleName,
+                busStopIndex = index
             )
         }
     }

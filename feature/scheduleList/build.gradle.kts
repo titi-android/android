@@ -14,7 +14,6 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.navigation)
     implementation(projects.core.common)
-    implementation(projects.core.data)
     implementation(project(":core:model"))
     implementation(project(":core:widget"))
 
@@ -30,7 +29,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.androidx.work.runtime.ktx)
-//    implementation(project(":feature:navigate"))
 
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.junit)

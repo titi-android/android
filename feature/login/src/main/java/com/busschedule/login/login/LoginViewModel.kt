@@ -1,9 +1,8 @@
 package com.busschedule.login.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.busschedule.data.local.datastore.TokenManager
+import com.busschedule.domain.repository.TokenRepository
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.user.LoginUseCase
 import com.busschedule.login.entity.LoginUiState
@@ -24,7 +23,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val postFCMTokenUseCase: PostFCMTokenUseCase,
-    private val tokenManager: TokenManager,
+    private val tokenRepository: TokenRepository
 ) : ViewModel() {
     private val _inputId = MutableStateFlow("")
     val inputId: StateFlow<String> = _inputId.asStateFlow()
@@ -46,7 +45,7 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun initFCMToken() {
         val token = Firebase.messaging.token.await()
-        tokenManager.saveFCMToken(token)
+        tokenRepository.saveFCMToken(token)
         fetchPostFCMToken(token)
     }
 
@@ -63,7 +62,6 @@ class LoginViewModel @Inject constructor(
                 navigationToScheduleList()
             }.onFailure {
                 showToast(it.message!!)
-                Log.d("daeyoung", "${it.message}")
             }
         }
     }

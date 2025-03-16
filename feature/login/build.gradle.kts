@@ -12,10 +12,9 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
-    implementation(projects.core.data)
     implementation(projects.core.model)
-    implementation(project(":core:util"))
-    implementation(project(":core:domain"))
+    implementation(projects.core.util)
+    implementation(projects.core.domain)
 
     // fcm
     implementation(libs.firebase.messaging.ktx)
