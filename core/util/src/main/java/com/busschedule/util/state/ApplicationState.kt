@@ -53,8 +53,8 @@ class ApplicationState(
         navController.navigate(Route.ScheduleList)
     }
 
-    fun navigateToRegister(id: Int? = null) {
-        navController.navigate(Route.RegisterGraph.RegisterSchedule(id))
+    fun navigateToRegister(id: Int? = null, dayOfWeek: String = "월") {
+        navController.navigate(Route.RegisterGraph.RegisterSchedule(id = id, dayOfWeek = dayOfWeek))
     }
 
     fun navigateToSelectRegion(id: Int) {

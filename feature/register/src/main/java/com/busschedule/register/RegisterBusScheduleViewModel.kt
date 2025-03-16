@@ -60,12 +60,16 @@ class RegisterBusScheduleViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val scheduleId = savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().id
+    private val selectDayOfWeek =
+        savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().dayOfWeek
 
     private val _scheduleName = MutableStateFlow("")
     val scheduleName: StateFlow<String> = _scheduleName.asStateFlow()
 
     private val _dayOfWeeks =
-        MutableStateFlow(DayOfWeek.entries.map { DayOfWeekUi(dayOfWeek = it, init = false) })
+        MutableStateFlow(DayOfWeek.entries.map {
+            DayOfWeekUi(dayOfWeek = it, init = isEqualDayOfWeek(it, selectDayOfWeek))
+        })
     val dayOfWeeks: StateFlow<List<DayOfWeekUi>> = _dayOfWeeks.asStateFlow()
 
     private val _startTime = MutableStateFlow("시작 시간")
@@ -210,7 +214,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 .map { BusInfo(name = it.name, type = it.type.name) }
         )
         cityOfRegion.value.unAllSelect()
-        _busStopInput.update {""}
+        _busStopInput.update { "" }
         _busStop.update { SelectedBusUI() }
         popBackStack()
     }
@@ -251,6 +255,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
     fun updateBusStop(region: String, busStopName: String, nodeId: String) {
         _busStop.update { it.copy(region = region, busStop = busStopName, nodeId = nodeId) }
     }
+
+    private fun isEqualDayOfWeek(dayOfWeek: DayOfWeek, selectDayOfWeek: String) =
+        dayOfWeek.value == selectDayOfWeek.take(1)
 
     private fun fetchPostBusSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {

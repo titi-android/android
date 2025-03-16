@@ -128,7 +128,7 @@ fun ScheduleListScreen(
                 }
             }
 
-            MainBottomButton(text = "스케줄 등록") { appState.navigate(com.busschedule.navigation.Route.RegisterGraph.RegisterSchedule()) }
+            MainBottomButton(text = "스케줄 등록") { appState.navigateToRegister(dayOfWeek = uiState.getSelectedDayOfWeek()) }
         }
         if (uiState.isLoading) {
             LoadingOfCoilDialog()
