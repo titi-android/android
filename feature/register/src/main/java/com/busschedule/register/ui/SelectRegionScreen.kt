@@ -28,10 +28,10 @@ import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.constant.City
 import com.busschedule.register.constant.Region
-import com.busschedule.register.entity.CityUiState
-import com.busschedule.register.entity.RegionUiState
-import com.busschedule.register.entity.SelectRegionUiState
-import com.busschedule.register.entity.TextBoxColor
+import com.busschedule.register.model.CityUiState
+import com.busschedule.register.model.RegionUiState
+import com.busschedule.register.model.SelectRegionUiState
+import com.busschedule.register.model.TextBoxColor
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar

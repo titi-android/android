@@ -10,7 +10,7 @@ class SplashViewModel @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
-    fun fetchIsCorrectAccessToken() {
+    fun fetchIsCorrectAccessToken(navigateToStart: () -> Unit, navigateToScheduleList: () -> Unit) {
 
     }
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.busschedule.domain.repository.TokenRepository
 import com.busschedule.domain.usecase.fcm.PostFCMTokenUseCase
 import com.busschedule.domain.usecase.user.LoginUseCase
-import com.busschedule.login.entity.LoginUiState
+import com.busschedule.login.model.LoginUiState
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel

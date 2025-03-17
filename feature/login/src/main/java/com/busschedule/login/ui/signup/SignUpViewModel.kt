@@ -3,7 +3,7 @@ package com.busschedule.login.ui.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.busschedule.domain.usecase.user.SignupUseCase
-import com.busschedule.login.entity.SignupUiState
+import com.busschedule.login.model.SignupUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

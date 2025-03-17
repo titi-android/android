@@ -1,4 +1,4 @@
-package com.busschedule.schedulelist.entity
+package com.busschedule.schedulelist.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

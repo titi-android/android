@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.login.entity.LoginUiState
+import com.busschedule.login.model.LoginUiState
 import com.busschedule.login.ui.login.LoginViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.appbar.BackArrowAppBar

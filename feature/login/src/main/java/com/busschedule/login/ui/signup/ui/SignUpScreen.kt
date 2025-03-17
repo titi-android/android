@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.login.entity.SignupUiState
+import com.busschedule.login.model.SignupUiState
 import com.busschedule.login.ui.signup.SignUpViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer

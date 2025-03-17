@@ -1,4 +1,4 @@
-package com.busschedule.login.entity
+package com.busschedule.login.model
 
 data class SignupUiState(
     val inputId: String = "",

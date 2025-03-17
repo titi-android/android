@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.busschedule.register.entity.NotifyInfo
+import com.busschedule.register.model.NotifyInfo
 import core.designsystem.component.WidthSpacer
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcNotify

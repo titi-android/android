@@ -54,9 +54,9 @@ import com.busschedule.register.component.NotifyIcon
 import com.busschedule.register.component.ScheduleNameTextField
 import com.busschedule.register.component.WhiteContentBox
 import com.busschedule.register.constant.TimePickerType
-import com.busschedule.register.entity.BusStopInfoUIFactory
-import com.busschedule.register.entity.ScheduleRegister
-import com.busschedule.register.entity.asBusStopInfo
+import com.busschedule.register.model.BusStopInfoUIFactory
+import com.busschedule.register.model.ScheduleRegister
+import com.busschedule.register.model.asBusStopInfo
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.model.DayOfWeekUi
 import com.busschedule.util.state.ApplicationState
