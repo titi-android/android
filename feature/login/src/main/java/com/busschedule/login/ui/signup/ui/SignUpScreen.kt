@@ -38,6 +38,7 @@ import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
+import core.designsystem.component.textfield.PasswordOutlineTextField
 import core.designsystem.component.textfield.PrimaryOutlineTextField
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcForwardArrow
@@ -102,14 +103,14 @@ fun SignUpScreen(appState: ApplicationState, viewModel: SignUpViewModel = hiltVi
                     errorText = "",
                     keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
                 )
-                PrimaryOutlineTextField(
+                PasswordOutlineTextField(
                     value = uiState.inputPw,
                     onValueChange = { viewModel.updateInputPw(it) },
                     placeholder = "비밀번호",
                     errorText = "",
                     keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
                 )
-                PrimaryOutlineTextField(
+                PasswordOutlineTextField(
                     value = uiState.inputCheckPw,
                     onValueChange = { viewModel.updateInputCheckPw(it) },
                     placeholder = "비밀번호 확인",

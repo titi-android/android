@@ -39,8 +39,6 @@ class AuthInterceptor @Inject constructor(
                     tokenManager.saveAccessToken(newAccessToken)
                 }
             }
-        } else {
-//            Timber.e("${response.code} : ${response.request} \n ${response.message}")
         }
 
         return response

@@ -27,6 +27,7 @@ import com.busschedule.login.ui.login.LoginViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
+import core.designsystem.component.textfield.PasswordOutlineTextField
 import core.designsystem.component.textfield.PrimaryOutlineTextField
 
 @Composable
@@ -74,7 +75,7 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
                 isError = false,
                 keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
             )
-            PrimaryOutlineTextField(
+            PasswordOutlineTextField(
                 value = uiState.inputPw,
                 onValueChange = { loginViewModel.updateInputPw(it) },
                 placeholder = "비밀번호",
