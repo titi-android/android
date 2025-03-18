@@ -26,9 +26,13 @@ class TokenRepositoryImpl @Inject constructor(private val tokenManager: TokenMan
         tokenManager.deleteAccessToken()
     }
 
-    override suspend fun validateToken() =
-        userApi.validateToken().getOrThrow().code
-
-
-
+    override suspend fun validateToken(): String {
+        return try {
+            val accessToken = userApi.validateToken().getOrThrow().data?.accessToken
+            accessToken?.let { tokenManager.saveAccessToken(it) }
+            accessToken!!
+        } catch (e: NullPointerException) {
+            return ""
+        }
+    }
 }

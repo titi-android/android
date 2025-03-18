@@ -1,5 +1,6 @@
 package com.busschedule.data.remote.network.auth
 
+import android.util.Log
 import com.busschedule.data.local.datastore.TokenManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -30,9 +31,6 @@ class AuthInterceptor @Inject constructor(
 
         // 엑세스 토큰이 유효하지 않아도 백엔드에서 HTTP CODE를 200으로 보내고 json code를 JWT407으로 보내는 상황
         if (response.code == HTTP_OK) {
-            // TODO: 리프레시 토큰 유효성 검사 성공 시
-            // 엑세스 토큰 저장
-
             val source = responseBody.source()
             source.request(Long.MAX_VALUE) // Buffer the entire body.
             val buffer = source.buffer.clone()
@@ -40,21 +38,10 @@ class AuthInterceptor @Inject constructor(
             val code = JSONObject(responseString).optString("code")
             if (code == "JWT407") {
                 val newRequest = HttpSuccessAuthenticator(tokenManager).authenticate(response)
+                Log.d("daeyoung", "newRequest: $newRequest")
                 return newRequest?.let { chain.proceed(it) } ?: response
             }
         }
-
-        // Authenticator로 한번 더 api  전송을 하고 성공했을 경우 호출
-//        if (response.code == HTTP_OK) {
-//            val newAccessToken: String = response.header(AUTHORIZATION, null) ?: return response
-//
-//            CoroutineScope(Dispatchers.IO).launch {
-//                val existedAccessToken = tokenManager.getAccessToken().first()
-//                if (existedAccessToken != newAccessToken) {
-//                    tokenManager.saveAccessToken(newAccessToken)
-//                }
-//            }
-//        }
 
         return response
     }

@@ -13,6 +13,8 @@ class SplashViewModel @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
     suspend fun fetchIsCorrectAccessToken(navigateToStart: () -> Unit, navigateToScheduleList: () -> Unit, showToast: (String) -> Unit) {
+//        tokenRepository.deleteAccessToken()
+//        tokenRepository.saveAccessToken("aa")
         validateTokenUseCase().onSuccess {
             Log.d("daeyoung", "validateToken: success: $it")
             navigateToScheduleList()

@@ -2,6 +2,7 @@ package com.busschedule.data.remote.api
 
 import com.busschedule.data.remote.model.DefaultResponse
 import com.busschedule.data.remote.model.request.InquiryRequest
+import com.busschedule.data.remote.model.response.TokenResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -14,7 +15,7 @@ interface UserApi {
 
     // 엑세스 토큰 유효성 검증
     @GET("/api/v1/users/auth/validate")
-    suspend fun validateToken(): DefaultResponse<Unit>
+    suspend fun validateToken(): DefaultResponse<TokenResponse>
 
     // 문의 사항 이메일 전송
     @POST("/api/v1/users/feed-back")
