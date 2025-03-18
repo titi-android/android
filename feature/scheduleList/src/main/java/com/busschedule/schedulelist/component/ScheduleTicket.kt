@@ -49,7 +49,7 @@ import com.busschedule.util.ext.toFormatKrTime
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.dialog.CloseDialog
-import core.designsystem.shadow.scheduleShadow
+import core.designsystem.shadow.titiShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
@@ -94,7 +94,7 @@ fun ScheduleTicket(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(2.42f)
-            .scheduleShadow(
+            .titiShadow(
                 color = Color(0x2E000000),
                 borderRadius = 10.dp,
                 blurRadius = 1.dp,

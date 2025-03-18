@@ -48,6 +48,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.model.BusStop
+import com.busschedule.model.RecentlySearchBusStop
 import com.busschedule.model.constant.BusType
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusInputDialog
@@ -66,7 +67,7 @@ import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.button.MainBottomButton
 import core.designsystem.component.loading.LoadingOfCoilDialog
-import core.designsystem.shadow.scheduleShadow
+import core.designsystem.shadow.titiShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
 import core.designsystem.svg.myiconpack.IcClose
@@ -74,6 +75,7 @@ import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextMColor
 import core.designsystem.theme.TextWColor
+import core.designsystem.theme.mBody
 import core.designsystem.theme.mTitle
 import core.designsystem.theme.rFooter
 import kotlinx.coroutines.async
@@ -95,7 +97,7 @@ fun SelectBusScreen(
     var isLoading by remember { mutableStateOf(busStop.isEmpty()) }
 
     LaunchedEffect(busStop) {
-        listOf( async { viewModel.fetchReadAllRecentlySearchBusStop() }, async {
+        listOf(async { viewModel.fetchReadAllRecentlySearchBusStop() }, async {
             if (busStop.isEmpty()) {
                 viewModel.fetchFirstReadAllBusStop(
                     busStop.region,
@@ -177,6 +179,19 @@ fun SelectBusScreen(
             SelectBusAppBar(
                 value = uiState.input,
                 onValueChange = { viewModel.updateBusStopInput(it) },
+                recentlyBusStopSearch = uiState.recentlySearchBusStop,
+                onClickFromRecentlyBusStop = { recently ->
+                    if (viewModel.isEqualBusStop(recently.search).not()) {
+                        isLoading = true
+                        viewModel.fetchReadAllBusStop(
+                            region = recently.region,
+                            busStopName = recently.search,
+                            changeLoadingState = { isLoading = false }
+                        ) { appState.showToastMsg(it) }
+                        isShowBottomSheet = false
+                    }
+                },
+                onDeleteFromRecentlyBusStop = { viewModel.fetchDeleteRecentlySearchBusStop(it.search)},
                 popBackStack = { appState.popBackStack() }) {
                 isLoading = true
                 viewModel.fetchReadAllBusStop(
@@ -185,38 +200,6 @@ fun SelectBusScreen(
                     changeLoadingState = { isLoading = false }
                 ) { appState.showToastMsg(it) }
                 isShowBottomSheet = false
-            }
-            HeightSpacer(height = 8.dp)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = MyIconPack.IcBus,
-                    contentDescription = "ic_clock",
-                    modifier = Modifier.size(18.dp),
-                    tint = TextMColor
-                )
-                WidthSpacer(width = 4.dp)
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(items = uiState.recentlySearchBusStop.take(3)) { recently ->
-                        RecentSearchCard(text = recently.search, onClick = {
-                            if (viewModel.isEqualBusStop(recently.search)) {
-                                return@RecentSearchCard
-                            }
-                            isLoading = true
-                            viewModel.fetchReadAllBusStop(
-                                region = recently.region,
-                                busStopName = recently.search,
-                                changeLoadingState = { isLoading = false }
-                            ) { appState.showToastMsg(it) }
-                            isShowBottomSheet = false
-                        }) {
-                            viewModel.fetchDeleteRecentlySearchBusStop(recently.search)
-                        }
-                    }
-                }
             }
         }
 
@@ -366,19 +349,28 @@ fun BoxScope.BusesBottomSheet(
 fun SelectBusAppBar(
     value: String,
     onValueChange: (String) -> Unit,
+    recentlyBusStopSearch: List<RecentlySearchBusStop>,
+    onClickFromRecentlyBusStop: (RecentlySearchBusStop) -> Unit,
+    onDeleteFromRecentlyBusStop: (RecentlySearchBusStop) -> Unit,
     popBackStack: () -> Unit,
     onSearch: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         IconButton(
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = TextWColor,
                 contentColor = Primary
-            ), onClick = { popBackStack() }) {
+            ),
+            modifier = Modifier.titiShadow(
+                color = Color.Black.copy(alpha = 0.1f),
+                blurRadius = 4.dp,
+                borderRadius = 100.dp
+            ),
+            onClick = { popBackStack() }) {
             Icon(
                 imageVector = Icons.Rounded.ArrowBackIosNew,
                 contentDescription = "ic_back_arrow",
@@ -386,19 +378,32 @@ fun SelectBusAppBar(
             )
         }
 
-        SearchTextField(
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .scheduleShadow(
-                    color = Color.Black.copy(alpha = 0.18f),
-                    blurRadius = 4.dp,
-                    borderRadius = 12.dp
-                ),
-            value = value,
-            onValueChange = { onValueChange(it) },
-            placeholder = "버스 정류장 검색"
-        ) { onSearch() }
-
+        Column(modifier = Modifier.padding(start = 8.dp)) {
+            SearchTextField(
+                modifier = Modifier
+                    .titiShadow(
+                        color = Color.Black.copy(alpha = 0.18f),
+                        blurRadius = 4.dp,
+                        borderRadius = 12.dp
+                    ),
+                value = value,
+                onValueChange = { onValueChange(it) },
+                placeholder = "버스 정류장 검색"
+            ) { onSearch() }
+            HeightSpacer(height = 4.dp)
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(items = recentlyBusStopSearch.take(3)) { recently ->
+                    RecentSearchCard(
+                        text = recently.search,
+                        onClick = { onClickFromRecentlyBusStop(recently) }
+                    ) { onDeleteFromRecentlyBusStop(recently) }
+                }
+            }
+        }
     }
 }
 
@@ -407,20 +412,22 @@ fun RecentSearchCard(text: String, onClick: () -> Unit, onDelete: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(contentColor = TextMColor, containerColor = TextWColor),
         shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.scheduleShadow(
-            color = Color.Black.copy(alpha = 0.18f),
+        modifier = Modifier.titiShadow(
+            color = Color.Black.copy(alpha = 0.05f),
             blurRadius = 8.dp,
             borderRadius = 8.dp,
 //            spread = 8.dp
         ),
         onClick = { onClick() }) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = text, style = mTitle)
+            Text(text = text, style = mBody)
             WidthSpacer(width = 4.dp)
             Icon(
                 imageVector = MyIconPack.IcClose,
                 contentDescription = "ic_close",
-                modifier = Modifier.size(14.dp).noRippleClickable { onDelete() }
+                modifier = Modifier
+                    .size(12.dp)
+                    .noRippleClickable { onDelete() }
             )
         }
     }
