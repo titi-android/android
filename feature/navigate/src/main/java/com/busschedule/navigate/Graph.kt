@@ -11,7 +11,7 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.busschedule.login.ui.login.ui.LoginScreen
 import com.busschedule.login.ui.signup.ui.SignUpScreen
-import com.busschedule.login.ui.splash.SplashScreen
+import com.busschedule.login.ui.splash.ui.SplashScreen
 import com.busschedule.login.ui.start.AppStartScreen
 import com.busschedule.model.BusStop
 import com.busschedule.model.navtype.serializableType
@@ -28,7 +28,10 @@ import kotlin.reflect.typeOf
 fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
 //    navigation<Route.LoginGraph>(startDestination = Route.LoginGraph.Login) {
     composable<LoginGraph.Splash> {
-        SplashScreen(navigateToStart = {appState.navigateToStart()})
+        SplashScreen(
+            navigateToStart = { appState.navigateToStart() },
+            navigateToScheduleList = { appState.navigateToScheduleList() },
+            showToast = { appState.showToastMsg(it) })
     }
     composable<LoginGraph.Start> {
         AppStartScreen(appState)
@@ -101,7 +104,7 @@ fun NavGraphBuilder.settingGraph(appState: ApplicationState) {
 fun rememberNavControllerBackEntry(
     entry: NavBackStackEntry,
     navController: NavController,
-    graph: com.busschedule.navigation.Route,
+    graph: Route,
 ) = remember(entry) {
     navController.getBackStackEntry(graph)
 }

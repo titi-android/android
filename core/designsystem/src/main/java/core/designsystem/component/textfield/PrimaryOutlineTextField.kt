@@ -63,10 +63,3 @@ fun PrimaryOutlineTextField(
         ),
     )
 }
-
-//@Composable
-//@Preview(showBackground = true)
-//fun PrimaryOutlineTextFieldPreview(modifier: Modifier = Modifier) {
-//    var input by remember { mutableStateOf("") }
-//    PrimaryOutlineTextField(value = input, onValueChange = { input = it }, placeholder = "아이디")
-//}

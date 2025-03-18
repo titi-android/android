@@ -1,26 +1,23 @@
-package com.busschedule.data.remote.di.auth
+package com.busschedule.data.remote.network.auth
 
+import android.util.Log
 import com.busschedule.data.local.datastore.TokenManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
-import okhttp3.Route
-import javax.inject.Inject
 
-class AuthAuthenticator @Inject constructor(
-    private val tokenManager: TokenManager
-) : Authenticator {
+class HttpSuccessAuthenticator(private val tokenManager: TokenManager) {
     private val AUTHORIZATION = "Authorization"
 
-    override fun authenticate(route: Route?, response: Response): Request? {
+    fun authenticate(response: Response): Request? {
         val refreshToken = runBlocking {
             tokenManager.getRefreshToken().first()
         }
+        Log.d("daeyoung", "refreshToken : $refreshToken")
 
         if (refreshToken == null || refreshToken == "LOGIN") {
-            response.close()
+//            response.close()
             return null
         }
 
@@ -29,6 +26,6 @@ class AuthAuthenticator @Inject constructor(
 
     private fun newRequestWithToken(token: String, request: Request): Request =
         request.newBuilder()
-            .header(AUTHORIZATION, token)
+            .header(AUTHORIZATION, "Bearer $token")
             .build()
 }

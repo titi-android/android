@@ -1,9 +1,9 @@
 package com.busschedule.data.remote.di
 
 import com.busschedule.data.BuildConfig
-import com.busschedule.data.remote.di.auth.AuthAuthenticator
-import com.busschedule.data.remote.di.auth.AuthInterceptor
 import com.busschedule.data.remote.network.ResultCallAdapterFactory
+import com.busschedule.data.remote.network.auth.AuthAuthenticator
+import com.busschedule.data.remote.network.auth.AuthInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

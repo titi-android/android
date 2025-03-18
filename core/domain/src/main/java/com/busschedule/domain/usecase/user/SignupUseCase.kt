@@ -5,7 +5,6 @@ import com.busschedule.domain.repository.UserRepository
 import javax.inject.Inject
 
 class SignupUseCase @Inject constructor(private val userRepository: UserRepository) {
-    //    operator fun invoke(loginUser: LoginUser) = loginRepository.signup(loginUser)
     suspend operator fun invoke(name: String, password: String) = runCatchingIgnoreCancelled {
         userRepository.signup(name, password)
     }

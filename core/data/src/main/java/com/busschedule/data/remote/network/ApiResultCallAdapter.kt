@@ -1,5 +1,6 @@
 package com.busschedule.data.remote.network
 
+import android.util.Log
 import com.busschedule.data.remote.model.ApiResult
 import com.busschedule.domain.model.ApiResponse
 import okhttp3.Request
@@ -31,6 +32,10 @@ private class ApiResultCall<R>(
 
             private fun Response<R>.toApiResult(): ApiResult<R> {
                 if (!isSuccessful) { // Http 응답 에러
+                    Log.d("daeyoung", "ApiResultCall: ${this.code()}")
+                    Log.d("daeyoung", "ApiResultCall: ${this.message()}")
+                    Log.d("daeyoung", "ApiResultCall: ${this.errorBody()?.string()}")
+
                     val errorBody = errorBody()?.string()
                     return ApiResult.Failure.HttpError(
                         code = code().toString(),
@@ -46,6 +51,7 @@ private class ApiResultCall<R>(
                 if (isSuccess) {
                     body()?.let { body -> return ApiResult.successOf(body) }
                 } else {
+                    Log.d("daeyoung", "ApiResultCall not success: ${body()}")
                     val errorBody = (body() as ApiResponse<*>)
                     return ApiResult.Failure.FailError(
                         code = errorBody.code,

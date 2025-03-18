@@ -22,7 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.setting.component.RoundTextField
 import com.busschedule.setting.ui.ask.AskViewModel
-import com.busschedule.setting.ui.ask.entity.AskUIState
+import com.busschedule.setting.ui.ask.model.AskUIState
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar

@@ -1,11 +1,11 @@
 package com.busschedule.data.data.repository
 
+import com.busschedule.data.local.datastore.TokenManager
 import com.busschedule.data.remote.api.LoginApi
 import com.busschedule.data.remote.api.UserApi
 import com.busschedule.data.remote.model.request.InquiryRequest
 import com.busschedule.data.remote.model.request.LoginUserRequest
 import com.busschedule.data.remote.model.response.asDomain
-import com.busschedule.data.local.datastore.TokenManager
 import com.busschedule.domain.repository.UserRepository
 import com.busschedule.model.Token
 import javax.inject.Inject
@@ -19,6 +19,7 @@ class UserRepositoryImpl @Inject constructor(
         val user = LoginUserRequest(name = name, password = password)
         return loginApi.login(user).getOrThrow().data!!.asDomain().also {
             tokenManager.saveAccessToken(it.accessToken)
+            tokenManager.saveRefreshToken(it.refreshToken)
         }
     }
     override suspend fun signup(name: String, password: String) {

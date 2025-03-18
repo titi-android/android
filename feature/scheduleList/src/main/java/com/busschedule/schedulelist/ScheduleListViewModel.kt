@@ -12,9 +12,9 @@ import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
 import com.busschedule.domain.usecase.schedule.ReadTodaySchedulesUseCase
 import com.busschedule.model.DayOfWeekUi
 import com.busschedule.model.constant.DayOfWeek
-import com.busschedule.schedulelist.entity.ScheduleListUiState
-import com.busschedule.schedulelist.entity.ScheduleUI
-import com.busschedule.schedulelist.entity.asStateUI
+import com.busschedule.schedulelist.model.ScheduleListUiState
+import com.busschedule.schedulelist.model.ScheduleUI
+import com.busschedule.schedulelist.model.asStateUI
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

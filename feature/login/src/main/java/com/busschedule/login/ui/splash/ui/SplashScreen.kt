@@ -13,26 +13,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.busschedule.login.ui.splash.SplashViewModel
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcMainlogo
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.bigLogo
-import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navigateToStart: () -> Unit) {
-
-
+fun SplashScreen(
+    navigateToStart: () -> Unit,
+    navigateToScheduleList: () -> Unit,
+    showToast: (String) -> Unit,
+    viewModel: SplashViewModel = hiltViewModel(),
+) {
     LaunchedEffect(Unit) {
-        delay(1500L)
-        navigateToStart()
+        viewModel.fetchIsCorrectAccessToken(
+            navigateToStart = navigateToStart,
+            navigateToScheduleList = navigateToScheduleList
+        ) { showToast(it) }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(TextWColor)
-    ) {
+    Box(modifier = Modifier.fillMaxSize().background(TextWColor)) {
         Column(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -42,7 +44,7 @@ fun SplashScreen(navigateToStart: () -> Unit) {
                 contentDescription = "ic_mainlogo",
                 modifier = Modifier.size(150.dp)
             )
-            Text(text = stringResource(id = com.busschedule.common.R.string.app_name), style = bigLogo)
+            Text( text = stringResource(id = com.busschedule.common.R.string.app_name), style = bigLogo )
         }
     }
 }

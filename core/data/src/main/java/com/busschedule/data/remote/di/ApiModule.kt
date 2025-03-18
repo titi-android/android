@@ -21,7 +21,7 @@ object ApiModule {
         return retrofit.create(LoginApi::class.java)
     }
     @Provides
-    fun provideUserApi(@NetworkModule.BusScheduleRetrofit retrofit: Retrofit): UserApi {
+    fun provideUserApi(@NetworkModule.BusScheduleAuthRetrofit retrofit: Retrofit): UserApi {
         return retrofit.create(UserApi::class.java)
     }
     @Provides

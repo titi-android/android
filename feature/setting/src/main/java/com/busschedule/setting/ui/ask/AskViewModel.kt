@@ -3,7 +3,7 @@ package com.busschedule.setting.ui.ask
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.busschedule.domain.usecase.user.PostInquiryUseCase
-import com.busschedule.setting.ui.ask.entity.AskUIState
+import com.busschedule.setting.ui.ask.model.AskUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

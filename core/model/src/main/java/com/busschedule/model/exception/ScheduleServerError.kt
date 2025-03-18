@@ -39,6 +39,7 @@ enum class ScheduleServerError(val code: String, val exception: Exception) {
     ACCESS_TOKEN_UNSUPPORTED("JWT404", AccessTokenUnsupportedException()),
     ACCESS_TOKEN_ILLEGAL_ARGUMENT( "JWT405", AccessTokenIllegalArgumentException()),
     ACCESS_TOKEN_USER_NOT_FOUND( "JWT406", AccessTokenUserNotFoundException()),
+    ACCESS_TOKEN_NOT_VALIDATE( "JWT407", AccessTokenIllegalArgumentException()),
 
     /** ETC **/
     UNSUPPORTED_ENCODING("UNSUPPORTED_ENCODING", UnsupportedEncoding());

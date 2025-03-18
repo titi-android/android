@@ -3,6 +3,7 @@ package com.busschedule.widget.widget
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import androidx.compose.animation.core.AnimationState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
