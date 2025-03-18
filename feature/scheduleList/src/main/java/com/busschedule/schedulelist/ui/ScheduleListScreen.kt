@@ -1,6 +1,5 @@
 package com.busschedule.schedulelist.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,9 +62,8 @@ fun ScheduleListScreen(
         }
     }
     Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Background)
+        modifier = Modifier.fillMaxSize(),
+        color = Background
     ) {
         Column(
             modifier = Modifier
