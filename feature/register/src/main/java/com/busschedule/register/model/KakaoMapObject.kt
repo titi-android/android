@@ -1,5 +1,6 @@
 package com.busschedule.register.model
 
+import android.util.Log
 import com.busschedule.model.exception.BusStopInfo
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
@@ -45,6 +46,7 @@ class KakaoMapObject(val map: KakaoMap) {
     }
 
     fun moveCamera(latLng: LatLng, isUpCamera: Boolean = false) {
+        Log.d("daeyoung", "moveCamera: $latLng")
         val lat = if(isUpCamera) -0.000500 else 0.0
         val cameraUpdate = makeCameraUpdate(latLng.latitude + lat, latLng.longitude, 18)
 

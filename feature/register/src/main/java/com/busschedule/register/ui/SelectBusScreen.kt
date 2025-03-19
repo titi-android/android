@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -57,6 +56,7 @@ import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.model.AddBusDialogUiState
 import com.busschedule.register.model.SelectBusStopUiState
 import com.busschedule.register.model.SelectedBusUI
+import com.busschedule.util.ext.customNavigationBarPadding
 import com.busschedule.util.ext.noRippleClickable
 import com.busschedule.util.state.ApplicationState
 import com.kakao.vectormap.KakaoMap
@@ -111,6 +111,7 @@ fun SelectBusScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
+            .customNavigationBarPadding(true)
     ) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
@@ -164,6 +165,10 @@ fun SelectBusScreen(
                                     kakaoMapObject.moveCamera(label.position, isUpCamera = true)
                                     false
                                 }
+
+//                                kakaoMap.setOnMapClickListener { kakaoMap, latLng, point, poi->
+//                                    Log.d("daeyoung", "latlng: $latLng")
+//                                }
                             }
                         }
                     )
@@ -301,7 +306,6 @@ fun BoxScope.BusesBottomSheet(
             .fillMaxWidth()
             .fillMaxHeight(0.4f)
             .background(TextWColor)
-            .customNavigationBarPadding(true)
     ) {
         val btnEnable by remember {
             derivedStateOf { selectedBusUi.buses.any { it.isSelected } }
@@ -447,6 +451,3 @@ fun TTT(modifier: Modifier = Modifier) {
         }
     }
 }
-
-fun Modifier.customNavigationBarPadding(state: Boolean) =
-    if (state) this.navigationBarsPadding() else this

@@ -37,6 +37,7 @@ import com.busschedule.register.model.SelectedBusUI
 import com.busschedule.register.model.asRouteInfo
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -258,6 +259,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     private fun isEqualDayOfWeek(dayOfWeek: DayOfWeek, selectDayOfWeek: String) =
         dayOfWeek.value == selectDayOfWeek.take(1)
+
 
     private fun fetchPostBusSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {

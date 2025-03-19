@@ -36,5 +36,4 @@ class HttpSuccessAuthenticator(private val tokenManager: TokenManager) {
             .post(RequestBody.create(null, ByteArray(0)))
             .build()
     }
-
 }
