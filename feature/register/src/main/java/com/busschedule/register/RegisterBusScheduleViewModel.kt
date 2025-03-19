@@ -37,7 +37,6 @@ import com.busschedule.register.model.SelectedBusUI
 import com.busschedule.register.model.asRouteInfo
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import com.kakao.vectormap.KakaoMap
-import com.kakao.vectormap.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -348,18 +347,22 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 cityName = kakaoMap.region,
                 busStopId = nodeId
             ).onSuccess { busInfos ->
-                _busStop.update { selectedBusUI ->
-                    selectedBusUI.copy(
+                _busStop.update {
+                    SelectedBusUI(
                         region = kakaoMap.region,
                         busStop = busStopName,
                         nodeId = nodeId,
                         buses = busInfos.map { bus ->
-                            Bus(
+                            val routeInfos = routeInfos.find { it.compareID(id) }
+                                Bus(
                                 name = bus.name,
                                 type = BusType.find(bus.type),
-                                selectedInit = routeInfos.find { it.compareID(id) }?.getBuses()
-                                    ?.any { it.name == bus.name && it.type == bus.type } ?: false)
-                        })
+                                nodeId = nodeId,
+                                selectedInit = routeInfos?.getBuses()
+                                    ?.any { it.name == bus.name && it.type == bus.type && routeInfos.nodeId == nodeId } ?: false
+                            )
+                        }
+                    )
                 }
                 hideBottomSheet()
             }.onFailure { showToast(it.message!!) }

@@ -1,5 +1,6 @@
 package com.busschedule.register.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -307,7 +308,7 @@ fun BoxScope.BusesBottomSheet(
             .fillMaxHeight(0.4f)
             .background(TextWColor)
     ) {
-        val btnEnable by remember {
+        val btnEnable by remember(selectedBusUi.buses) {
             derivedStateOf { selectedBusUi.buses.any { it.isSelected } }
         }
         val lazyListState = rememberLazyListState()
@@ -325,11 +326,17 @@ fun BoxScope.BusesBottomSheet(
                     Text(text = selectedBusUi.busStop, style = mTitle.copy(Primary))
                 }
             }
-            items(items = selectedBusUi.buses, key = { it.name }) {
+            items(items = selectedBusUi.buses) {
                 BusCard(
                     name = "${it.name}번",
                     type = it.type,
-                    suffixIcon = { CheckBoxIcon(it.isSelected) }) { it.isSelected = !it.isSelected }
+                    suffixIcon = {
+//                        Log.d("daeyoung", "아이콘 선택되었는가?: $it")
+                        CheckBoxIcon(it.isSelected) }) {
+                    Log.d("daeyoung", "before bus: $it")
+                    it.isSelected = !it.isSelected
+                    Log.d("daeyoung", "after bus: $it")
+                }
             }
             item {
                 BusCard(
@@ -396,7 +403,7 @@ fun SelectBusAppBar(
             ) { onSearch() }
             HeightSpacer(height = 4.dp)
             LazyRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier,
                 contentPadding = PaddingValues(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {

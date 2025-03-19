@@ -7,8 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStop
-import com.busschedule.model.constant.BusType
 import com.busschedule.model.RouteInfo
+import com.busschedule.model.constant.BusType
 
 object BusStopInfoUIFactory {
     private var id = 1
@@ -78,7 +78,10 @@ data class SelectedBusUI(
 data class Bus(
     val name: String,
     val type: BusType = BusType.지정,
+    val nodeId: String = "",
     private val selectedInit: Boolean = false,
 ) {
     var isSelected by mutableStateOf(selectedInit)
+    override fun toString(): String =
+        "name: $name, type: $type, isSelected: $isSelected"
 }

@@ -46,7 +46,6 @@ class KakaoMapObject(val map: KakaoMap) {
     }
 
     fun moveCamera(latLng: LatLng, isUpCamera: Boolean = false) {
-        Log.d("daeyoung", "moveCamera: $latLng")
         val lat = if(isUpCamera) -0.000500 else 0.0
         val cameraUpdate = makeCameraUpdate(latLng.latitude + lat, latLng.longitude, 18)
 
