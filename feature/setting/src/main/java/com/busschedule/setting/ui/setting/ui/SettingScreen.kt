@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.busschedule.common.constant.Constants
 import com.busschedule.setting.ui.setting.SettingViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
@@ -81,7 +82,7 @@ fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hilt
                     Text(text = "버전 정보", style = mTitle.copy(Primary))
                     HeightSpacer(height = 4.dp)
                     Text(
-                        text = "1.0.2", style = rFooter.copy(TextMColor)
+                        text = Constants.VERSION, style = rFooter.copy(TextMColor)
                     )
                 }
             }

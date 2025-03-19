@@ -29,7 +29,7 @@ android {
         applicationId = "com.schedule.notify.app"
         targetSdk = 35
         versionCode = 2
-        versionName = "1.02"
+        versionName = "1.03"
         manifestPlaceholders
         multiDexEnabled = true
         signingConfig = signingConfigs.getByName("release")

@@ -1,6 +1,5 @@
 package com.busschedule.register.ui
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -330,13 +329,7 @@ fun BoxScope.BusesBottomSheet(
                 BusCard(
                     name = "${it.name}번",
                     type = it.type,
-                    suffixIcon = {
-//                        Log.d("daeyoung", "아이콘 선택되었는가?: $it")
-                        CheckBoxIcon(it.isSelected) }) {
-                    Log.d("daeyoung", "before bus: $it")
-                    it.isSelected = !it.isSelected
-                    Log.d("daeyoung", "after bus: $it")
-                }
+                    suffixIcon = { CheckBoxIcon(it.isSelected) }) { it.isSelected = !it.isSelected }
             }
             item {
                 BusCard(
@@ -427,7 +420,6 @@ fun RecentSearchCard(text: String, onClick: () -> Unit, onDelete: () -> Unit) {
             color = Color.Black.copy(alpha = 0.05f),
             blurRadius = 8.dp,
             borderRadius = 8.dp,
-//            spread = 8.dp
         ),
         onClick = { onClick() }) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -450,10 +442,9 @@ fun TTT(modifier: Modifier = Modifier) {
     Box(modifier = Modifier) {
         Row {
             RecentSearchCard("asd", {}, {})
-            core.designsystem.component.WidthSpacer(width = 4.dp)
+            WidthSpacer(width = 4.dp)
             RecentSearchCard("asd", {}, {})
-            core.designsystem.component.WidthSpacer(width = 4.dp)
-
+            WidthSpacer(width = 4.dp)
             RecentSearchCard("asd", {}, {})
         }
     }
