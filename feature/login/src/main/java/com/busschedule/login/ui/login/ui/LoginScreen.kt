@@ -14,7 +14,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
@@ -22,6 +24,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.login.component.CheckBoxContainer
 import com.busschedule.login.model.LoginUiState
 import com.busschedule.login.ui.login.LoginViewModel
 import com.busschedule.util.state.ApplicationState
@@ -39,6 +42,7 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
     val isBtnEnable by remember {
         derivedStateOf { uiState.inputId.isNotEmpty() && uiState.inputPw.isNotEmpty() }
     }
+    var isAuthLogin by remember { mutableStateOf(false) }
 
     val fetchLogin = {
         loginViewModel.fetchLogin(
@@ -83,6 +87,7 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
                 isError = false,
                 keyboardActions = { focusManager.clearFocus() }
             )
+            CheckBoxContainer(isCheck = isAuthLogin, onCheckedChange = { isAuthLogin = it }, text = "자동 로그인")
         }
         MainBottomButton(text = "완료", enabled = isBtnEnable) { fetchLogin() }
     }

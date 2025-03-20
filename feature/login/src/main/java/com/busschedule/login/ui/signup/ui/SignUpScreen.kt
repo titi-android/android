@@ -1,7 +1,6 @@
 package com.busschedule.login.ui.signup.ui
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,19 +30,17 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.login.component.CheckBoxContainer
 import com.busschedule.login.model.SignupUiState
 import com.busschedule.login.ui.signup.SignUpViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
-import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
 import core.designsystem.component.textfield.PasswordOutlineTextField
 import core.designsystem.component.textfield.PrimaryOutlineTextField
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcForwardArrow
-import core.designsystem.svg.myiconpack.IcOffCheckbox
-import core.designsystem.svg.myiconpack.IcOnCheckbox
 import core.designsystem.theme.Primary
 import core.designsystem.theme.mTitle
 
@@ -119,7 +116,11 @@ fun SignUpScreen(appState: ApplicationState, viewModel: SignUpViewModel = hiltVi
                     keyboardActions = { focusManager.clearFocus() }
                 )
                 HeightSpacer(height = 32.dp)
-                TermsCheckRow(isCheck = isCheckPrivacyPolicy) { isCheckPrivacyPolicy = it }
+                CheckBoxContainer(
+                    isCheck = isCheckPrivacyPolicy,
+                    onCheckedChange = { isCheckPrivacyPolicy = it },
+                    text = "회원가입 및 이용약관에 동의하겠습니까?"
+                )
 
                 HeightSpacer(height = 16.dp)
                 Row(
@@ -145,29 +146,5 @@ fun SignUpScreen(appState: ApplicationState, viewModel: SignUpViewModel = hiltVi
 
         }
 
-    }
-}
-
-@Composable
-fun TermsCheckRow(isCheck: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    val icon = if (isCheck.not()) MyIconPack.IcOffCheckbox else MyIconPack.IcOnCheckbox
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Image(
-            imageVector = icon,
-            contentDescription = "ic_checkbox",
-            modifier = Modifier
-                .size(24.dp)
-                .clickable { onCheckedChange(!isCheck) }
-        )
-        WidthSpacer(width = 16.dp)
-        Text(
-            text = "회원가입 및 이용약관에 동의하겠습니까?",
-            style = mTitle.copy(Primary),
-            modifier = Modifier.weight(1f)
-        )
     }
 }
