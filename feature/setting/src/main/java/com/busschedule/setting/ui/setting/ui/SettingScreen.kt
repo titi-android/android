@@ -69,7 +69,7 @@ fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hilt
             SettingContentCard(
                 icon = MyIconPack.IcLogout,
                 hideForwardIcon = true,
-                onClick = { isShowUserDeleteDialog = true }) {
+                onClick = { viewModel.logout { appState.navigateToStart() } }) {
                 Text(text = "로그아웃", style = mTitle.copy(Primary))
             }
             HeightSpacer(height = 16.dp)
@@ -112,7 +112,7 @@ fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hilt
                 onDismissRequest = { isShowUserDeleteDialog = false }) {
                 viewModel.fetchDeleteUser(showToast = { appState.showToastMsg(it) }) {
                     isShowUserDeleteDialog = false
-                    appState.popBackStackStart()
+                    appState.navigateToStart()
                 }
             }
         }

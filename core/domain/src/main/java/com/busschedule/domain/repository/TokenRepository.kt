@@ -12,6 +12,7 @@ interface TokenRepository {
     fun getRefreshToken(): Flow<String?>
 
     suspend fun deleteAccessToken()
+    suspend fun deleteRefreshToken()
 
     suspend fun validateToken(): String
 }

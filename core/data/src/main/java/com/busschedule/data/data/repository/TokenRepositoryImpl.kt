@@ -26,6 +26,10 @@ class TokenRepositoryImpl @Inject constructor(private val tokenManager: TokenMan
         tokenManager.deleteAccessToken()
     }
 
+    override suspend fun deleteRefreshToken() {
+        tokenManager.deleteRefreshToken()
+    }
+
     override suspend fun validateToken(): String {
         return try {
             val accessToken = userApi.validateToken().getOrThrow().data?.accessToken
