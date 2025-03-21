@@ -16,11 +16,18 @@ class TokenRepositoryImpl @Inject constructor(private val tokenManager: TokenMan
         tokenManager.saveFCMToken(token)
     }
 
+    override suspend fun saveAutoLoginState(state: Boolean) {
+        tokenManager.saveAutoLoginState(state)
+    }
+
     override fun getAccessToken(): Flow<String?> =
         tokenManager.getAccessToken()
 
     override fun getRefreshToken(): Flow<String?> =
         tokenManager.getRefreshToken()
+
+    override fun getAutoLoginState(): Flow<Boolean> =
+        tokenManager.getAutoLoginState()
 
     override suspend fun deleteAccessToken() {
         tokenManager.deleteAccessToken()

@@ -45,21 +45,21 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun initFCMToken() {
         val token = Firebase.messaging.token.await()
-        tokenRepository.saveFCMToken(token)
         fetchPostFCMToken(token)
     }
 
     fun fetchLogin(
         id: String,
         pw: String,
+        autoLoginState: Boolean,
         showToast: (String) -> Unit,
         navigationToScheduleList: () -> Unit,
     ) {
         viewModelScope.launch {
             loginUseCase(name = id, password = pw).onSuccess {
                 initFCMToken()
-                showToast("로그인에 성공했습니다.")
                 navigationToScheduleList()
+                tokenRepository.saveAutoLoginState(autoLoginState)
             }.onFailure {
                 showToast(it.message!!)
             }

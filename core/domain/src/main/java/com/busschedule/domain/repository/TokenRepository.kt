@@ -7,9 +7,13 @@ interface TokenRepository {
 
     suspend fun saveFCMToken(token: String)
 
+    suspend fun saveAutoLoginState(state: Boolean)
+
     fun getAccessToken(): Flow<String?>
 
     fun getRefreshToken(): Flow<String?>
+
+    fun getAutoLoginState(): Flow<Boolean>
 
     suspend fun deleteAccessToken()
     suspend fun deleteRefreshToken()

@@ -10,10 +10,14 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val validateTokenUseCase: ValidateTokenUseCase,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
 ) : ViewModel() {
-    suspend fun fetchIsCorrectAccessToken(navigateToStart: () -> Unit, navigateToScheduleList: () -> Unit, showToast: (String) -> Unit) {
-        if ( tokenRepository.getAccessToken().firstOrNull() == null ) {
+    suspend fun fetchIsCorrectAccessToken(
+        navigateToStart: () -> Unit,
+        navigateToScheduleList: () -> Unit,
+        showToast: (String) -> Unit,
+    ) {
+        if ( validateAccessTokenAndAutoLogin() ) {
             navigateToStart()
             return
         }
@@ -23,5 +27,10 @@ class SplashViewModel @Inject constructor(
             showToast(it.message.toString())
             navigateToStart()
         }
+    }
+
+    private suspend fun validateAccessTokenAndAutoLogin(): Boolean {
+        val autoLoginState = tokenRepository.getAutoLoginState().firstOrNull()
+        return tokenRepository.getAccessToken().firstOrNull() == null || autoLoginState == false || autoLoginState == null
     }
 }

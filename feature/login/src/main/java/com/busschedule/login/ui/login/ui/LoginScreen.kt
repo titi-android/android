@@ -48,6 +48,7 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
         loginViewModel.fetchLogin(
             id = uiState.inputId,
             pw = uiState.inputPw,
+            autoLoginState = isAuthLogin,
             showToast = {
                 Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             }) { appState.navigateToScheduleList() }

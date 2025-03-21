@@ -1,12 +1,11 @@
 package com.busschedule.data.local.datastore
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Named
@@ -18,6 +17,7 @@ class TokenManager @Inject constructor(
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
         private val FCM_TOKEN_KEY = stringPreferencesKey("fcm_token")
+        private val AUTO_LOGIN_STATE_KEY = booleanPreferencesKey("auto_login_state")
     }
 
     fun getAccessToken(): Flow<String?> {
@@ -35,6 +35,12 @@ class TokenManager @Inject constructor(
     fun getFCMToken(): Flow<String?> {
         return dataStore.data.map { prefs ->
             prefs[FCM_TOKEN_KEY]
+        }
+    }
+
+    fun getAutoLoginState(): Flow<Boolean> {
+        return dataStore.data.map { prefs ->
+            prefs[AUTO_LOGIN_STATE_KEY] ?: false
         }
     }
 
@@ -58,19 +64,10 @@ class TokenManager @Inject constructor(
 //        Log.d("daeyoung", "FCMToken: $token")
     }
 
-    suspend fun isExistAccessToken(accessToken: String): Boolean {
-        return getAccessToken().first() == accessToken
-    }
-
-    suspend fun isExistFCMToken(accessToken: String): Boolean {
-        Log.d("daeyoung", "access to local: ${getAccessToken().first() }")
-        Log.d("daeyoung", "access to server: ${accessToken}")
-        if (getAccessToken().first() == accessToken) {
-            return true
+    suspend fun saveAutoLoginState(state: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[AUTO_LOGIN_STATE_KEY] = state
         }
-        return dataStore.data.map { prefs ->
-            prefs[FCM_TOKEN_KEY] != null
-        }.first()
     }
 
     suspend fun deleteAccessToken(){
