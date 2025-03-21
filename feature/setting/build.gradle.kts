@@ -18,6 +18,9 @@ dependencies {
     // hiltViewModel 사용
     implementation(libs.androidx.hilt.compose)
 
+    // fcm
+    implementation(libs.firebase.messaging.ktx)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

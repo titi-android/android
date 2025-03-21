@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.common.constant.Constants
 import com.busschedule.setting.ui.setting.SettingViewModel
 import com.busschedule.setting.ui.setting.component.PushNotifyCheckingCard
@@ -37,6 +38,7 @@ import core.designsystem.theme.rFooter
 @Composable
 fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hiltViewModel()) {
     var isShowUserDeleteDialog by remember { mutableStateOf(false) }
+    val isPushNotifyChecked = viewModel.isPushNotifyChecked.collectAsStateWithLifecycle().value
 
     Box(
         modifier = Modifier
@@ -52,8 +54,9 @@ fun SettingScreen(appState: ApplicationState, viewModel: SettingViewModel = hilt
             HeightSpacer(height = 16.dp)
             PushNotifyCheckingCard(
                 icon = MyIconPack.IcNotify,
+                isCheck = isPushNotifyChecked,
                 onClickOnCheck = { viewModel.fetchDeleteFCMToken { appState.showToastMsg(it) } },
-                onClickOffCheck = {}) {
+                onClickOffCheck = { viewModel.fetchPostFCMToken { appState.showToastMsg(it) } }) {
                 Column {
                     Text(text = "푸시 알림", style = mTitle.copy(Primary))
                     HeightSpacer(height = 4.dp)

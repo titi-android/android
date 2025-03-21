@@ -1,6 +1,5 @@
 package com.busschedule.schedulelist.component
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.busschedule.common.R
+import com.busschedule.util.ext.noRippleClickable
 import core.designsystem.component.WidthSpacer
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcMainlogo
@@ -42,6 +42,6 @@ fun ScheduleListAppBar(onClickSetting: () -> Unit) {
             tint = Primary,
             modifier = Modifier
                 .size(24.dp)
-                .clickable { onClickSetting() })
+                .noRippleClickable { onClickSetting() })
     }
 }

@@ -12,10 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,19 +29,13 @@ import core.designsystem.theme.TextWColor
 @Composable
 fun PushNotifyCheckingCard(
     icon: ImageVector,
+    isCheck: Boolean = true,
     onClickOnCheck: () -> Unit = {},
     onClickOffCheck: () -> Unit = {},
     content: @Composable RowScope.() -> Unit,
 ) {
-    var isChecked by remember { mutableStateOf(false) }
 
-    val onClickFromCheck = if(isChecked) {
-        isChecked = false
-        onClickOffCheck
-    } else {
-        isChecked = true
-        onClickOnCheck
-    }
+    val onClickFromCheck = if(isCheck) { onClickOffCheck } else { onClickOnCheck }
 
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -71,7 +61,7 @@ fun PushNotifyCheckingCard(
                 content()
             }
             Switch(
-                checked = isChecked,
+                checked = isCheck,
                 onCheckedChange = { onClickFromCheck() },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = TextWColor,

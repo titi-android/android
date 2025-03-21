@@ -32,10 +32,6 @@ private class ApiResultCall<R>(
 
             private fun Response<R>.toApiResult(): ApiResult<R> {
                 if (!isSuccessful) { // Http 응답 에러
-                    Log.d("daeyoung", "ApiResultCall: ${this.code()}")
-                    Log.d("daeyoung", "ApiResultCall: ${this.message()}")
-                    Log.d("daeyoung", "ApiResultCall: ${this.errorBody()?.string()}")
-
                     val errorBody = errorBody()?.string()
                     return ApiResult.Failure.HttpError(
                         code = code().toString(),
