@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -48,6 +49,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.model.BusInfo
+import com.busschedule.model.DayOfWeekUi
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusBox
 import com.busschedule.register.component.NotifyIcon
@@ -58,13 +60,13 @@ import com.busschedule.register.model.BusStopInfoUIFactory
 import com.busschedule.register.model.ScheduleRegister
 import com.busschedule.register.model.asBusStopInfo
 import com.busschedule.register.util.convertTimePickerToUiTime
-import com.busschedule.model.DayOfWeekUi
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
+import core.designsystem.component.dialog.TitleDialog
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus
 import core.designsystem.svg.myiconpack.IcMinus
@@ -84,73 +86,90 @@ fun RegisterBusScheduleScreen(
     viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(ScheduleRegister())
-    Column(
+    var isShowTempSaveScheduleDialog by remember { mutableStateOf(false) }
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-        BackArrowAppBar(title = "스케줄 등록하기") {
-            appState.popBackStack()
+        if (isShowTempSaveScheduleDialog) {
+            TitleDialog(
+                title = "작성 중인 스케줄을 저장할까요?",
+                leftBtnText = "취소",
+                rightBtnText = "임시 저장",
+                onDismissRequest = { isShowTempSaveScheduleDialog = false },
+                onNotComplete = { appState.popBackStack() },
+                onComplete = { viewModel.fetchInsertTempSchedule {appState.popBackStack()} })
         }
-        val scrollState = rememberScrollState()
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 24.dp)
-                .verticalScroll(scrollState)
-        ) {
-            HeightSpacer(height = 32.dp)
-            ScheduleNameTextField(
-                value = uiState.name,
-                onValueChange = { viewModel.updateScheduleName(it) },
-                placeholder = "스케줄"
-            )
-            HeightSpacer(height = 32.dp)
-            NotifyArea(
-                dayOfWeeks = uiState.dayOfWeeks,
-                startTime = uiState.startTime,
-                endTime = uiState.endTime,
-                updateStartTime = { viewModel.updateStartTime(it.convertTimePickerToUiTime()) },
-                updateEndTime = { viewModel.updateEndTime(it.convertTimePickerToUiTime()) },
-                isNotify = uiState.isNotify
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .background(Background)) {
+            BackArrowAppBar(title = "스케줄 등록하기") {
+                if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }
+                else { appState.popBackStack() }
+            }
+            val scrollState = rememberScrollState()
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 24.dp)
+                    .verticalScroll(scrollState)
             ) {
-                viewModel.updateIsNotify()
-            }
-            viewModel.routeInfos.forEachIndexed { index, busStopInfoUI ->
-                RegionArea(
-                    title = if (index == 0) "출발" else "환승",
-                    region = busStopInfoUI.region,
-                    navigateRegionScreen = { appState.navigateToSelectRegion(busStopInfoUI.getID()) },
-                    busStop = busStopInfoUI.busStop,
-                    buses = busStopInfoUI.getBuses(),
-                    isRemoveRegionArea = viewModel.routeInfos.size >= 2,
-                    removeRegionArea = { viewModel.removeBusStopInfoUI(busStopInfoUI.getID()) },
-                    deleteBus = { busStopInfoUI.remove(it) }) {
-                    Log.d("daeyoung", "busStopInfoUI: $busStopInfoUI")
-                    appState.navigateToSelectBusStop(busStopInfoUI.asBusStopInfo())
+                HeightSpacer(height = 32.dp)
+                ScheduleNameTextField(
+                    value = uiState.name,
+                    onValueChange = { viewModel.updateScheduleName(it) },
+                    placeholder = "스케줄"
+                )
+                HeightSpacer(height = 32.dp)
+                NotifyArea(
+                    dayOfWeeks = uiState.dayOfWeeks,
+                    startTime = uiState.startTime,
+                    endTime = uiState.endTime,
+                    updateStartTime = { viewModel.updateStartTime(it.convertTimePickerToUiTime()) },
+                    updateEndTime = { viewModel.updateEndTime(it.convertTimePickerToUiTime()) },
+                    isNotify = uiState.isNotify
+                ) {
+                    viewModel.updateIsNotify()
                 }
-            }
+                viewModel.routeInfos.forEachIndexed { index, busStopInfoUI ->
+                    RegionArea(
+                        title = if (index == 0) "출발" else "환승",
+                        region = busStopInfoUI.region,
+                        navigateRegionScreen = { appState.navigateToSelectRegion(busStopInfoUI.getID()) },
+                        busStop = busStopInfoUI.busStop,
+                        buses = busStopInfoUI.getBuses(),
+                        isRemoveRegionArea = viewModel.routeInfos.size >= 2,
+                        removeRegionArea = { viewModel.removeBusStopInfoUI(busStopInfoUI.getID()) },
+                        deleteBus = { busStopInfoUI.remove(it) }) {
+                        Log.d("daeyoung", "busStopInfoUI: $busStopInfoUI")
+                        appState.navigateToSelectBusStop(busStopInfoUI.asBusStopInfo())
+                    }
+                }
 
-            ArriveArea(
-                region = uiState.arriveBusStop.region,
-                navigateRegionScreen = { appState.navigateToSelectRegion(BusStopInfoUIFactory.ARRIVE_ID) },
-                busStop = uiState.arriveBusStop.busStop
-            ) { appState.navigateToSelectBusStop(uiState.arriveBusStop) }
-            TransferRow {
-                viewModel.addBusStopInfoUI()
-            }
+                ArriveArea(
+                    region = uiState.arriveBusStop.region,
+                    navigateRegionScreen = { appState.navigateToSelectRegion(BusStopInfoUIFactory.ARRIVE_ID) },
+                    busStop = uiState.arriveBusStop.busStop
+                ) { appState.navigateToSelectBusStop(uiState.arriveBusStop) }
+                TransferRow {
+                    viewModel.addBusStopInfoUI()
+                }
 
+            }
+            MainBottomButton(text = "완료") {
+                viewModel.putOrPostSchedule(
+                    onSuccessOfPut = { appState.navigateToScheduleList() },
+                    onSuccessOfPost = { appState.navigateToScheduleList() },
+                ) { appState.showToastMsg(it) }
+            }
         }
-        MainBottomButton(text = "완료") {
-            viewModel.putOrPostSchedule(
-                onSuccessOfPut = { appState.navigateToScheduleList() },
-                onSuccessOfPost = { appState.navigateToScheduleList() },
-            ) { appState.showToastMsg(it) }
-        }
+
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

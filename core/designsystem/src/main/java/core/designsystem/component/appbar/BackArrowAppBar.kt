@@ -1,6 +1,5 @@
 package core.designsystem.component.appbar
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.busschedule.util.ext.noRippleClickable
 import core.designsystem.theme.Primary
 import core.designsystem.theme.rTopBar
 
@@ -29,7 +29,7 @@ fun BackArrowAppBar(title: String, onClick: () -> Unit) {
             modifier = Modifier
                 .size(24.dp)
                 .align(Alignment.CenterStart)
-                .clickable { onClick() }
+                .noRippleClickable { onClick() }
         )
         Text(text = title, modifier = Modifier.align(Alignment.Center), style = rTopBar.copy(Primary))
 

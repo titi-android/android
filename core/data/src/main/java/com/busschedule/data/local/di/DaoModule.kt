@@ -18,4 +18,10 @@ object DaoModule {
     @Singleton
     @Provides
     fun provideRecentlySearchBusStopDao(db: RoomDataBase) = db.recentlySearchBusStopDao()
+
+    @Singleton
+    @Provides
+    fun provideRegisterScheduleDao(db: RoomDataBase) = db.registerScheduleDao()
+
+
 }

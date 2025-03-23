@@ -9,7 +9,7 @@ data class BusStop(
     val busStop: String = "",
     val nodeId: String = "",
 ) {
-    fun isEmpty() = busStop.isNotBlank() && nodeId.isNotBlank()
+    fun isNotBlank() = busStop.isNotBlank() && nodeId.isNotBlank()
 }
 
 

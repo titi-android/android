@@ -40,6 +40,10 @@ data class BusStopInfoUI(
     fun getBuses() = buses.toList()
 
     fun getID() = this.id
+
+    fun isNotBlank() =
+        region.isNotBlank() || busStop.isNotBlank() || nodeId.isNotBlank() || buses.isNotEmpty()
+
 }
 
 fun BusStopInfoUI.asBusStopInfo() = BusStop(
@@ -63,8 +67,6 @@ fun RouteInfo.asBusStopInfoUI(id: Int) = BusStopInfoUI(
     nodeId = nodeId,
     busesInit = busInfos
 )
-
-
 
 
 @Stable

@@ -36,7 +36,7 @@ class ApplicationState(
     }
 
     fun navigateToStart() {
-        navController.navigate(route = LoginGraph.Start,) {
+        navController.navigate(route = LoginGraph.Start) {
             popUpTo<LoginGraph.Splash> { inclusive = true }
         }
     }
@@ -53,8 +53,18 @@ class ApplicationState(
         navController.navigate(Route.ScheduleList)
     }
 
-    fun navigateToRegister(id: Int? = null, dayOfWeek: String = "월") {
-        navController.navigate(Route.RegisterGraph.RegisterSchedule(id = id, dayOfWeek = dayOfWeek))
+    fun navigateToRegister(
+        id: Int? = null,
+        isExistTempSchedule: Boolean = false,
+        dayOfWeek: String = "월",
+    ) {
+        navController.navigate(
+            Route.RegisterGraph.RegisterSchedule(
+                id = id,
+                isExistTempSchedule = isExistTempSchedule,
+                dayOfWeek = dayOfWeek
+            )
+        )
     }
 
     fun navigateToSelectRegion(id: Int) {

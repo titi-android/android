@@ -1,7 +1,7 @@
 package com.busschedule.domain.repository
 
 import com.busschedule.model.BusStopInfo
-import com.busschedule.model.NotifySchedule
+import com.busschedule.model.ScheduleNotify
 
 interface NotifyRepository {
     fun insert(
@@ -11,7 +11,7 @@ interface NotifyRepository {
         busStopInfos: List<BusStopInfo> = emptyList(),
     )
 
-    fun read(scheduleId: String): NotifySchedule
+    fun read(scheduleId: String): ScheduleNotify
 
     fun readBusStopIndex(scheduleId: String): Int
 

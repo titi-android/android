@@ -1,6 +1,6 @@
 package com.busschedule.model
 
-data class NotifySchedule(
+data class ScheduleNotify(
     val scheduleId: String,
     val scheduleName: String,
     val busStopIndex: Int = 0,

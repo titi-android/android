@@ -12,6 +12,7 @@ sealed interface Route {
         @Serializable
         data class RegisterSchedule(
             val id: Int? = null,
+            val isExistTempSchedule: Boolean = false,
             val dayOfWeek: String = "월요일"
         ): Route
         @Serializable

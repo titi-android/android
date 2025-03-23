@@ -1,6 +1,7 @@
 package com.busschedule.register
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
@@ -10,6 +11,7 @@ import androidx.navigation.toRoute
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.busschedule.domain.repository.RecentlySearchBusStopRepository
+import com.busschedule.domain.repository.TempSaveScheduleRepository
 import com.busschedule.domain.usecase.bus.ReadAllBusOfBusStopUseCase
 import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
@@ -39,12 +41,14 @@ import com.busschedule.widget.widget.worker.ScheduleWorker
 import com.kakao.vectormap.KakaoMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,10 +60,13 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val readScheduleUseCase: ReadScheduleUseCase,
     private val putScheduleUseCase: PutScheduleUseCase,
     private val recentlySearchBusStopRepository: RecentlySearchBusStopRepository,
+    private val tempSaveScheduleRepository: TempSaveScheduleRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val scheduleId = savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().id
+    private val isExistTempSchedule = savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().isExistTempSchedule
+
     private val selectDayOfWeek =
         savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().dayOfWeek
 
@@ -141,9 +148,17 @@ class RegisterBusScheduleViewModel @Inject constructor(
     lateinit var kakaoMap: KakaoMapObject
 
     init {
-        if (scheduleId != null) viewModelScope.launch {
-            fetchReadSchedule(scheduleId) { showToastMsg(it) }
+        if (isExistTempSchedule) fetchReadTempSchedule()
+        else if (isUpdateSchedule()) viewModelScope.launch {
+            fetchReadSchedule(scheduleId!!) { showToastMsg(it) }
         }
+    }
+
+    fun isUpdateSchedule(): Boolean = scheduleId != null
+
+    fun isRouteInfoNotEmpty():Boolean {
+        if (routeInfos.isEmpty()) return false
+        return routeInfos.first().isNotBlank()
     }
 
     fun updateScheduleName(name: String) {
@@ -206,6 +221,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
     fun addBusStopInSelectBusStopInfo(id: Int, popBackStack: () -> Unit) {
         val bus = busStop.value
         val index = _routeInfos.indexOfFirst { it.compareID(id) }
+        Log.d("daeyoung", "index: $index")
         _routeInfos[index] = _routeInfos[index].copy(
             region = bus.region,
             busStop = bus.busStop,
@@ -237,11 +253,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
         return kakaoMap
     }
 
-    fun showToastMsg(message: String) {
+    private fun showToastMsg(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun setRouteInfos(list: List<BusStopInfoUI>) {
+    private fun setRouteInfos(list: List<BusStopInfoUI>) {
         _routeInfos.clear()
         _routeInfos.addAll(list)
     }
@@ -425,7 +441,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
         } catch (e: Exception) {
             showToast("시간이 입력되지 않았습니다.")
         }
-        if (scheduleId != null) {
+        if (isUpdateSchedule()) {
             fetchPutSchedule(onSuccess = { onSuccessOfPut() }) { showToast(it) }
             return
         }
@@ -436,7 +452,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
         return busStop.value.busStop == c
     }
 
-    fun fetchInsertRecentlySearchBusStop(region: String, search: String) {
+    private fun fetchInsertRecentlySearchBusStop(region: String, search: String) {
         viewModelScope.launch {
             if (recentlySearchBusStopRepository.existsBySearch(search))
                 return@launch
@@ -457,6 +473,43 @@ class RegisterBusScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             if (recentlySearchBusStopRepository.delete(search)) {
                 _recentlySearchBusStop.update { recentlySearchBusStopRepository.realAll() }
+            }
+        }
+    }
+
+    fun fetchInsertTempSchedule(navigateToScheduleList: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tempSaveScheduleRepository.insert(
+                name = scheduleName.value,
+                dayOfWeeks = dayOfWeeks.value.filter { it.isSelected }.map { it.dayOfWeek.value },
+                startTime = startTime.value,
+                endTime = endTime.value,
+                routeInfos = routeInfos.map { it.asRouteInfo() },
+                arriveBusStop = arriveBusStop.value,
+            )
+            withContext(Dispatchers.Main) { navigateToScheduleList() }
+        }
+    }
+
+    private fun fetchReadTempSchedule() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isExistTempSchedule) {
+                val temp = tempSaveScheduleRepository.read()
+                _scheduleName.update { temp.name }
+                _dayOfWeeks.update {
+                    DayOfWeek.entries.map {
+                        DayOfWeekUi(
+                            dayOfWeek = it,
+                            init = temp.days.contains(it.value)
+                        )
+                    }
+                }
+                _startTime.update { temp.startTime }
+                _endTime.update { temp.endTime }
+                _isNotify.update { temp.isAlarmOn }
+                _routeInfos.addAll(temp.busStops.map { BusStopInfoUIFactory.create(it) })
+                _arriveBusStop.update { temp.destinationInfo.asBusStop() }
+                tempSaveScheduleRepository.delete()
             }
         }
     }

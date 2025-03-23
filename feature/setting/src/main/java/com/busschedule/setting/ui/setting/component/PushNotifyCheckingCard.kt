@@ -30,12 +30,12 @@ import core.designsystem.theme.TextWColor
 fun PushNotifyCheckingCard(
     icon: ImageVector,
     isCheck: Boolean = true,
-    onClickOnCheck: () -> Unit = {},
-    onClickOffCheck: () -> Unit = {},
+    onClickOnCheck: () -> Unit = {},    // 알림 켜진 상태에서 호출되는 함수
+    onClickOffCheck: () -> Unit = {},   // 알림 꺼진 상태에서 호출되는 함수
     content: @Composable RowScope.() -> Unit,
 ) {
 
-    val onClickFromCheck = if(isCheck) { onClickOffCheck } else { onClickOnCheck }
+    val onClickFromCheck = if(isCheck) { onClickOnCheck } else { onClickOffCheck }
 
     Card(
         shape = RoundedCornerShape(12.dp),

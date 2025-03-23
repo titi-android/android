@@ -17,7 +17,7 @@ data class FCMMessage(
     }
 
     fun getContent(): String {
-        return busStopInfos.busInfos.joinToString(separator = ",") {
+        return busStopInfos.busInfos.joinToString(separator = ", ") {
             "${it.routeno}번 ${it.arrtime.toFormatKrTime()} ${formatArrPrevStationCnt(it.arrprevstationcnt)}"
         }
     }

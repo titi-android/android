@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.busschedule.domain.repository.NotifyRepository
+import com.busschedule.domain.repository.TempSaveScheduleRepository
 import com.busschedule.domain.usecase.schedule.DeleteScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleAlarmUseCase
 import com.busschedule.domain.usecase.schedule.ReadDaysSchedulesUseCase
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -36,6 +38,7 @@ class ScheduleListViewModel @Inject constructor(
     private val deleteScheduleUseCase: DeleteScheduleUseCase,
     private val putScheduleAlarmUseCase: PutScheduleAlarmUseCase,
     private val notifyRepository: NotifyRepository,
+    private val tempSaveScheduleRepository: TempSaveScheduleRepository,
 ) : ViewModel() {
 
     private val _dayOfWeeks = MutableStateFlow(DayOfWeek.entries.map {
@@ -72,7 +75,11 @@ class ScheduleListViewModel @Inject constructor(
         }
     }
 
-    fun fetchReadDayOfWeekSchedules(dayOfWeek: String, changeLoadingState: () -> Unit = {}, showToast: (String) -> Unit) {
+    fun fetchReadDayOfWeekSchedules(
+        dayOfWeek: String,
+        changeLoadingState: () -> Unit = {},
+        showToast: (String) -> Unit,
+    ) {
         viewModelScope.launch {
             readDaysSchedulesUseCase(dayOfWeek).onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asStateUI() } }
@@ -113,6 +120,26 @@ class ScheduleListViewModel @Inject constructor(
                 scheduleName = scheduleName,
                 busStopIndex = index
             )
+        }
+    }
+
+    fun fetchIsExistTempSchedule(navigateToRegister: () -> Unit, showBringTempScheduleDialog: () -> Unit, ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val action = if (tempSaveScheduleRepository.isExist()) {
+                showBringTempScheduleDialog
+            } else { navigateToRegister }
+
+            withContext(Dispatchers.Main) { action() }
+        }
+    }
+
+    fun fetchDeleteTempSchedule(navigateToRegister: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (tempSaveScheduleRepository.delete()) {
+                withContext(Dispatchers.Main) {
+                    navigateToRegister()
+                }
+            }
         }
     }
 

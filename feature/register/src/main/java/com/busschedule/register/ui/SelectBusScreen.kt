@@ -94,11 +94,11 @@ fun SelectBusScreen(
     val mapView = remember { MapView(context) }
     var isShowBottomSheet by remember { mutableStateOf(false) }
     var isShowDialog by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(busStop.isEmpty()) }
+    var isLoading by remember { mutableStateOf(busStop.isNotBlank()) }
 
     LaunchedEffect(busStop) {
         listOf(async { viewModel.fetchReadAllRecentlySearchBusStop() }, async {
-            if (busStop.isEmpty()) {
+            if (busStop.isNotBlank()) {
                 viewModel.fetchFirstReadAllBusStop(
                     busStop.region,
                     busStop.busStop,

@@ -4,13 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.busschedule.data.local.room.model.EntityTable
-import com.busschedule.data.local.room.model.NotifyScheduleEntity
+import com.busschedule.data.local.room.model.ScheduleNotifyEntity
 import com.busschedule.model.BusStopInfo
 
 @Dao
 interface NotifyScheduleDao {
     @Insert
-    fun insert(notifySchedule: NotifyScheduleEntity)
+    fun insert(notifySchedule: ScheduleNotifyEntity)
 
     @Query("DELETE FROM ${EntityTable.NOTIFY_SCHEDULE} WHERE scheduleId = :scheduleId")
     fun deleteById(scheduleId: String)
@@ -19,7 +19,7 @@ interface NotifyScheduleDao {
     fun isExist(scheduleId: String): Boolean
 
     @Query("SELECT * FROM ${EntityTable.NOTIFY_SCHEDULE} WHERE scheduleId = :scheduleId")
-    fun read(scheduleId: String): NotifyScheduleEntity
+    fun read(scheduleId: String): ScheduleNotifyEntity
 
     @Query("SELECT busStopIndex FROM ${EntityTable.NOTIFY_SCHEDULE} WHERE scheduleId = :scheduleId")
     fun readBusStopIndex(scheduleId: String): Int

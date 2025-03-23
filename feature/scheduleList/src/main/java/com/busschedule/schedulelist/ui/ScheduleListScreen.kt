@@ -1,5 +1,6 @@
 package com.busschedule.schedulelist.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,6 +36,7 @@ import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.button.MainBottomButton
+import core.designsystem.component.dialog.TitleDialog
 import core.designsystem.component.loading.LoadingOfCoilDialog
 import core.designsystem.theme.Background
 import kotlinx.coroutines.delay
@@ -43,12 +44,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun ScheduleListScreen(
     appState: ApplicationState,
-    scheduleListViewModel: ScheduleListViewModel = hiltViewModel(),
+    viewModel: ScheduleListViewModel = hiltViewModel(),
 ) {
 
-    val uiState by scheduleListViewModel.scheduleListUiState.collectAsStateWithLifecycle(
+    val uiState by viewModel.scheduleListUiState.collectAsStateWithLifecycle(
         ScheduleListUiState()
     )
+    var isShowBringTempScheduleDialog by remember { mutableStateOf(false) }
     var isRefreshLoading by remember { mutableStateOf(false) }
 
     CheckNotifyPermission()
@@ -56,15 +58,35 @@ fun ScheduleListScreen(
     LaunchedEffect(Unit) {
         while (true) {
             if (uiState.dayOfWeeks.find { it.isSelected }?.isToday() == true) {
-                scheduleListViewModel.fetchReadTodaySchedules { appState.showToastMsg(it) }
+                viewModel.fetchReadTodaySchedules { appState.showToastMsg(it) }
             }
             delay(Constants.MINUTE_1)
         }
     }
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Background
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Background),
     ) {
+        if (isShowBringTempScheduleDialog) {
+            TitleDialog(
+                title = "작성 중인 스케줄을 저장할까요?",
+                leftBtnText = "새로 쓰기",
+                rightBtnText = "이어서 쓰기",
+                onDismissRequest = { isShowBringTempScheduleDialog = false },
+                onNotComplete = {
+                    viewModel.fetchDeleteTempSchedule {
+                        appState.navigateToRegister(dayOfWeek = uiState.getSelectedDayOfWeek())
+                    }
+                },
+                onComplete = {
+                    appState.navigateToRegister(
+                        isExistTempSchedule = true,
+                        dayOfWeek = uiState.getSelectedDayOfWeek()
+                    )
+                }
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,7 +97,7 @@ fun ScheduleListScreen(
             ScheduleListAppBar { appState.navigateToSetting() }
             HeightSpacer(height = 16.dp)
             DayOfWeekSelectArea(dayOfWeekUi = uiState.dayOfWeeks) {
-                scheduleListViewModel.fetchReadDayOfWeekSchedules(it) { appState.showToastMsg(it) }
+                viewModel.fetchReadDayOfWeekSchedules(it) { appState.showToastMsg(it) }
             }
             Box(modifier = Modifier.weight(1f)) {
                 val lazyListState = rememberLazyListState()
@@ -92,7 +114,7 @@ fun ScheduleListScreen(
                             holeColor = Background,
                             schedule = schedule,
                             changeNotifyState = {
-                                scheduleListViewModel.fetchPutScheduleAlarm(
+                                viewModel.fetchPutScheduleAlarm(
                                     scheduleId = schedule.id,
                                     updateAlarm = {
                                         schedule.updateAlarm()
@@ -101,12 +123,12 @@ fun ScheduleListScreen(
                             },
                             onEdit = { appState.navigateToRegister(schedule.id) },
                             onDelete = {
-                                scheduleListViewModel.fetchDeleteSchedules(schedule.id) {
+                                viewModel.fetchDeleteSchedules(schedule.id) {
                                     appState.showToastMsg(it)
                                 }
                             }
                         ) { scheduleId, scheduleName, notifyState ->
-                            scheduleListViewModel.fetchUpdateBusStopStateOfNotify(
+                            viewModel.fetchUpdateBusStopStateOfNotify(
                                 scheduleId,
                                 scheduleName,
                                 notifyState
@@ -119,14 +141,19 @@ fun ScheduleListScreen(
                     isLoading = isRefreshLoading
                 ) {
                     isRefreshLoading = true
-                    scheduleListViewModel.fetchReadDayOfWeekSchedules(
+                    viewModel.fetchReadDayOfWeekSchedules(
                         dayOfWeek = uiState.getSelectedDayOfWeek(),
-                        changeLoadingState = {isRefreshLoading = false}
+                        changeLoadingState = { isRefreshLoading = false }
                     ) { appState.showToastMsg(it) }
                 }
             }
 
-            MainBottomButton(text = "스케줄 등록") { appState.navigateToRegister(dayOfWeek = uiState.getSelectedDayOfWeek()) }
+            MainBottomButton(text = "스케줄 등록") {
+                viewModel.fetchIsExistTempSchedule(
+                    navigateToRegister = { appState.navigateToRegister(dayOfWeek = uiState.getSelectedDayOfWeek()) }
+                ) { isShowBringTempScheduleDialog = true }
+            }
+
         }
         if (uiState.isLoading) {
             LoadingOfCoilDialog()
