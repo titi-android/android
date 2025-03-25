@@ -20,10 +20,11 @@ class AuthInterceptor @Inject constructor(
     private val NETWORK_ERROR = 401
 
     override fun intercept(chain: Interceptor.Chain): Response {
+        println("intercept start")
         val token: String = runBlocking {
             tokenManager.getAccessToken().first()
         } ?: return errorResponse(chain.request())
-
+        println("intercept token: $token")
         val request = chain.request().newBuilder().header(AUTHORIZATION, "Bearer $token").build()
 
         val response = chain.proceed(request)

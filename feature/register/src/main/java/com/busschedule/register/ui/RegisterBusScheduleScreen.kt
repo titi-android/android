@@ -1,6 +1,7 @@
 package com.busschedule.register.ui
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -87,6 +88,11 @@ fun RegisterBusScheduleScreen(
 ) {
     val uiState by viewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(ScheduleRegister())
     var isShowTempSaveScheduleDialog by remember { mutableStateOf(false) }
+
+    BackHandler {
+        if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }
+        else { appState.popBackStack() }
+    }
 
     Box(
         modifier = Modifier
