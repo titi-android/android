@@ -57,8 +57,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0") // JUnit 의존성 추가
-    androidTestImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0") // JUnit 엔진
+//    androidTestImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0") // JUnit 의존성 추가
+//    androidTestImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0") // JUnit 엔진
 //    androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.espresso.core)
 }

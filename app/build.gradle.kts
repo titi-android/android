@@ -28,7 +28,7 @@ android {
     defaultConfig {
         applicationId = "com.schedule.notify.app"
         targetSdk = 35
-        versionCode = 2
+        versionCode = 3
         versionName = "1.03"
         manifestPlaceholders
         multiDexEnabled = true
