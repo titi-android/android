@@ -13,7 +13,7 @@
    https://velog.io/@daeyoung2/Android-Test-Code%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%BD%94%EB%93%9C
 
 ## Project Structure
-![Image](https://github.com/user-attachments/assets/706b22d5-635b-494a-9d57-6b55cea8bba4)
+![Image](https://github.com/user-attachments/assets/69943e33-e342-48fa-99fa-d87f39904d4a)
 
 ## Tech Stack
 | Tech Stack      |                                                                 |
