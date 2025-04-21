@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        Log.d("daeyoung", "onDestroy()")
 //        FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {
 //            if (it.isSuccessful) {
 //                Log.d("daeyoung", "deleteToken: success")

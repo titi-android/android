@@ -11,8 +11,7 @@ import javax.inject.Inject
 
 class NotifyRepositoryImpl @Inject constructor(
     private val dao: NotifyScheduleDao,
-    private val tokenManager: TokenManager):
-    NotifyRepository {
+    private val tokenManager: TokenManager): NotifyRepository {
     override fun insert(
         scheduleId: String,
         scheduleName: String,

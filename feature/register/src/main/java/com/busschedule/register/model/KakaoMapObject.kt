@@ -1,6 +1,5 @@
 package com.busschedule.register.model
 
-import android.util.Log
 import com.busschedule.model.exception.BusStopInfo
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
@@ -12,14 +11,14 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTextBuilder
 
-class KakaoMapObject(val map: KakaoMap) {
+class KakaoMapObject(val map: KakaoMap? = null) {
 
-    private fun removeAllLabels() = map.labelManager?.removeAllLabelLayer()
+    private fun removeAllLabels() = map?.labelManager?.removeAllLabelLayer()
     private var labels: List<BusStopInfo> = emptyList()
     var region: String = ""
 
     private fun addLabel(icon: Int, text: String, lat: Double, lng: Double) {
-        val styles = map.labelManager?.addLabelStyles(
+        val styles = map?.labelManager?.addLabelStyles(
             LabelStyles.from(
                 LabelStyle.from(icon).setTextStyles(20, 0x2E2E34, 20, 0xFFFFFF)
             )
@@ -28,7 +27,7 @@ class KakaoMapObject(val map: KakaoMap) {
             .setStyles(styles).setTexts(
                 LabelTextBuilder().setTexts(text)
             )
-        val layer = map.labelManager?.layer
+        val layer = map?.labelManager?.layer
         layer?.addLabel(options)
     }
 
@@ -50,11 +49,13 @@ class KakaoMapObject(val map: KakaoMap) {
         val cameraUpdate = makeCameraUpdate(latLng.latitude + lat, latLng.longitude, 18)
 
         // 카메라를 지정된 위치로 이동
-        map.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
+        map?.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
     }
 
     fun findBusStop(name: String, lat: Double, lng: Double) =
         requireNotNull(labels.find { it.name == name && it.tmX == lat && it.tmY == lng }) {
             "BusStop not found"
         }
+
+    fun getLabels() = labels
 }

@@ -5,6 +5,16 @@ plugins {
 
 android {
     namespace = "com.busschedule.register"
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 dependencies {
@@ -24,10 +34,14 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.work.runtime.ktx)
 
-    testImplementation(libs.junit4)
+    androidTestImplementation(libs.junit4)
+//    implementation(libs.androidx.runner)
+//    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.ext)
+    androidTestImplementation(libs.mockk.androidTest)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.kakao.maps)
+    testImplementation(kotlin("test"))
 
 }

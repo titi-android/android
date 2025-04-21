@@ -28,8 +28,8 @@ android {
     defaultConfig {
         applicationId = "com.schedule.notify.app"
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.03"
+        versionCode = 5
+        versionName = "1.04"
         manifestPlaceholders
         multiDexEnabled = true
         signingConfig = signingConfigs.getByName("release")
@@ -56,8 +56,8 @@ android {
 
 dependencies {
     implementation(projects.feature.navigate)
-    implementation(projects.core.data)
     implementation(projects.core.domain)
+    implementation(projects.core.data)
     implementation(projects.core.designsystem)
     implementation(projects.core.util)
     implementation(projects.core.notification)
@@ -79,4 +79,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.kakao.maps)
+    implementation("com.kakao.sdk:v2-all:2.21.1")
 }

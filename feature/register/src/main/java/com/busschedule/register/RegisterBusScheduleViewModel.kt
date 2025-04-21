@@ -61,9 +61,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val putScheduleUseCase: PutScheduleUseCase,
     private val recentlySearchBusStopRepository: RecentlySearchBusStopRepository,
     private val tempSaveScheduleRepository: TempSaveScheduleRepository,
+//    private val dispatcher: CoroutineDispatcher = Dispatchers.IO, // 기존 코드
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
     private val scheduleId = savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().id
     private val isExistTempSchedule = savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().isExistTempSchedule
 
@@ -79,10 +79,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
         })
     val dayOfWeeks: StateFlow<List<DayOfWeekUi>> = _dayOfWeeks.asStateFlow()
 
-    private val _startTime = MutableStateFlow("시작 시간")
+    private val _startTime = MutableStateFlow(START_TIME_EMPTY)
     val startTime: StateFlow<String> = _startTime.asStateFlow()
 
-    private val _endTime = MutableStateFlow("종료 시간")
+    private val _endTime = MutableStateFlow(END_TIME_EMPTY)
     val endTime: StateFlow<String> = _endTime.asStateFlow()
 
     private val _isNotify = MutableStateFlow(false)
@@ -324,14 +324,15 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     fun fetchReadAllBusStop(
         region: String,
-        busStopName: String,
+        busStopNodeId: String,
         changeLoadingState: () -> Unit,
         showToast: (String) -> Unit,
     ) {
         viewModelScope.launch {
+//            viewModelScope.launch(dispatcher) {
             readAllBusStopUseCase(
                 cityName = region,
-                nodeId = busStopName
+                nodeId = busStopNodeId
             ).onSuccess { busStop ->
                 if (busStop.isNotEmpty()) {
                     kakaoMap.removeAndAddLabel(
@@ -339,7 +340,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         labels = busStop,
                         region = region
                     )
-                    fetchInsertRecentlySearchBusStop(region, busStopName)
+                    println("labels:${kakaoMap.getLabels()}")
+//                    fetchInsertRecentlySearchBusStop(region, busStopNodeId)
                 } else {
                     showToast("버스 정류장을 찾을 수 없습니다.")
                 }
@@ -434,18 +436,34 @@ class RegisterBusScheduleViewModel @Inject constructor(
         showToast: (String) -> Unit,
     ) {
         try {
+            if (startTime.value == START_TIME_EMPTY) {
+                showToast("시작 시간이 입력되지 않았습니다.")
+                return
+            }
+            if (endTime.value == END_TIME_EMPTY) {
+                showToast("종료 시간이 입력되지 않았습니다.")
+                return
+            }
             if (isBiggerStartTime(endTime.value).not()) {
                 showToast("종료 시간이 시작 시간보다 늦습니다.")
                 return
             }
+            if (routeInfos.first().isNotBlank().not()) {
+                showToast("춥발지가 입력되지 않았습니다.")
+                return
+            }
+            if (arriveBusStop.value.isNotBlank().not()) {
+                showToast("도착지가 입력되지 않았습니다.")
+                return
+            }
+            if (isUpdateSchedule()) {
+                fetchPutSchedule(onSuccess = { onSuccessOfPut() }) { showToast(it) }
+                return
+            }
+            fetchPostBusSchedule(onSuccess = { onSuccessOfPost() }) { showToast(it) }
         } catch (e: Exception) {
-            showToast("시간이 입력되지 않았습니다.")
+            showToast("주어진 항목을 모두 입력해주세요.")
         }
-        if (isUpdateSchedule()) {
-            fetchPutSchedule(onSuccess = { onSuccessOfPut() }) { showToast(it) }
-            return
-        }
-        fetchPostBusSchedule(onSuccess = { onSuccessOfPost() }) { showToast(it) }
     }
 
     fun isEqualBusStop(c: String): Boolean {
@@ -512,5 +530,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 tempSaveScheduleRepository.delete()
             }
         }
+    }
+
+    companion object {
+        private const val START_TIME_EMPTY = "시작 시간"
+        private const val END_TIME_EMPTY = "종료 시간"
     }
 }

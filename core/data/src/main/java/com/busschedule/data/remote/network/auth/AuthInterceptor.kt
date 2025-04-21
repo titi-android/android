@@ -1,6 +1,5 @@
 package com.busschedule.data.remote.network.auth
 
-import android.util.Log
 import com.busschedule.data.local.datastore.TokenManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -20,11 +19,11 @@ class AuthInterceptor @Inject constructor(
     private val NETWORK_ERROR = 401
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        println("intercept start")
+//        println("intercept start")
         val token: String = runBlocking {
             tokenManager.getAccessToken().first()
         } ?: return errorResponse(chain.request())
-        println("intercept token: $token")
+//        println("intercept token: $token")
         val request = chain.request().newBuilder().header(AUTHORIZATION, "Bearer $token").build()
 
         val response = chain.proceed(request)
@@ -37,9 +36,9 @@ class AuthInterceptor @Inject constructor(
             val buffer = source.buffer.clone()
             val responseString = buffer.readUtf8() // 복사된 Buffer에서 문자열 추출
             val code = JSONObject(responseString).optString("code")
-            if (code == "JWT407") {
+            if (code in listOf("JWT407", "JWT401")) {
+//                println("다시 실행")
                 val newRequest = HttpSuccessAuthenticator(tokenManager).authenticate(response)
-                Log.d("daeyoung", "newRequest: $newRequest")
                 return newRequest?.let { chain.proceed(it) } ?: response
             }
         }

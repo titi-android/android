@@ -9,14 +9,13 @@ android {
 
 dependencies {
     implementation(projects.core.designsystem)
-    implementation(projects.feature.login)
     implementation(projects.core.navigation)
     implementation(projects.core.model)
     implementation(project(":core:util"))
-    implementation(project(":feature:scheduleList"))
-    implementation(project(":feature:register"))
-    implementation(project(":feature:setting"))
-
+    implementation(projects.feature.login)
+    implementation(projects.feature.scheduleList)
+    implementation(projects.feature.register)
+    implementation(projects.feature.setting)
 
     // hiltViewModel 사용
     implementation(libs.androidx.hilt.compose)

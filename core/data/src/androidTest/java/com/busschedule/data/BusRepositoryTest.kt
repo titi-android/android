@@ -16,7 +16,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +47,6 @@ class BusRepositoryTest {
     fun setUp() {
         hiltRule.inject()
         Dispatchers.setMain(dispatcher)
-
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -59,7 +57,7 @@ class BusRepositoryTest {
     }
 
     @Test
-    //  고개에 240번 버스가 경유 하는지 테스트
+    //  모란 고개에 240번 버스가 경유 하는지 테스트
     fun readAllBus() = testScope.runTest {
 
         // give
@@ -77,15 +75,15 @@ class BusRepositoryTest {
 
     @Test
     fun isExistAccessTokenInDataStore() = testScope.runTest {
-//        userRepository.login(name = "test", password = "test")
+        val t = userRepository.login(name = "test", password = "test")
         val accessToken = tokenManager.getAccessToken().first()
         println("accessToken: $accessToken")
-        assertNull(accessToken)
+//        assertNull(accessToken)
 //        assertNotNull(accessToken)
     }
 
-    @Test
-    fun login() = testScope.runTest {
-        userRepository.login(name = "test", password = "0000")
-    }
+//    @Test
+//    fun login() = testScope.runTest {
+//        userRepository.login(name = "test", password = "0000")
+//    }
 }

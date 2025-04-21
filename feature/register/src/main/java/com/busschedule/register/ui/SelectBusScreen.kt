@@ -190,7 +190,7 @@ fun SelectBusScreen(
                         isLoading = true
                         viewModel.fetchReadAllBusStop(
                             region = recently.region,
-                            busStopName = recently.search,
+                            busStopNodeId = recently.search,
                             changeLoadingState = { isLoading = false }
                         ) { appState.showToastMsg(it) }
                         isShowBottomSheet = false
@@ -201,7 +201,7 @@ fun SelectBusScreen(
                 isLoading = true
                 viewModel.fetchReadAllBusStop(
                     region = busStop.region,
-                    busStopName = uiState.input,
+                    busStopNodeId = uiState.input,
                     changeLoadingState = { isLoading = false }
                 ) { appState.showToastMsg(it) }
                 isShowBottomSheet = false
