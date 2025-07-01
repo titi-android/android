@@ -4,22 +4,22 @@ import com.busschedule.model.BusStopInfo
 import com.busschedule.model.ScheduleNotify
 
 interface NotifyRepository {
-    fun insert(
+    suspend fun insert(
         scheduleId: String,
         scheduleName: String,
         busStopIndex: Int = 0,
         busStopInfos: List<BusStopInfo> = emptyList(),
     )
 
-    fun read(scheduleId: String): ScheduleNotify
+    suspend fun read(scheduleId: String): ScheduleNotify
 
-    fun readBusStopIndex(scheduleId: String): Int
+    suspend fun readBusStopIndex(scheduleId: String): Int
 
-    fun isExist(scheduleId: String): Boolean
+    suspend fun isExist(scheduleId: String): Boolean
 
-    fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>)
+    suspend fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>)
 
-    fun updateBusStopIndex(scheduleId: String, busStopIndex: Int)
+    suspend fun updateBusStopIndex(scheduleId: String, busStopIndex: Int)
 
     suspend fun saveFCMToken(token: String)
 }

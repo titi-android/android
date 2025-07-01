@@ -20,6 +20,7 @@ import com.busschedule.widget.widget.worker.ScheduleWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -67,7 +68,7 @@ class ScheduleListViewModel @Inject constructor(
     }
 
     fun fetchReadTodaySchedules(showToast: (String) -> Unit) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             readTodaySchedulesUseCase().onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asStateUI() } }
                 _isLoading.update { false }
@@ -80,7 +81,7 @@ class ScheduleListViewModel @Inject constructor(
         changeLoadingState: () -> Unit = {},
         showToast: (String) -> Unit,
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             readDaysSchedulesUseCase(dayOfWeek).onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asStateUI() } }
                 changeLoadingState()
@@ -89,7 +90,7 @@ class ScheduleListViewModel @Inject constructor(
     }
 
     fun fetchDeleteSchedules(scheduleId: Int, showToast: (String) -> Unit) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             deleteScheduleUseCase(scheduleId).onSuccess {
                 _schedules.update { schedule -> schedule.filter { it.id != scheduleId } }
                 updateWidget()
@@ -102,7 +103,7 @@ class ScheduleListViewModel @Inject constructor(
         updateAlarm: () -> Unit,
         showToast: (String) -> Unit,
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             putScheduleAlarmUseCase(scheduleId).onSuccess { updateAlarm() }.onFailure {
                 showToast(it.message!!)
             }
@@ -111,10 +112,13 @@ class ScheduleListViewModel @Inject constructor(
 
     fun fetchUpdateBusStopStateOfNotify(scheduleId: String, scheduleName: String, index: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (notifyRepository.isExist(scheduleId)) {
+            val isScheduleIdExist = async { notifyRepository.isExist(scheduleId) }.await()
+
+            if (isScheduleIdExist) {
                 notifyRepository.updateBusStopIndex(scheduleId, index)
                 return@launch
             }
+
             notifyRepository.insert(
                 scheduleId = scheduleId,
                 scheduleName = scheduleName,
@@ -135,10 +139,9 @@ class ScheduleListViewModel @Inject constructor(
 
     fun fetchDeleteTempSchedule(navigateToRegister: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (tempSaveScheduleRepository.delete()) {
-                withContext(Dispatchers.Main) {
-                    navigateToRegister()
-                }
+            val isSuccess = async { tempSaveScheduleRepository.delete() }.await()
+            if (isSuccess) {
+                withContext(Dispatchers.Main) { navigateToRegister() }
             }
         }
     }

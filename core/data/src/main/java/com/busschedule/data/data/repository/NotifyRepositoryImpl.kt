@@ -12,7 +12,7 @@ import javax.inject.Inject
 class NotifyRepositoryImpl @Inject constructor(
     private val dao: NotifyScheduleDao,
     private val tokenManager: TokenManager): NotifyRepository {
-    override fun insert(
+    override suspend fun insert(
         scheduleId: String,
         scheduleName: String,
         busStopIndex: Int,
@@ -27,19 +27,18 @@ class NotifyRepositoryImpl @Inject constructor(
         dao.insert(scheduleNotifyEntity)
     }
 
-    override fun read(scheduleId: String): ScheduleNotify =
+    override suspend fun read(scheduleId: String): ScheduleNotify =
         dao.read(scheduleId).toModel()
 
-    override fun readBusStopIndex(scheduleId: String): Int = dao.readBusStopIndex(scheduleId)
+    override suspend fun readBusStopIndex(scheduleId: String): Int = dao.readBusStopIndex(scheduleId)
 
-    override fun isExist(scheduleId: String): Boolean = dao.isExist(scheduleId)
+    override suspend fun isExist(scheduleId: String): Boolean = dao.isExist(scheduleId)
 
-
-    override fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>) {
+    override suspend fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>) {
         dao.update(scheduleId, scheduleName, busStopInfos)
     }
 
-    override fun updateBusStopIndex(scheduleId: String, busStopIndex: Int) {
+    override suspend fun updateBusStopIndex(scheduleId: String, busStopIndex: Int) {
         dao.updateBusStopIndex(scheduleId, busStopIndex)
     }
 
