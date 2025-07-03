@@ -62,6 +62,7 @@ class LoginViewModel @Inject constructor(
                 tokenRepository.saveAutoLoginState(autoLoginState)
             }.onFailure {
                 showToast(it.message!!)
+                it.printStackTrace()
             }
         }
     }

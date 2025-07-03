@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.login.component.CheckBoxContainer
-import com.busschedule.login.model.LoginUiState
 import com.busschedule.login.ui.login.LoginViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.appbar.BackArrowAppBar
@@ -36,22 +35,31 @@ import core.designsystem.component.textfield.PrimaryOutlineTextField
 @Composable
 fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hiltViewModel()) {
 
-    val uiState by loginViewModel.loginUiState.collectAsStateWithLifecycle(LoginUiState())
+    val inputIdUiState by loginViewModel.inputId.collectAsStateWithLifecycle()
+    val inputPwUiState by loginViewModel.inputPw.collectAsStateWithLifecycle()
+
+    val updateInputId = remember { {id:String -> loginViewModel.updateInputPw(id)} }
+    val updateInputPw = remember { {pw:String -> loginViewModel.updateInputPw(pw)} }
+
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val clearFocus = remember { {focusManager.clearFocus()} }
+    val moveFocus: () -> Unit = remember { {focusManager.moveFocus(FocusDirection.Down)} }
     val isBtnEnable by remember {
-        derivedStateOf { uiState.inputId.isNotEmpty() && uiState.inputPw.isNotEmpty() }
+        derivedStateOf { inputIdUiState.isNotEmpty() && inputPwUiState.isNotEmpty() }
     }
     var isAuthLogin by remember { mutableStateOf(false) }
 
-    val fetchLogin = {
-        loginViewModel.fetchLogin(
-            id = uiState.inputId,
-            pw = uiState.inputPw,
-            autoLoginState = isAuthLogin,
-            showToast = {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }) { appState.navigateToScheduleList() }
+    val fetchLogin = remember {
+        {
+            loginViewModel.fetchLogin(
+                id = inputIdUiState,
+                pw = inputPwUiState,
+                autoLoginState = isAuthLogin,
+                showToast = {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }) { appState.navigateToScheduleList() }
+        }
     }
     val scrollState = rememberScrollState()
 
@@ -73,21 +81,22 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
             verticalArrangement = Arrangement.Center
         ) {
             PrimaryOutlineTextField(
-                value = uiState.inputId,
-                onValueChange = { loginViewModel.updateInputId(it) },
+                value = inputIdUiState,
+                onValueChange = updateInputPw,
                 placeholder = "아이디",
                 errorText = "",
                 isError = false,
-                keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
+                keyboardActions = moveFocus
             )
             PasswordOutlineTextField(
-                value = uiState.inputPw,
-                onValueChange = { loginViewModel.updateInputPw(it) },
+                value = inputPwUiState,
+                onValueChange = updateInputId,
                 placeholder = "비밀번호",
                 errorText = "",
                 isError = false,
-                keyboardActions = { focusManager.clearFocus() }
+                keyboardActions = clearFocus
             )
+
             CheckBoxContainer(isCheck = isAuthLogin, onCheckedChange = { isAuthLogin = it }, text = "자동 로그인")
         }
         MainBottomButton(text = "완료", enabled = isBtnEnable) { fetchLogin() }
