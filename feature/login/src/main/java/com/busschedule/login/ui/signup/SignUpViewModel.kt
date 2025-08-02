@@ -3,12 +3,10 @@ package com.busschedule.login.ui.signup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.busschedule.domain.usecase.user.SignupUseCase
-import com.busschedule.login.model.SignupUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,10 +24,6 @@ class SignUpViewModel  @Inject constructor(
     private val _inputCheckPw = MutableStateFlow("")
     val inputCheckPw: StateFlow<String> = _inputCheckPw.asStateFlow()
 
-    val signupUiState = combine(inputId, inputPw, inputCheckPw) { inputId, inputPw, inputCheckPw ->
-        SignupUiState(inputId = inputId, inputPw = inputPw, inputCheckPw = inputCheckPw)
-    }
-
     fun updateInputId(input: String) {
         _inputId.update { input }
     }
@@ -41,6 +35,13 @@ class SignUpViewModel  @Inject constructor(
     fun updateInputCheckPw(input: String) {
         _inputCheckPw.update { input }
     }
+
+    fun isEqualPwAndCheckPw() = inputPw.value == inputCheckPw.value
+
+    fun isNotEqualPwAndCheckPw() = inputPw.value != inputCheckPw.value
+
+    fun isAllNotEmptyInput() =
+        inputId.value.isNotEmpty() && inputPw.value.isNotEmpty() && inputCheckPw.value.isNotEmpty()
 
     fun fetchSignup(id: String, pw: String, showToast: (String) -> Unit, navigateToLogin: () -> Unit) {
         viewModelScope.launch {

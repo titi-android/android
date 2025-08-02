@@ -1,6 +1,7 @@
 package com.busschedule.schedulelist
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
@@ -72,7 +73,12 @@ class ScheduleListViewModel @Inject constructor(
             readTodaySchedulesUseCase().onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asStateUI() } }
                 _isLoading.update { false }
-            }.onFailure { showToast(it.message!!) }
+            }.onFailure {
+                // TODO("오류 해결해야 함, 테스트하기 위해 임시로 수정")
+                Log.d("daeyoung", "error: ${it.message ?: ""}")
+                _isLoading.update { false }
+                //showToast(it.message!!)
+            }
         }
     }
 

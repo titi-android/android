@@ -38,7 +38,7 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
     val inputIdUiState by loginViewModel.inputId.collectAsStateWithLifecycle()
     val inputPwUiState by loginViewModel.inputPw.collectAsStateWithLifecycle()
 
-    val updateInputId = remember { {id:String -> loginViewModel.updateInputPw(id)} }
+    val updateInputId = remember { {id:String -> loginViewModel.updateInputId(id)} }
     val updateInputPw = remember { {pw:String -> loginViewModel.updateInputPw(pw)} }
 
     val context = LocalContext.current
@@ -82,7 +82,7 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
         ) {
             PrimaryOutlineTextField(
                 value = inputIdUiState,
-                onValueChange = updateInputPw,
+                onValueChange = updateInputId,
                 placeholder = "아이디",
                 errorText = "",
                 isError = false,
@@ -90,7 +90,7 @@ fun LoginScreen(appState: ApplicationState, loginViewModel: LoginViewModel = hil
             )
             PasswordOutlineTextField(
                 value = inputPwUiState,
-                onValueChange = updateInputId,
+                onValueChange = updateInputPw,
                 placeholder = "비밀번호",
                 errorText = "",
                 isError = false,

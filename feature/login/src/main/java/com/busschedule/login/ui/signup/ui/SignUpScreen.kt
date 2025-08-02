@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.login.component.CheckBoxContainer
-import com.busschedule.login.model.SignupUiState
 import com.busschedule.login.ui.signup.SignUpViewModel
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
@@ -47,26 +46,40 @@ import core.designsystem.theme.mTitle
 @Composable
 fun SignUpScreen(appState: ApplicationState, viewModel: SignUpViewModel = hiltViewModel()) {
 
-    val uiState by viewModel.signupUiState.collectAsStateWithLifecycle(SignupUiState())
+    val inputIdUiState by viewModel.inputId.collectAsStateWithLifecycle()
+    val inputPwUiState by viewModel.inputPw.collectAsStateWithLifecycle()
+    val inputCheckPwUiState by viewModel.inputCheckPw.collectAsStateWithLifecycle()
+
+    val updateInputId = remember { { id: String -> viewModel.updateInputId(id) } }
+    val updateInputPw = remember { { pw: String -> viewModel.updateInputPw(pw) } }
+    val updateInputCheckPw = remember { { pw: String -> viewModel.updateInputCheckPw(pw) } }
+
     val focusManager = LocalFocusManager.current
+
+    val moveFocus: () -> Unit = remember { { focusManager.moveFocus(FocusDirection.Down) } }
+    val clearFocus = remember { { focusManager.clearFocus() } }
+
     val context = LocalContext.current
 
     var isCheckPrivacyPolicy by remember { mutableStateOf(false) }
     var isShowPrivacyPolicy by remember { mutableStateOf(false) }
-    val isBtnEnable by remember {
-        derivedStateOf { uiState.inputId.isNotEmpty() && uiState.inputPw.isNotEmpty() && uiState.inputCheckPw.isNotEmpty() && (uiState.inputPw == uiState.inputCheckPw) && isCheckPrivacyPolicy }
-    }
-    val isCheckPwBtnError by remember {
-        derivedStateOf { uiState.inputCheckPw.isNotEmpty() && (uiState.inputPw != uiState.inputCheckPw) }
+    val isBtnEnable by remember(inputIdUiState, inputPwUiState, inputCheckPwUiState, isCheckPrivacyPolicy) {
+        derivedStateOf { viewModel.isAllNotEmptyInput() && viewModel.isEqualPwAndCheckPw() && isCheckPrivacyPolicy }
     }
 
-    val fetchSignup = {
-        viewModel.fetchSignup(
-            id = uiState.inputId,
-            pw = uiState.inputPw,
-            showToast = {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }) { appState.navigateToLogin() }
+    val isCheckPwBtnError by remember(inputPwUiState, inputCheckPwUiState) {
+        derivedStateOf { inputPwUiState.isNotEmpty() && viewModel.isNotEqualPwAndCheckPw() }
+    }
+
+    val fetchSignup = remember {
+        {
+            viewModel.fetchSignup(
+                id = inputIdUiState,
+                pw = inputPwUiState,
+                showToast = {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }) { appState.navigateToLogin() }
+        }
     }
     val scrollState = rememberScrollState()
 
@@ -94,26 +107,26 @@ fun SignUpScreen(appState: ApplicationState, viewModel: SignUpViewModel = hiltVi
                 verticalArrangement = Arrangement.Center
             ) {
                 PrimaryOutlineTextField(
-                    value = uiState.inputId,
-                    onValueChange = { viewModel.updateInputId(it) },
+                    value = inputIdUiState,
+                    onValueChange = updateInputId,
                     placeholder = "아이디",
                     errorText = "",
-                    keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
+                    keyboardActions = moveFocus
                 )
                 PasswordOutlineTextField(
-                    value = uiState.inputPw,
-                    onValueChange = { viewModel.updateInputPw(it) },
+                    value = inputPwUiState,
+                    onValueChange = updateInputPw,
                     placeholder = "비밀번호",
                     errorText = "",
-                    keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
+                    keyboardActions = moveFocus
                 )
                 PasswordOutlineTextField(
-                    value = uiState.inputCheckPw,
-                    onValueChange = { viewModel.updateInputCheckPw(it) },
+                    value = inputCheckPwUiState,
+                    onValueChange = updateInputCheckPw,
                     placeholder = "비밀번호 확인",
                     errorText = "비밀번호가 일치하지 않습니다.",
                     isError = isCheckPwBtnError,
-                    keyboardActions = { focusManager.clearFocus() }
+                    keyboardActions = clearFocus
                 )
                 HeightSpacer(height = 32.dp)
                 CheckBoxContainer(
@@ -143,8 +156,6 @@ fun SignUpScreen(appState: ApplicationState, viewModel: SignUpViewModel = hiltVi
                 }
             }
             MainBottomButton(text = "완료", enabled = isBtnEnable) { fetchSignup() }
-
         }
-
     }
 }
