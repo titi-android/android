@@ -52,7 +52,6 @@ import com.busschedule.model.constant.BusType
 import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusInputDialog
 import com.busschedule.register.component.CheckBoxIcon
-import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.model.AddBusDialogUiState
 import com.busschedule.register.model.SelectBusStopUiState
 import com.busschedule.register.model.SelectedBusUI
@@ -67,6 +66,7 @@ import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.button.MainBottomButton
 import core.designsystem.component.loading.LoadingOfCoilDialog
+import core.designsystem.component.textfield.SearchTextField
 import core.designsystem.shadow.titiShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcBus

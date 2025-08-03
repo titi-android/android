@@ -5,6 +5,7 @@
 .idea
 app/keystore/keystore.properties
 app/release
+.kotlin
 
 ### Kotlin ###
 # Compiled class file

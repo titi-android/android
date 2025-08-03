@@ -84,8 +84,8 @@ val mBody2 = TextStyle(
 
 val mFooter = TextStyle(
     fontFamily = FontFamily(Font(R.font.roboto)),
-    fontWeight = FontWeight.Medium,
-    fontSize = 10.sp,
+    fontWeight = FontWeight.Normal,
+    fontSize = 18.sp,
 )
 
 val rTopBar = TextStyle(

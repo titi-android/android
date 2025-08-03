@@ -25,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.model.BusStop
 import com.busschedule.register.RegisterBusScheduleViewModel
-import com.busschedule.register.component.SearchTextField
 import com.busschedule.register.constant.City
 import com.busschedule.register.constant.Region
 import com.busschedule.register.model.CityUiState
@@ -36,6 +35,7 @@ import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
+import core.designsystem.component.textfield.SearchTextField
 import core.designsystem.theme.Background
 
 @Composable
