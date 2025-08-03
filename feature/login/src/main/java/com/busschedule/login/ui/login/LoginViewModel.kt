@@ -8,6 +8,7 @@ import com.busschedule.domain.usecase.user.LoginUseCase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,9 +50,10 @@ class LoginViewModel @Inject constructor(
         showToast: (String) -> Unit,
         navigationToScheduleList: () -> Unit,
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             loginUseCase(name = id, password = pw).onSuccess {
-                initFCMToken()
+                val FCMTokenJob = launch { initFCMToken() }
+                FCMTokenJob.join()
                 navigationToScheduleList()
                 tokenRepository.saveAutoLoginState(autoLoginState)
             }.onFailure {
@@ -61,7 +63,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun fetchPostFCMToken(token: String) {
-        viewModelScope.launch { postFCMTokenUseCase(token) }
+    private suspend fun fetchPostFCMToken(token: String) {
+        postFCMTokenUseCase(token)
     }
 }
