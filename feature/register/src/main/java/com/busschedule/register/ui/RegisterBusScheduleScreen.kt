@@ -88,6 +88,7 @@ fun RegisterBusScheduleScreen(
 ) {
     val uiState by viewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(ScheduleRegister())
     var isShowTempSaveScheduleDialog by remember { mutableStateOf(false) }
+    var isShowSelectRegisterTypeDialog by remember { mutableStateOf(false) }
 
     BackHandler {
         if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }

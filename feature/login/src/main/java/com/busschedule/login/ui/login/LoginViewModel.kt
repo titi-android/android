@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -52,10 +53,9 @@ class LoginViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             loginUseCase(name = id, password = pw).onSuccess {
-                val FCMTokenJob = launch { initFCMToken() }
-                FCMTokenJob.join()
-                navigationToScheduleList()
+                launch { initFCMToken() }.join()
                 tokenRepository.saveAutoLoginState(autoLoginState)
+                withContext(Dispatchers.Main) { navigationToScheduleList() }
             }.onFailure {
                 showToast(it.message!!)
                 it.printStackTrace()
