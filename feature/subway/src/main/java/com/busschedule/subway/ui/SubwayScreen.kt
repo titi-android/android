@@ -25,16 +25,20 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.busschedule.subway.SubwayViewModel
 import com.busschedule.subway.component.SelectStationBox
 import com.busschedule.subway.component.SelectStationPrefixText
 import com.busschedule.subway.component.SubwayLineCard
 import com.busschedule.subway.component.SubwayStationComponent
+import com.busschedule.subway.model.StationLineUI
 import com.busschedule.subway.model.StationUI
 import com.busschedule.util.ext.customNavigationBarPadding
 import com.busschedule.util.ext.noRippleClickable
@@ -49,15 +53,11 @@ import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mFooter
 
 @Composable
-@Preview(
-    showBackground = true, backgroundColor = 0xFFFFFFFF,
-    device = "spec:width=1080px,height=2340px,dpi=440"
-)
-fun SubwayScreen() {
+fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
 
-    val dummy = (0 until 15).mapIndexed { index, it ->
-        StationUI(id = index, stationNm = "${index}역", lineNum = "2호선")
-    }
+    val stationsUIState by viewModel.station.collectAsStateWithLifecycle()
+    val stationLines by viewModel.subwayManager.stationLines.collectAsStateWithLifecycle()
+
     var selectStations by remember { mutableStateOf<Pair<StationUI?, StationUI?>>(null to null) }
     val stationDirection by remember {
         derivedStateOf {
@@ -73,8 +73,8 @@ fun SubwayScreen() {
                 first = null,
                 second = null
             )
-            else if (selectStations.first == null) selectStations.copy(first = dummy[it])
-            else selectStations.copy(second = dummy[it])
+            else if (selectStations.first == null) selectStations.copy(first = stationsUIState[it])
+            else selectStations.copy(second = stationsUIState[it])
     }
 
     val checkSelectStation: (id: Int) -> SelectStation = {
@@ -105,11 +105,14 @@ fun SubwayScreen() {
             .customNavigationBarPadding(true)
             .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 10.dp)
     ) {
-        SubwayAppBar()
-        HeightSpacer(16.dp)
+        SubwayAppBar(
+            stationLines = stationLines,
+            onChangeStationLineState = { viewModel.changeStationLineState(it) },
+            onSearch = { viewModel.fetchGetSubwayStationLineInfo(it) })
+        HeightSpacer(8.dp)
         Box(Modifier.weight(1f)) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(items = dummy, key = { it.id }) {
+                items(items = stationsUIState, key = { it.id }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier.noRippleClickable { onClickStation(it.id) },
@@ -151,7 +154,13 @@ fun SubwayScreen() {
 }
 
 @Composable
-fun ColumnScope.SubwayAppBar(modifier: Modifier = Modifier) {
+fun ColumnScope.SubwayAppBar(
+    stationLines: List<StationLineUI>,
+    onChangeStationLineState: (stName: String) -> Unit,
+    onSearch: (search: String) -> Unit,
+) {
+    var input by rememberSaveable { mutableStateOf("") }
+
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -177,23 +186,22 @@ fun ColumnScope.SubwayAppBar(modifier: Modifier = Modifier) {
 
         SearchTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = "",
-            onValueChange = { },
+            value = input,
+            onValueChange = { input = it },
             placeholder = "지하철역 이름을 검색해보세요"
         ) {
-//                if (uiState.region.searchCity(it).not()) {
-//                    appState.showToastMsg("일치하는 지역이 없습니다.")
-//                }
+            onSearch(input)
         }
     }
-    HeightSpacer(height = 16.dp)
     LazyRow(
         modifier = Modifier,
 //                contentPadding = PaddingValues(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(items = listOf(1, 2, 3)) {
-            SubwayLineCard(name = it.toString(), isSelected = false) { }
+        items(items = stationLines, key = { it.name }) {
+            SubwayLineCard(name = it.name, isSelected = it.isSelected) {
+                onChangeStationLineState(it.name)
+            }
         }
     }
 }

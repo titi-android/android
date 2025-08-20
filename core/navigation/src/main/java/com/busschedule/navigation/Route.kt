@@ -22,6 +22,9 @@ sealed interface Route {
     }
 
     @Serializable
+    data object SelectSubway: Route
+
+    @Serializable
     data object SettingGraph: Route {
         @Serializable
         data object Setting: Route

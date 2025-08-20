@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.busschedule.model.TextBoxColor
 import core.designsystem.theme.TextBoxDis
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.sbTitle3
@@ -17,19 +18,22 @@ import core.designsystem.theme.sbTitle3
 @Composable
 fun SubwayLineCard(name: String, isSelected: Boolean, onClick: () -> Unit) {
 
+    val colors = if (isSelected) {
+        TextBoxColor(container = Color(0xFF2E4291), content = TextWColor)
+    } else {
+        TextBoxColor(container = TextBoxDis, content = TextWColor)
+    }
+
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF2E4291),
-            contentColor = TextWColor,
-            disabledContainerColor = TextBoxDis,
-            disabledContentColor = TextWColor
+            containerColor = colors.container,
+            contentColor = colors.content
         ),
-        enabled = isSelected,
         onClick = onClick
     ) {
         Box(modifier = Modifier.padding(10.dp)) {
-            Text(text = "${name}호선", style = sbTitle3.copy(color = TextWColor))
+            Text(text = name, style = sbTitle3.copy(color = TextWColor))
         }
     }
 }

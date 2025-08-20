@@ -30,7 +30,7 @@ import com.busschedule.register.constant.Region
 import com.busschedule.register.model.CityUiState
 import com.busschedule.register.model.RegionUiState
 import com.busschedule.register.model.SelectRegionUiState
-import com.busschedule.register.model.TextBoxColor
+import com.busschedule.model.TextBoxColor
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar

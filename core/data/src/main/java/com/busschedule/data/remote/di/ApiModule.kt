@@ -5,6 +5,7 @@ import com.busschedule.data.remote.api.BusStopApi
 import com.busschedule.data.remote.api.FCMApi
 import com.busschedule.data.remote.api.LoginApi
 import com.busschedule.data.remote.api.ScheduleApi
+import com.busschedule.data.remote.api.SubwayApi
 import com.busschedule.data.remote.api.UserApi
 import dagger.Module
 import dagger.Provides
@@ -42,5 +43,10 @@ object ApiModule {
     @Provides
     fun provideFCMApi(@NetworkModule.BusScheduleAuthRetrofit retrofit: Retrofit): FCMApi {
         return retrofit.create(FCMApi::class.java)
+    }
+
+    @Provides
+    fun providesSubwayApi(@NetworkModule.BusScheduleAuthRetrofit retrofit: Retrofit): SubwayApi {
+        return retrofit.create(SubwayApi::class.java)
     }
 }

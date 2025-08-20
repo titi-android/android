@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.feature.scheduleList)
     implementation(projects.feature.register)
     implementation(projects.feature.setting)
+    implementation(projects.feature.subway)
 
     // hiltViewModel 사용
     implementation(libs.androidx.hilt.compose)

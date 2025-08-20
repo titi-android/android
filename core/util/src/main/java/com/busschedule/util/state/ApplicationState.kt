@@ -75,6 +75,10 @@ class ApplicationState(
         navController.navigate(Route.RegisterGraph.SelectBusStop(busStop))
     }
 
+    fun navigateToSelectSubway() {
+        navController.navigate(Route.SelectSubway)
+    }
+
     fun navigateToSetting() {
         navController.navigate(Route.SettingGraph.Setting)
     }

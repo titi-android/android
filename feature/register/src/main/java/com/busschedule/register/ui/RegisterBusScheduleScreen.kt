@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -89,6 +90,7 @@ fun RegisterBusScheduleScreen(
     val uiState by viewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(ScheduleRegister())
     var isShowTempSaveScheduleDialog by remember { mutableStateOf(false) }
     var isShowSelectRegisterTypeDialog by remember { mutableStateOf(false) }
+    val changeSelectRegisterTypeDialogState: (Boolean) -> Unit = remember { {isShowSelectRegisterTypeDialog = it} }
 
     BackHandler {
         if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }
@@ -109,6 +111,15 @@ fun RegisterBusScheduleScreen(
                 onDismissRequest = { isShowTempSaveScheduleDialog = false },
                 onNotComplete = { appState.popBackStack() },
                 onComplete = { viewModel.fetchInsertTempSchedule {appState.popBackStack()} })
+        }
+        if (isShowSelectRegisterTypeDialog) {
+            TitleDialog(
+                title = "등록할 스케줄 타입을 선택하세요",
+                leftBtnText = "버스",
+                rightBtnText = "지하철",
+                onDismissRequest = { isShowSelectRegisterTypeDialog = false },
+                onNotComplete = {  },
+                onComplete = { appState.navigateToSelectSubway() })
         }
         Column(modifier = Modifier
             .fillMaxSize()
@@ -166,6 +177,9 @@ fun RegisterBusScheduleScreen(
                 }
 
             }
+            /* TODO: UI 변경되면 삭제할 것 */
+            Button(onClick = {changeSelectRegisterTypeDialogState(true)}) { Text("(임시) 등록 타입 선택 버튼") }
+
             MainBottomButton(text = "완료") {
                 viewModel.putOrPostSchedule(
                     onSuccessOfPut = { appState.navigateToScheduleList() },

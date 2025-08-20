@@ -41,6 +41,7 @@ fun RootNavHost(route: String) {
         loginGraph(appState)
         scheduleListComposable(appState)
         registerBusScheduleGraph(appState)
+        registerSubwayScheduleComposable(appState)
         settingGraph(appState)
     }
 }
