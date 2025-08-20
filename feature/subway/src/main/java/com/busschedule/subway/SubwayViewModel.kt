@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SubwayViewModel @Inject constructor(
     private val getSubwayStationLineInfoUseCase: GetSubwayStationLineInfoUseCase,
-    private val getSubwayStationUseCase: GetSubwayStationUseCase
+    private val getSubwayStationUseCase: GetSubwayStationUseCase,
 ) : ViewModel() {
     val TAG = this::class.java.simpleName
     var subwayManager = SubwayManager()
@@ -38,15 +38,13 @@ class SubwayViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             getSubwayStationLineInfoUseCase(stName).onSuccess { result ->
                 val inputStationName = result.first().stationName
-                val stationLine = mutableSetOf<StationLineUI>()
+                val stationLineSet = mutableSetOf<StationLineUI>()
                 result.forEach { subwayStationLineInfo ->
-                    subwayStationLineInfo.lines.forEach {
-                        stationLine.add(
-                            StationLineUI(name = it, initSelected = false)
-                        )
-                    }
+                    subwayStationLineInfo.lines
+                        .filter { StationLine.isExistStationLine(it) }
+                        .forEach { stationLineSet.add(StationLineUI(name = it, initSelected = false)) }
                 }
-                val sortedStationLine = stationLine.toList().sortedBy { it.name }
+                val sortedStationLine = stationLineSet.toList().sortedBy { it.name }
                 fetchGetSubwayStation(sortedStationLine.first().name)
                 subwayManager.setStationLines(sortedStationLine)
                 subwayManager.setInputStationName(inputStationName)
@@ -62,7 +60,15 @@ class SubwayViewModel @Inject constructor(
             getSubwayStationUseCase(mappingLineName).onSuccess { result ->
                 withContext(Dispatchers.Main) {
                     launch { changeStationLineState(lineName) }
-                    launch { _subwayStations.update { result.mapIndexed { idx, station -> station.asState(idx) } } }
+                    launch {
+                        _subwayStations.update {
+                            result.mapIndexed { idx, station ->
+                                station.asState(
+                                    idx
+                                )
+                            }
+                        }
+                    }
                 }
             }.onFailure { Log.e(TAG, "fetchGetSubwayStation() called, error: ${it.message}") }
         }

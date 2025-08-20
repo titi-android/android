@@ -14,5 +14,8 @@ enum class StationLine(val value: String) {
     companion object {
         fun fromValue(lineName: String): String =
             requireNotNull(StationLine.entries.find { it.value == lineName }?.name) { "StationLine not found for value: $lineName" }
+
+        fun isExistStationLine(lineName: String): Boolean =
+            StationLine.entries.find { it.value == lineName } != null
     }
 }
