@@ -12,11 +12,10 @@ class SubwayManager {
     private var inputStationName = ""
 
     fun setStationLines(newLines: List<StationLineUI>) {
-        val sortedLines = newLines.sortedBy { it.name }
-            .mapIndexed { index, it ->
+        val mappedLines = newLines.mapIndexed { index, it ->
                 it.apply { it.setSelect(index == 0) }
             }
-        _stationLines.update { sortedLines }
+        _stationLines.update { mappedLines }
     }
 
     fun setInputStationName(input: String) {

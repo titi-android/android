@@ -39,7 +39,7 @@ import com.busschedule.subway.component.SelectStationPrefixText
 import com.busschedule.subway.component.SubwayLineCard
 import com.busschedule.subway.component.SubwayStationComponent
 import com.busschedule.subway.model.StationLineUI
-import com.busschedule.subway.model.StationUI
+import com.busschedule.subway.model.SubwayStationUI
 import com.busschedule.util.ext.customNavigationBarPadding
 import com.busschedule.util.ext.noRippleClickable
 import core.designsystem.component.HeightSpacer
@@ -55,10 +55,10 @@ import core.designsystem.theme.mFooter
 @Composable
 fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
 
-    val stationsUIState by viewModel.station.collectAsStateWithLifecycle()
+    val subwayStationsState by viewModel.subwayStations.collectAsStateWithLifecycle()
     val stationLines by viewModel.subwayManager.stationLines.collectAsStateWithLifecycle()
 
-    var selectStations by remember { mutableStateOf<Pair<StationUI?, StationUI?>>(null to null) }
+    var selectStations by remember { mutableStateOf<Pair<SubwayStationUI?, SubwayStationUI?>>(null to null) }
     val stationDirection by remember {
         derivedStateOf {
             if (selectStations.first?.id == null || selectStations.second == null) StationDirection.NONE
@@ -67,14 +67,14 @@ fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
         }
     }
 
-    val onClickStation: (id: Int) -> Unit = {
+    val onClickStation: (id: Int) -> Unit = { id ->
         selectStations =
             if (selectStations.first != null && selectStations.second != null) selectStations.copy(
                 first = null,
                 second = null
             )
-            else if (selectStations.first == null) selectStations.copy(first = stationsUIState[it])
-            else selectStations.copy(second = stationsUIState[it])
+            else if (selectStations.first == null) selectStations.copy(first = subwayStationsState[id])
+            else selectStations.copy(second = subwayStationsState[id])
     }
 
     val checkSelectStation: (id: Int) -> SelectStation = {
@@ -107,12 +107,12 @@ fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
     ) {
         SubwayAppBar(
             stationLines = stationLines,
-            onChangeStationLineState = { viewModel.changeStationLineState(it) },
+            onSubwayStationLineClicked = { viewModel.fetchGetSubwayStation(it) },
             onSearch = { viewModel.fetchGetSubwayStationLineInfo(it) })
         HeightSpacer(8.dp)
         Box(Modifier.weight(1f)) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(items = stationsUIState, key = { it.id }) {
+                items(items = subwayStationsState, key = { it.id }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier.noRippleClickable { onClickStation(it.id) },
@@ -120,7 +120,7 @@ fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
                         ) {
                             val stationState = checkSelectStation(it.id)
                             SubwayStationComponent(
-                                stationState,
+                                isSelected = stationState,
                                 stationDirection = stationDirection,
                                 selectedColor = Color(0xFFFF0000)
                             )
@@ -156,7 +156,7 @@ fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
 @Composable
 fun ColumnScope.SubwayAppBar(
     stationLines: List<StationLineUI>,
-    onChangeStationLineState: (stName: String) -> Unit,
+    onSubwayStationLineClicked: (stName: String) -> Unit,
     onSearch: (search: String) -> Unit,
 ) {
     var input by rememberSaveable { mutableStateOf("") }
@@ -200,7 +200,7 @@ fun ColumnScope.SubwayAppBar(
     ) {
         items(items = stationLines, key = { it.name }) {
             SubwayLineCard(name = it.name, isSelected = it.isSelected) {
-                onChangeStationLineState(it.name)
+                onSubwayStationLineClicked(it.name)
             }
         }
     }
