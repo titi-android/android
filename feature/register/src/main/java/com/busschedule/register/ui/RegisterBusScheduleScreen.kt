@@ -56,6 +56,7 @@ import com.busschedule.register.RegisterBusScheduleViewModel
 import com.busschedule.register.component.BusBox
 import com.busschedule.register.component.NotifyIcon
 import com.busschedule.register.component.ScheduleNameTextField
+import com.busschedule.register.component.SelectTransitDialog
 import com.busschedule.register.component.WhiteContentBox
 import com.busschedule.register.constant.TimePickerType
 import com.busschedule.register.model.BusStopInfoUIFactory
@@ -113,13 +114,12 @@ fun RegisterBusScheduleScreen(
                 onComplete = { viewModel.fetchInsertTempSchedule {appState.popBackStack()} })
         }
         if (isShowSelectRegisterTypeDialog) {
-            TitleDialog(
-                title = "등록할 스케줄 타입을 선택하세요",
-                leftBtnText = "버스",
-                rightBtnText = "지하철",
+            SelectTransitDialog(
                 onDismissRequest = { isShowSelectRegisterTypeDialog = false },
-                onNotComplete = {  },
-                onComplete = { appState.navigateToSelectSubway() })
+                // TODO: navigateToSelectRegion() 에 들어가는 매개변수 목적 파악
+                navigateToSelectRegion = { appState.navigateToSelectRegion(BusStopInfoUIFactory.ARRIVE_ID) },
+                navigateToSubway = { appState.navigateToSelectSubway() }
+            )
         }
         Column(modifier = Modifier
             .fillMaxSize()

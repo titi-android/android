@@ -23,7 +23,9 @@ import core.designsystem.svg.myiconpack.IcSearch
 import core.designsystem.svg.myiconpack.IcSetting
 import core.designsystem.svg.myiconpack.IcTalk
 import core.designsystem.svg.myiconpack.IcVersionInfo
+import core.designsystem.svg.myiconpack.ImageBus
 import core.designsystem.svg.myiconpack.ImageBusOfTicket
+import core.designsystem.svg.myiconpack.ImageSubway
 import kotlin.collections.List as ____KtList
 
 public object MyIconPack
@@ -38,6 +40,6 @@ public val MyIconPack.AllIcons: ____KtList<ImageVector>
     __AllIcons= listOf(IcClock, IcNotify, IcBan, IcTalk, IcPlus, IcVersionInfo, IcMinus,
         IcForwardArrow2, IcMainlogo, IcClose, IcOffnotify, IcSetting, IcRefresh, IcNextArrow,
         IcOnCheckbox, IcInfomationCircle, ImageBusOfTicket, IcOffCheckbox, IcSearch, IcBus, IcEdit,
-        IcLogout, IcForwardArrow)
+        IcLogout, IcForwardArrow, ImageBus, ImageSubway)
     return __AllIcons!!
   }

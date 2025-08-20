@@ -53,7 +53,7 @@ import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mFooter
 
 @Composable
-fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
+fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel(), popBackStack: () -> Unit) {
 
     val subwayStationsState by viewModel.subwayStations.collectAsStateWithLifecycle()
     val stationLines by viewModel.subwayManager.stationLines.collectAsStateWithLifecycle()
@@ -106,6 +106,7 @@ fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
             .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 10.dp)
     ) {
         SubwayAppBar(
+            popBackStack = popBackStack,
             stationLines = stationLines,
             onSubwayStationLineClicked = { viewModel.fetchGetSubwayStation(it) },
             onSearch = { viewModel.fetchGetSubwayStationLineInfo(it) })
@@ -155,6 +156,7 @@ fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel()) {
 
 @Composable
 fun ColumnScope.SubwayAppBar(
+    popBackStack: () -> Unit,
     stationLines: List<StationLineUI>,
     onSubwayStationLineClicked: (stName: String) -> Unit,
     onSearch: (search: String) -> Unit,
@@ -176,7 +178,7 @@ fun ColumnScope.SubwayAppBar(
                 blurRadius = 4.dp,
                 borderRadius = 100.dp
             ),
-            onClick = { }) {
+            onClick = { popBackStack() }) {
             Icon(
                 imageVector = Icons.Rounded.ArrowBackIosNew,
                 contentDescription = "ic_back_arrow",
