@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
 import com.busschedule.model.BusStop
+import com.busschedule.model.constant.TransitConst
 import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
 import java.net.URLEncoder
@@ -111,6 +112,21 @@ class ApplicationState(
             }
         popBackStack()
     }
+
+    fun isBackFromSubway(): Boolean {
+        val transitType = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow(
+            key = "transitType",
+            ""
+        )?.value
+        return transitType == TransitConst.SUBWAY.name
+
+    }
+
+    fun getSavedDataFromSubway() =
+        listOf("regionName", "lineName", "stationName", "dir", "upDownDir").map {
+            navController.currentBackStackEntry?.savedStateHandle?.getStateFlow(key = it, "")?.value
+                ?: ""
+        }
 
 
     fun navigateEncodingUrl(prefixUrl: String, encodeUrl: String, param: String) {

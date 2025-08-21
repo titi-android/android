@@ -146,13 +146,7 @@ fun SubwayScreen(
             modifier = Modifier.fillMaxWidth(),
             enabled = isExistSelectStation
         ) {
-            val saveData = mapOf(
-                "regionName" to "서울",
-                "lineName" to "1호선",
-                "stationName" to "서울",
-                "dir" to "UP"
-            )
-            appState.popBackStackFromSubway(saveData)
+            appState.popBackStackFromSubway(viewModel.getSelectSubwayStationTotalInfo())
         }
     }
 }

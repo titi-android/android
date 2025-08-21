@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.busschedule.model.BusInfo
+import com.busschedule.register.model.TransitCardUI
 import com.busschedule.register.model.TransitPointType
-import com.busschedule.register.model.TransitType
 import com.busschedule.util.ext.applyBlur
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
@@ -50,11 +50,12 @@ import core.designsystem.theme.sbTitle3
 @Composable
 @Preview
 fun TransitCard(
-    isNotInit: Boolean = true,
     onInitClick: (Boolean) -> Unit = {},
     type: TransitPointType = TransitPointType.START,
-    transitType: TransitType = TransitType.Bus.empty(),
+    transitCardUI: TransitCardUI = TransitCardUI.Bus(),
 ) {
+    val isNotInit = if (transitCardUI.isEmpty()) true else false
+
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
@@ -79,7 +80,7 @@ fun TransitCard(
                         Text(text = type.value, style = sbTitle2.copy(fontSize = 22.sp))
                         WidthSpacer(2.dp)
                         Image(
-                            imageVector = transitType.icon,
+                            imageVector = transitCardUI.icon,
                             contentDescription = "image_transit",
                             modifier = Modifier.size(16.dp)
                         )
@@ -93,19 +94,24 @@ fun TransitCard(
                     }
                 }
                 HeightSpacer(16.dp)
-                TransitCardContentRow(title = transitType.title1, content = "서울광역시")
+                TransitCardContentRow(title = transitCardUI.title1, content = transitCardUI.content1)
                 HeightSpacer(16.dp)
-                TransitCardContentRow(title = transitType.title2, content = "버스정류장")
+                TransitCardContentRow(title = transitCardUI.title2, content = transitCardUI.content2)
                 HeightSpacer(16.dp)
-                if (transitType is TransitType.Bus) {
-                    TransitCardBusNumContentRow(buses = transitType.buses)
-                } else {
-                    TransitCardContentRow(title = transitType.title3, content = "신설동역 방향")
+                when(transitCardUI) {
+                    is TransitCardUI.Bus -> {
+                        TransitCardBusNumContentRow(buses = transitCardUI.buses)
+                    }
+                    is TransitCardUI.Subway -> {
+                        TransitCardContentRow(title = transitCardUI.title3, content = transitCardUI.subwayDirection)
+                    }
                 }
-
             }
             if (isNotInit) {
-                StartInitButton(modifier = Modifier.align(Alignment.Center), text = "${type.value}지 입력하기") { onInitClick(true) }
+                StartInitButton(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "${type.value}지 입력하기"
+                ) { onInitClick(true) }
             }
         }
 

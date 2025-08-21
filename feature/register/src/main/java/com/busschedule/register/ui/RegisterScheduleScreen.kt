@@ -1,6 +1,5 @@
 package com.busschedule.register.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -84,14 +83,16 @@ import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterBusScheduleScreen(
+fun RegisterScheduleScreen(
     appState: ApplicationState,
     viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(ScheduleRegister())
+    val lastTransitCardUI by viewModel.lastTransitCardUIInfos.collectAsStateWithLifecycle()
     var isShowTempSaveScheduleDialog by remember { mutableStateOf(false) }
     var isShowSelectRegisterTypeDialog by remember { mutableStateOf(false) }
-    val changeSelectRegisterTypeDialogState: (Boolean) -> Unit = remember { {isShowSelectRegisterTypeDialog = it} }
+    val changeSelectRegisterTypeDialogState: (Boolean) -> Unit =
+        remember { { isShowSelectRegisterTypeDialog = it } }
 
     /*
     BackHandler {
@@ -100,10 +101,11 @@ fun RegisterBusScheduleScreen(
     }
 
      */
-    Log.i("daeyoung", "RegisterBusScheduleScreen, called")
     LaunchedEffect(Unit) {
-        val t = appState.getNavController().currentBackStackEntry?.savedStateHandle?.getStateFlow(key = "test", "")?.value
-        Log.i("daeyoung", "RegisterBusScheduleScreen, LaunchedEffect() called, data: $t")
+        if (appState.isBackFromSubway()) {
+            val subwayInfo = appState.getSavedDataFromSubway()
+            viewModel.addSubwayInfo(subwayInfo)
+        }
     }
 
 
@@ -120,7 +122,7 @@ fun RegisterBusScheduleScreen(
                 rightBtnText = "임시 저장",
                 onDismissRequest = { isShowTempSaveScheduleDialog = false },
                 onNotComplete = { appState.popBackStack() },
-                onComplete = { /*viewModel.fetchInsertTempSchedule {appState.popBackStack()} */})
+                onComplete = { /*viewModel.fetchInsertTempSchedule {appState.popBackStack()} */ })
         }
         if (isShowSelectRegisterTypeDialog) {
             SelectTransitDialog(
@@ -130,9 +132,11 @@ fun RegisterBusScheduleScreen(
                 navigateToSubway = { appState.navigateToSelectSubway() }
             )
         }
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(Background)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Background)
+        ) {
             BackArrowAppBar(title = "스케줄 등록하기") {
                 /*
                 if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }
@@ -165,19 +169,25 @@ fun RegisterBusScheduleScreen(
                     viewModel.updateIsNotify()
                 }
 
-                if (viewModel.transitTypeInfos.isEmpty()) {
+                HeightSpacer(16.dp)
+
+                if (viewModel.transitCardUIInfos.isEmpty()) {
                     TransitCard(
-                        isNotInit = true,
                         onInitClick = changeSelectRegisterTypeDialogState,
                         type = TransitPointType.START,
                     )
                 }
 
-                viewModel.transitTypeInfos.forEachIndexed { index, busStopInfoUI ->
+                if (viewModel.transitCardUIInfos.isNotEmpty() && lastTransitCardUI.isEmpty().not()) {
+                    TransferRow {  }
+                    HeightSpacer(16.dp)
+                }
+
+                viewModel.transitCardUIInfos.forEachIndexed { index, transitInfo ->
                     TransitCard(
-                        isNotInit = false,
                         onInitClick = { },
                         type = if (index == 0) TransitPointType.START else TransitPointType.TRANSFER,
+                        transitCardUI = transitInfo
                     )
                     /*
                     RegionArea(
@@ -196,9 +206,12 @@ fun RegisterBusScheduleScreen(
                      */
                 }
                 TransitCard(
-                    isNotInit = true,
-                    onInitClick = changeSelectRegisterTypeDialogState,
+                    onInitClick = {
+                        changeSelectRegisterTypeDialogState(it)
+                        viewModel.setLastTransitCardState(true)
+                    },
                     type = TransitPointType.END,
+                    transitCardUI = lastTransitCardUI
                 )
                 /*
                 ArriveArea(

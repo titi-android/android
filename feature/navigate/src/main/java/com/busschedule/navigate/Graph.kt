@@ -17,7 +17,7 @@ import com.busschedule.model.BusStop
 import com.busschedule.model.navtype.serializableType
 import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
-import com.busschedule.register.ui.RegisterBusScheduleScreen
+import com.busschedule.register.ui.RegisterScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
 import com.busschedule.setting.ui.ask.ui.AskScreen
@@ -53,7 +53,7 @@ fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
                 navController = appState.getNavController(),
                 graph = Route.RegisterGraph
             )
-            RegisterBusScheduleScreen(
+            RegisterScheduleScreen(
                 appState = appState,
                 viewModel = hiltViewModel(backStackEntry)
             )

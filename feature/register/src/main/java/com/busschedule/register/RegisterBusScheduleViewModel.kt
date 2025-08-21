@@ -29,7 +29,7 @@ import com.busschedule.register.model.ScheduleRegister
 import com.busschedule.register.model.SelectBusStopUiState
 import com.busschedule.register.model.SelectRegionUiState
 import com.busschedule.register.model.SelectedBusUI
-import com.busschedule.register.model.TransitType
+import com.busschedule.register.model.TransitCardUI
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import com.kakao.vectormap.KakaoMap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,6 +57,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
 ) : ViewModel() {
     private val scheduleId = savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().id
     private val isExistTempSchedule = savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().isExistTempSchedule
+    private var isLastTransitCard = false
 
     private val selectDayOfWeek =
         savedStateHandle.toRoute<Route.RegisterGraph.RegisterSchedule>().dayOfWeek
@@ -79,8 +80,11 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _isNotify = MutableStateFlow(false)
     val isNotify: StateFlow<Boolean> = _isNotify.asStateFlow()
 
-    private var _transitTypeInfos = mutableStateListOf<TransitType>()
-    val transitTypeInfos: List<TransitType> = _transitTypeInfos
+    private var _transitCardUIInfos = mutableStateListOf<TransitCardUI>()
+    val transitCardUIInfos: List<TransitCardUI> = _transitCardUIInfos
+
+    private val _lastTransitCardUIInfos = MutableStateFlow<TransitCardUI>(TransitCardUI.Bus())
+    val lastTransitCardUIInfos: StateFlow<TransitCardUI> = _lastTransitCardUIInfos.asStateFlow()
 
     private val _arriveBusStop = MutableStateFlow(BusStop())
     val arriveBusStop: StateFlow<BusStop> = _arriveBusStop
@@ -154,6 +158,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
 //        return transitTypeInfos.first().isNotBlank()
 //    }
 
+    fun setLastTransitCardState(state: Boolean) {
+        isLastTransitCard = state
+    }
+
     fun updateScheduleName(name: String) {
         _scheduleName.update { name }
     }
@@ -168,6 +176,24 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     fun updateIsNotify() {
         _isNotify.update { !isNotify.value }
+    }
+
+    fun addSubwayInfo(data: List<String>) {
+        val subway = TransitCardUI.Subway(
+            content1 = data[0],
+            content2 = "${data[1]}, ${data[2]}",
+            subwayDirection = data[3],
+            upDownDir = data[4],
+        )
+
+        if (isLastTransitCard) {
+            setLastTransitCardState(false)
+            _lastTransitCardUIInfos.update { subway }
+            return
+        }
+        _transitCardUIInfos.add(subway)
+
+
     }
 
 //    fun addBusStopInfoUI() {
@@ -250,9 +276,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setRouteInfos(list: List<TransitType>) {
-        _transitTypeInfos.clear()
-        _transitTypeInfos.addAll(list)
+    private fun setRouteInfos(list: List<TransitCardUI>) {
+        _transitCardUIInfos.clear()
+        _transitCardUIInfos.addAll(list)
     }
 
     private fun updateWidget() {

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.busschedule.domain.usecase.subway.GetSubwayStationLineInfoUseCase
 import com.busschedule.domain.usecase.subway.GetSubwayStationUseCase
+import com.busschedule.model.constant.TransitConst
 import com.busschedule.subway.model.StationLine
 import com.busschedule.subway.model.StationLineUI
 import com.busschedule.subway.model.SubwayManager
@@ -55,6 +56,15 @@ class SubwayViewModel @Inject constructor(
         else if (selectStations.value.first!!.id > selectStations.value.second!!.id) StationDirection.UP
         else StationDirection.DOWN
 
+    fun getSelectSubwayStationTotalInfo(): Map<String, String> = mapOf(
+        "transitType" to TransitConst.SUBWAY.name,
+        "regionName" to "서울",
+        "lineName" to subwayManager.getCurrentSelectStationLine(),
+        "stationName" to selectStations.value.first!!.stationNm,
+        "dir" to "${selectStations.value.second!!.stationNm} 방향",
+        "upDownDir" to getSubwayDirection().name
+    )
+
 
     fun fetchGetSubwayStationLineInfo(stName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -91,11 +101,7 @@ class SubwayViewModel @Inject constructor(
                     launch { changeStationLineState(lineName) }
                     launch {
                         _subwayStations.update {
-                            result.mapIndexed { idx, station ->
-                                station.asState(
-                                    idx
-                                )
-                            }
+                            result.mapIndexed { idx, station -> station.asState(idx) }
                         }
                     }
                 }
