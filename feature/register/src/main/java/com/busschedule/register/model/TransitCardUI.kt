@@ -36,7 +36,7 @@ sealed class TransitCardUI(
     }
 
     data class Subway(
-        override val title1: String = "호선",
+        override val title1: String = "지역",
         override val title2: String = "지하철 역",
         override val title3: String = "지하철 방향",
         override val icon: ImageVector = MyIconPack.ImageSubway,

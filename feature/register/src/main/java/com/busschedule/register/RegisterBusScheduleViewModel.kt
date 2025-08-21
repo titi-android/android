@@ -192,8 +192,10 @@ class RegisterBusScheduleViewModel @Inject constructor(
             return
         }
         _transitCardUIInfos.add(subway)
+    }
 
-
+    fun removeTransitCard(id: Int) {
+        _transitCardUIInfos.removeAt(id)
     }
 
 //    fun addBusStopInfoUI() {

@@ -23,7 +23,14 @@ import core.designsystem.theme.TextWColor
 import core.designsystem.theme.sbTitle3
 
 @Composable
-fun TitleDialog(title: String, leftBtnText: String, rightBtnText: String, onDismissRequest: () -> Unit, onNotComplete: () -> Unit, onComplete: () -> Unit) {
+fun TitleDialog(
+    title: String,
+    leftBtnText: String,
+    rightBtnText: String,
+    onDismissRequest: () -> Unit,
+    onNotComplete: () -> Unit,
+    onComplete: () -> Unit,
+) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
             colors = CardDefaults.cardColors(containerColor = TextWColor),

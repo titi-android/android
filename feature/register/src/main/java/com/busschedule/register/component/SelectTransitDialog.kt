@@ -36,13 +36,18 @@ fun SelectTransitDialog(
     onDismissRequest: () -> Unit = {},
     navigateToSelectRegion: () -> Unit = {},
     navigateToSubway: () -> Unit = {},
+    setLastTransitCardState: () -> Unit = {},
 ) {
 
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    Dialog(onDismissRequest = {
+        onDismissRequest()
+        setLastTransitCardState()
+    }) {
         Row {
             TransitImageCard {
                 onDismissRequest()
-                navigateToSelectRegion() }
+                navigateToSelectRegion()
+            }
             WidthSpacer(16.dp)
             TransitImageCard(imageVector = MyIconPack.ImageSubway, text = "지하철") {
                 onDismissRequest()

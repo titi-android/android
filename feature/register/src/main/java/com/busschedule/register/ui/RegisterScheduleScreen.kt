@@ -129,7 +129,8 @@ fun RegisterScheduleScreen(
                 onDismissRequest = { isShowSelectRegisterTypeDialog = false },
                 // TODO: navigateToSelectRegion() 에 들어가는 매개변수 목적 파악
                 navigateToSelectRegion = { appState.navigateToSelectRegion(BusStopInfoUIFactory.ARRIVE_ID) },
-                navigateToSubway = { appState.navigateToSelectSubway() }
+                navigateToSubway = { appState.navigateToSelectSubway() },
+                setLastTransitCardState = { viewModel.setLastTransitCardState(false) },
             )
         }
         Column(
@@ -169,26 +170,29 @@ fun RegisterScheduleScreen(
                     viewModel.updateIsNotify()
                 }
 
-                HeightSpacer(16.dp)
-
                 if (viewModel.transitCardUIInfos.isEmpty()) {
+                    HeightSpacer(16.dp)
                     TransitCard(
                         onInitClick = changeSelectRegisterTypeDialogState,
                         type = TransitPointType.START,
                     )
                 }
 
-                if (viewModel.transitCardUIInfos.isNotEmpty() && lastTransitCardUI.isEmpty().not()) {
-                    TransferRow {  }
-                    HeightSpacer(16.dp)
-                }
+                if (viewModel.transitCardUIInfos.isNotEmpty() && lastTransitCardUI.isEmpty()
+                        .not()
+                ) {
+                    TransferRow { changeSelectRegisterTypeDialogState(true) }
+                } else { HeightSpacer(16.dp) }
 
                 viewModel.transitCardUIInfos.forEachIndexed { index, transitInfo ->
                     TransitCard(
-                        onInitClick = { },
+                        id = index,
                         type = if (index == 0) TransitPointType.START else TransitPointType.TRANSFER,
-                        transitCardUI = transitInfo
+                        transitCardUI = transitInfo,
+                        onEditClick = { isNotInit -> if (isNotInit.not()) changeSelectRegisterTypeDialogState(true) },
+                        onRemoveClick = { viewModel.removeTransitCard(it) }
                     )
+                    HeightSpacer(height = 16.dp)
                     /*
                     RegionArea(
                         title = if (index == 0) "출발" else "환승",
@@ -206,12 +210,16 @@ fun RegisterScheduleScreen(
                      */
                 }
                 TransitCard(
+                    type = TransitPointType.END,
+                    transitCardUI = lastTransitCardUI,
                     onInitClick = {
                         changeSelectRegisterTypeDialogState(it)
                         viewModel.setLastTransitCardState(true)
                     },
-                    type = TransitPointType.END,
-                    transitCardUI = lastTransitCardUI
+                    onEditClick = {
+                        changeSelectRegisterTypeDialogState(true)
+                        viewModel.setLastTransitCardState(true)
+                    },
                 )
                 /*
                 ArriveArea(

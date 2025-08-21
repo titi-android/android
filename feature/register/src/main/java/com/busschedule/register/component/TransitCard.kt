@@ -50,11 +50,14 @@ import core.designsystem.theme.sbTitle3
 @Composable
 @Preview
 fun TransitCard(
-    onInitClick: (Boolean) -> Unit = {},
     type: TransitPointType = TransitPointType.START,
+    id: Int = 0,
     transitCardUI: TransitCardUI = TransitCardUI.Bus(),
+    onInitClick: (Boolean) -> Unit = {},
+    onEditClick: (Boolean) -> Unit = {},
+    onRemoveClick: (Int) -> Unit = {},
 ) {
-    val isNotInit = if (transitCardUI.isEmpty()) true else false
+    val isNotInit = transitCardUI.isEmpty()
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -86,10 +89,10 @@ fun TransitCard(
                         )
                     }
                     Row {
-                        MainOutlineButton(text = "수정") { }
+                        MainOutlineButton(text = "수정") { onEditClick(isNotInit) }
                         WidthSpacer(8.dp)
                         if (TransitPointType.isTransfer(type)) {
-                            MainButton(text = "삭제") { }
+                            MainButton(text = "삭제") { onRemoveClick(id) }
                         }
                     }
                 }
