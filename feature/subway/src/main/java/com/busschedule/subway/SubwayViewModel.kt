@@ -41,12 +41,13 @@ class SubwayViewModel @Inject constructor(
     }
 
     fun setSelectStation(id: Int) {
+        if (selectStations.value.first?.id == id) return
+
         val (f, s) = if (selectStations.value.first != null && selectStations.value.second != null)
             null to null
         else if (selectStations.value.first == null) subwayStations.value[id] to null
         else selectStations.value.first to subwayStations.value[id]
         _selectStations.update { f to s }
-        Log.i("daeyoung", "setSelectStation() called, selectStations: ${selectStations.value}")
     }
 
     fun getSubwayDirection(): StationDirection =
