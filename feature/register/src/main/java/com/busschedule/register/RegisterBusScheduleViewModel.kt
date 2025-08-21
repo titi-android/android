@@ -185,6 +185,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
             subwayDirection = data[3],
             upDownDir = data[4],
         )
+        if (subway.isEmpty()) return
 
         if (isLastTransitCard) {
             setLastTransitCardState(false)
