@@ -17,7 +17,6 @@ import com.busschedule.model.BusStop
 import com.busschedule.model.navtype.serializableType
 import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
-import com.busschedule.register.ui.RegisterScheduleScreen
 import com.busschedule.register.ui.SelectBusScreen
 import com.busschedule.register.ui.SelectRegionScreen
 import com.busschedule.setting.ui.ask.ui.AskScreen
@@ -45,43 +44,32 @@ fun NavGraphBuilder.loginGraph(appState: ApplicationState) {
 //    }
 }
 
-fun NavGraphBuilder.registerBusScheduleGraph(appState: ApplicationState) {
-    navigation<Route.RegisterGraph>(startDestination = Route.RegisterGraph.RegisterSchedule()) {
-        composable<Route.RegisterGraph.RegisterSchedule> { entry ->
+fun NavGraphBuilder.busGraph(appState: ApplicationState) {
+    navigation<Route.SelectBus>(startDestination = Route.SelectBus.SelectRegion()) {
+        composable<Route.SelectBus.SelectRegion> { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Route.RegisterGraph
-            )
-            RegisterScheduleScreen(
-                appState = appState,
-                viewModel = hiltViewModel(backStackEntry)
-            )
-        }
-        composable<Route.RegisterGraph.SelectRegion> { entry ->
-            val backStackEntry = rememberNavControllerBackEntry(
-                entry = entry,
-                navController = appState.getNavController(),
-                graph = Route.RegisterGraph
+                graph = Route.SelectBus
             )
             SelectRegionScreen(
                 appState = appState,
                 viewModel = hiltViewModel(backStackEntry),
-                id = entry.toRoute<Route.RegisterGraph.SelectRegion>().id
+                id = entry.toRoute<Route.SelectBus.SelectRegion>().id
             )
         }
-        composable<Route.RegisterGraph.SelectBusStop>(
+        composable<Route.SelectBus.SelectBusStop>(
             typeMap = mapOf(typeOf<BusStop>() to serializableType<BusStop>(isNullableAllowed = true))
         ) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(
                 entry = entry,
                 navController = appState.getNavController(),
-                graph = Route.RegisterGraph
+                graph = Route.SelectBus
             )
             SelectBusScreen(
                 appState = appState,
                 viewModel = hiltViewModel(backStackEntry),
-                busStop = entry.toRoute<Route.RegisterGraph.SelectBusStop>().busStop
+                busStop = entry.toRoute<Route.SelectBus.SelectBusStop>().busStop
             )
         }
     }

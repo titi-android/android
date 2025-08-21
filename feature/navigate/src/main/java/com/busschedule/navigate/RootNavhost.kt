@@ -26,7 +26,7 @@ fun RootNavHost(route: String) {
 //        }
 //    }
     val initRoute: Route = when (route) {
-        "Register" -> Route.RegisterGraph
+        "Register" -> Route.RegisterSchedule()
         "Start" -> LoginGraph.Start
         else -> LoginGraph.Splash
 
@@ -40,8 +40,9 @@ fun RootNavHost(route: String) {
     ) {
         loginGraph(appState)
         scheduleListComposable(appState)
-        registerBusScheduleGraph(appState)
-        registerSubwayScheduleComposable(appState)
+        registerScheduleComposable(appState)
+        busGraph(appState)
+        subwayComposable(appState)
         settingGraph(appState)
     }
 }
