@@ -15,6 +15,6 @@ fun NavGraphBuilder.scheduleListComposable(appState: ApplicationState) {
 
 fun NavGraphBuilder.registerSubwayScheduleComposable(appState: ApplicationState) {
     composable<Route.SelectSubway> { entry ->
-        SubwayScreen(popBackStack = { appState.popBackStack() })
+        SubwayScreen(appState = appState, popBackStack = { appState.popBackStack() })
     }
 }

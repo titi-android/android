@@ -13,8 +13,8 @@ class SubwayManager {
 
     fun setStationLines(newLines: List<StationLineUI>) {
         val mappedLines = newLines.mapIndexed { index, it ->
-                it.apply { it.setSelect(index == 0) }
-            }
+            it.apply { it.setSelect(index == 0) }
+        }
         _stationLines.update { mappedLines }
     }
 
@@ -31,4 +31,6 @@ class SubwayManager {
         }
     }
 
+    fun getCurrentSelectStationLine(): String =
+        _stationLines.value.first { it.isSelected }.name
 }

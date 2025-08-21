@@ -1,7 +1,6 @@
 package com.busschedule.register.ui
 
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +35,7 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,11 +56,12 @@ import com.busschedule.register.component.BusBox
 import com.busschedule.register.component.NotifyIcon
 import com.busschedule.register.component.ScheduleNameTextField
 import com.busschedule.register.component.SelectTransitDialog
+import com.busschedule.register.component.TransitCard
 import com.busschedule.register.component.WhiteContentBox
 import com.busschedule.register.constant.TimePickerType
 import com.busschedule.register.model.BusStopInfoUIFactory
 import com.busschedule.register.model.ScheduleRegister
-import com.busschedule.register.model.asBusStopInfo
+import com.busschedule.register.model.TransitPointType
 import com.busschedule.register.util.convertTimePickerToUiTime
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.DayOfWeekCard
@@ -93,10 +93,19 @@ fun RegisterBusScheduleScreen(
     var isShowSelectRegisterTypeDialog by remember { mutableStateOf(false) }
     val changeSelectRegisterTypeDialogState: (Boolean) -> Unit = remember { {isShowSelectRegisterTypeDialog = it} }
 
+    /*
     BackHandler {
         if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }
         else { appState.popBackStack() }
     }
+
+     */
+    Log.i("daeyoung", "RegisterBusScheduleScreen, called")
+    LaunchedEffect(Unit) {
+        val t = appState.getNavController().currentBackStackEntry?.savedStateHandle?.getStateFlow(key = "test", "")?.value
+        Log.i("daeyoung", "RegisterBusScheduleScreen, LaunchedEffect() called, data: $t")
+    }
+
 
     Box(
         modifier = Modifier
@@ -111,7 +120,7 @@ fun RegisterBusScheduleScreen(
                 rightBtnText = "임시 저장",
                 onDismissRequest = { isShowTempSaveScheduleDialog = false },
                 onNotComplete = { appState.popBackStack() },
-                onComplete = { viewModel.fetchInsertTempSchedule {appState.popBackStack()} })
+                onComplete = { /*viewModel.fetchInsertTempSchedule {appState.popBackStack()} */})
         }
         if (isShowSelectRegisterTypeDialog) {
             SelectTransitDialog(
@@ -125,8 +134,11 @@ fun RegisterBusScheduleScreen(
             .fillMaxSize()
             .background(Background)) {
             BackArrowAppBar(title = "스케줄 등록하기") {
+                /*
                 if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }
                 else { appState.popBackStack() }
+
+                 */
             }
             val scrollState = rememberScrollState()
             Column(
@@ -152,7 +164,22 @@ fun RegisterBusScheduleScreen(
                 ) {
                     viewModel.updateIsNotify()
                 }
-                viewModel.routeInfos.forEachIndexed { index, busStopInfoUI ->
+
+                if (viewModel.transitTypeInfos.isEmpty()) {
+                    TransitCard(
+                        isNotInit = true,
+                        onInitClick = changeSelectRegisterTypeDialogState,
+                        type = TransitPointType.START,
+                    )
+                }
+
+                viewModel.transitTypeInfos.forEachIndexed { index, busStopInfoUI ->
+                    TransitCard(
+                        isNotInit = false,
+                        onInitClick = { },
+                        type = if (index == 0) TransitPointType.START else TransitPointType.TRANSFER,
+                    )
+                    /*
                     RegionArea(
                         title = if (index == 0) "출발" else "환승",
                         region = busStopInfoUI.region,
@@ -165,8 +192,15 @@ fun RegisterBusScheduleScreen(
                         Log.d("daeyoung", "busStopInfoUI: $busStopInfoUI")
                         appState.navigateToSelectBusStop(busStopInfoUI.asBusStopInfo())
                     }
-                }
 
+                     */
+                }
+                TransitCard(
+                    isNotInit = true,
+                    onInitClick = changeSelectRegisterTypeDialogState,
+                    type = TransitPointType.END,
+                )
+                /*
                 ArriveArea(
                     region = uiState.arriveBusStop.region,
                     navigateRegionScreen = { appState.navigateToSelectRegion(BusStopInfoUIFactory.ARRIVE_ID) },
@@ -176,15 +210,15 @@ fun RegisterBusScheduleScreen(
                     viewModel.addBusStopInfoUI()
                 }
 
-            }
-            /* TODO: UI 변경되면 삭제할 것 */
-            Button(onClick = {changeSelectRegisterTypeDialogState(true)}) { Text("(임시) 등록 타입 선택 버튼") }
+                 */
 
+            }
             MainBottomButton(text = "완료") {
+                /*
                 viewModel.putOrPostSchedule(
                     onSuccessOfPut = { appState.navigateToScheduleList() },
                     onSuccessOfPost = { appState.navigateToScheduleList() },
-                ) { appState.showToastMsg(it) }
+                ) { appState.showToastMsg(it) } */
             }
         }
 

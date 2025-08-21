@@ -1,7 +1,6 @@
 package com.busschedule.register
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
@@ -17,38 +16,30 @@ import com.busschedule.domain.usecase.busstop.ReadAllBusStopUseCase
 import com.busschedule.domain.usecase.schedule.PostScheduleUseCase
 import com.busschedule.domain.usecase.schedule.PutScheduleUseCase
 import com.busschedule.domain.usecase.schedule.ReadScheduleUseCase
-import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStop
 import com.busschedule.model.DayOfWeekUi
 import com.busschedule.model.RecentlySearchBusStop
-import com.busschedule.model.asBusStop
-import com.busschedule.model.asDestinationInfo
-import com.busschedule.model.constant.BusType
 import com.busschedule.model.constant.DayOfWeek
 import com.busschedule.navigation.Route
 import com.busschedule.register.model.AddBusDialogUiState
 import com.busschedule.register.model.Bus
-import com.busschedule.register.model.BusStopInfoUI
-import com.busschedule.register.model.BusStopInfoUIFactory
 import com.busschedule.register.model.CityOfRegion
 import com.busschedule.register.model.KakaoMapObject
 import com.busschedule.register.model.ScheduleRegister
 import com.busschedule.register.model.SelectBusStopUiState
 import com.busschedule.register.model.SelectRegionUiState
 import com.busschedule.register.model.SelectedBusUI
-import com.busschedule.register.model.asRouteInfo
+import com.busschedule.register.model.TransitType
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import com.kakao.vectormap.KakaoMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -88,8 +79,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
     private val _isNotify = MutableStateFlow(false)
     val isNotify: StateFlow<Boolean> = _isNotify.asStateFlow()
 
-    private var _routeInfos = mutableStateListOf(BusStopInfoUIFactory.create())
-    val routeInfos: List<BusStopInfoUI> = _routeInfos
+    private var _transitTypeInfos = mutableStateListOf<TransitType>()
+    val transitTypeInfos: List<TransitType> = _transitTypeInfos
 
     private val _arriveBusStop = MutableStateFlow(BusStop())
     val arriveBusStop: StateFlow<BusStop> = _arriveBusStop
@@ -147,19 +138,21 @@ class RegisterBusScheduleViewModel @Inject constructor(
 
     lateinit var kakaoMap: KakaoMapObject
 
+    /*
     init {
         if (isExistTempSchedule) fetchReadTempSchedule()
         else if (isUpdateSchedule()) viewModelScope.launch {
             fetchReadSchedule(scheduleId!!) { showToastMsg(it) }
         }
     }
+     */
 
     fun isUpdateSchedule(): Boolean = scheduleId != null
 
-    fun isRouteInfoNotEmpty():Boolean {
-        if (routeInfos.isEmpty()) return false
-        return routeInfos.first().isNotBlank()
-    }
+//    fun isRouteInfoNotEmpty():Boolean {
+//        if (transitTypeInfos.isEmpty()) return false
+//        return transitTypeInfos.first().isNotBlank()
+//    }
 
     fun updateScheduleName(name: String) {
         _scheduleName.update { name }
@@ -177,13 +170,13 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _isNotify.update { !isNotify.value }
     }
 
-    fun addBusStopInfoUI() {
-        _routeInfos.add(BusStopInfoUIFactory.create())
-    }
+//    fun addBusStopInfoUI() {
+//        _transitTypeInfos.add(BusStopInfoUIFactory.create())
+//    }
 
-    fun removeBusStopInfoUI(id: Int) {
-        _routeInfos.removeIf { it.compareID(id) }
-    }
+//    fun removeBusStopInfoUI(id: Int) {
+//        _transitTypeInfos.removeIf { it.compareID(id) }
+//    }
 
 
     fun updateBusStopInput(input: String) {
@@ -218,22 +211,22 @@ class RegisterBusScheduleViewModel @Inject constructor(
         _addBus.update { emptyList() }
     }
 
-    fun addBusStopInSelectBusStopInfo(id: Int, popBackStack: () -> Unit) {
-        val bus = busStop.value
-        val index = _routeInfos.indexOfFirst { it.compareID(id) }
-        Log.d("daeyoung", "index: $index")
-        _routeInfos[index] = _routeInfos[index].copy(
-            region = bus.region,
-            busStop = bus.busStop,
-            nodeId = bus.nodeId,
-            busesInit = bus.buses.filter { it.isSelected }
-                .map { BusInfo(name = it.name, type = it.type.name) }
-        )
-        cityOfRegion.value.unAllSelect()
-        _busStopInput.update { "" }
-        _busStop.update { SelectedBusUI() }
-        popBackStack()
-    }
+//    fun addBusStopInSelectBusStopInfo(id: Int, popBackStack: () -> Unit) {
+//        val bus = busStop.value
+//        val index = _transitTypeInfos.indexOfFirst { it.compareID(id) }
+//        Log.d("daeyoung", "index: $index")
+//        _transitTypeInfos[index] = _transitTypeInfos[index].copy(
+//            region = bus.region,
+//            busStop = bus.busStop,
+//            nodeId = bus.nodeId,
+//            busesInit = bus.buses.filter { it.isSelected }
+//                .map { BusInfo(name = it.name, type = it.type.name) }
+//        )
+//        cityOfRegion.value.unAllSelect()
+//        _busStopInput.update { "" }
+//        _busStop.update { SelectedBusUI() }
+//        popBackStack()
+//    }
 
     fun completeOfArriveBusStop(region: String, popBackStack: () -> Unit) {
         val bus = busStop.value
@@ -257,9 +250,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setRouteInfos(list: List<BusStopInfoUI>) {
-        _routeInfos.clear()
-        _routeInfos.addAll(list)
+    private fun setRouteInfos(list: List<TransitType>) {
+        _transitTypeInfos.clear()
+        _transitTypeInfos.addAll(list)
     }
 
     private fun updateWidget() {
@@ -276,24 +269,24 @@ class RegisterBusScheduleViewModel @Inject constructor(
         dayOfWeek.value == selectDayOfWeek.take(1)
 
 
-    private fun fetchPostBusSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
-        viewModelScope.launch {
-            postScheduleUseCase(
-                name = scheduleName.value,
-                daysList = dayOfWeeks.value.filter { it.isSelected }
-                    .map { "${it.dayOfWeek.value}요일" },
-                startTime = startTime.value,
-                endTime = endTime.value,
-                routeInfos = routeInfos.map { it.asRouteInfo() },
-                destinationInfo = arriveBusStop.value.asDestinationInfo(),
-                isAlarmOn = isNotify.value
-            ).onSuccess {
-                onSuccess()
-                showToast("스케줄을 등록했습니다.")
-                updateWidget()
-            }.onFailure { showToast(it.message!!) }
-        }
-    }
+//    private fun fetchPostBusSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
+//        viewModelScope.launch {
+//            postScheduleUseCase(
+//                name = scheduleName.value,
+//                daysList = dayOfWeeks.value.filter { it.isSelected }
+//                    .map { "${it.dayOfWeek.value}요일" },
+//                startTime = startTime.value,
+//                endTime = endTime.value,
+//                routeInfos = transitTypeInfos.map { it.asRouteInfo() },
+//                destinationInfo = arriveBusStop.value.asDestinationInfo(),
+//                isAlarmOn = isNotify.value
+//            ).onSuccess {
+//                onSuccess()
+//                showToast("스케줄을 등록했습니다.")
+//                updateWidget()
+//            }.onFailure { showToast(it.message!!) }
+//        }
+//    }
 
     fun isBiggerStartTime(time: String): Boolean {
         val eTime = time.split(":").map { it.toInt() }
@@ -353,6 +346,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
         }
     }
 
+    /*
     fun fetchReadAllBusOfBusStop(
         id: Int,
         busStopName: String,
@@ -371,7 +365,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                         busStop = busStopName,
                         nodeId = nodeId,
                         buses = busInfos.map { bus ->
-                            val routeInfos = routeInfos.find { it.compareID(id) }
+                            val routeInfos = transitTypeInfos.find { it.compareID(id) }
                                 Bus(
                                 name = bus.name,
                                 type = BusType.find(bus.type),
@@ -386,7 +380,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
             }.onFailure { showToast(it.message!!) }
         }
     }
+     */
 
+    /*
     private fun fetchReadSchedule(scheduleId: Int, showToast: (String) -> Unit) {
         viewModelScope.launch {
             readScheduleUseCase(scheduleId).onSuccess { scheduleRegister ->
@@ -410,6 +406,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
         }
     }
 
+     */
+
+    /*
     private fun fetchPutSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {
         viewModelScope.launch {
             putScheduleUseCase(
@@ -419,7 +418,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                     .map { "${it.dayOfWeek.value}요일" },
                 startTime = startTime.value,
                 endTime = endTime.value,
-                routeInfos = routeInfos.map { it.asRouteInfo() },
+                routeInfos = transitTypeInfos.map { it.asRouteInfo() },
                 destinationInfo = arriveBusStop.value.asDestinationInfo(),
                 isAlarmOn = isNotify.value
             ).onSuccess {
@@ -430,6 +429,9 @@ class RegisterBusScheduleViewModel @Inject constructor(
         }
     }
 
+     */
+
+    /*
     fun putOrPostSchedule(
         onSuccessOfPut: () -> Unit,
         onSuccessOfPost: () -> Unit,
@@ -448,7 +450,7 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 showToast("종료 시간이 시작 시간보다 늦습니다.")
                 return
             }
-            if (routeInfos.first().isNotBlank().not()) {
+            if (transitTypeInfos.first().isNotBlank().not()) {
                 showToast("춥발지가 입력되지 않았습니다.")
                 return
             }
@@ -465,6 +467,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
             showToast("주어진 항목을 모두 입력해주세요.")
         }
     }
+
+     */
 
     fun isEqualBusStop(c: String): Boolean {
         return busStop.value.busStop == c
@@ -495,6 +499,8 @@ class RegisterBusScheduleViewModel @Inject constructor(
         }
     }
 
+
+    /*
     fun fetchInsertTempSchedule(navigateToScheduleList: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             tempSaveScheduleRepository.insert(
@@ -502,13 +508,16 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 dayOfWeeks = dayOfWeeks.value.filter { it.isSelected }.map { it.dayOfWeek.value },
                 startTime = startTime.value,
                 endTime = endTime.value,
-                routeInfos = routeInfos.map { it.asRouteInfo() },
+                routeInfos = transitTypeInfos.map { it.asRouteInfo() },
                 arriveBusStop = arriveBusStop.value,
             )
             withContext(Dispatchers.Main) { navigateToScheduleList() }
         }
     }
 
+     */
+
+    /*
     private fun fetchReadTempSchedule() {
         viewModelScope.launch(Dispatchers.IO) {
             if (isExistTempSchedule) {
@@ -525,12 +534,13 @@ class RegisterBusScheduleViewModel @Inject constructor(
                 _startTime.update { temp.startTime }
                 _endTime.update { temp.endTime }
                 _isNotify.update { temp.isAlarmOn }
-                _routeInfos.addAll(temp.busStops.map { BusStopInfoUIFactory.create(it) })
+                _transitTypeInfos.addAll(temp.busStops.map { BusStopInfoUIFactory.create(it) })
                 _arriveBusStop.update { temp.destinationInfo.asBusStop() }
                 tempSaveScheduleRepository.delete()
             }
         }
     }
+     */
 
     companion object {
         private const val START_TIME_EMPTY = "시작 시간"

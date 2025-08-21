@@ -39,9 +39,9 @@ import com.busschedule.subway.component.SelectStationPrefixText
 import com.busschedule.subway.component.SubwayLineCard
 import com.busschedule.subway.component.SubwayStationComponent
 import com.busschedule.subway.model.StationLineUI
-import com.busschedule.subway.model.SubwayStationUI
 import com.busschedule.util.ext.customNavigationBarPadding
 import com.busschedule.util.ext.noRippleClickable
+import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.button.MainButton
@@ -53,29 +53,15 @@ import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mFooter
 
 @Composable
-fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel(), popBackStack: () -> Unit) {
+fun SubwayScreen(
+    viewModel: SubwayViewModel = hiltViewModel(),
+    appState: ApplicationState,
+    popBackStack: () -> Unit,
+) {
 
     val subwayStationsState by viewModel.subwayStations.collectAsStateWithLifecycle()
     val stationLines by viewModel.subwayManager.stationLines.collectAsStateWithLifecycle()
-
-    var selectStations by remember { mutableStateOf<Pair<SubwayStationUI?, SubwayStationUI?>>(null to null) }
-    val stationDirection by remember {
-        derivedStateOf {
-            if (selectStations.first?.id == null || selectStations.second == null) StationDirection.NONE
-            else if (selectStations.first!!.id > selectStations.second!!.id) StationDirection.UP
-            else StationDirection.DOWN
-        }
-    }
-
-    val onClickStation: (id: Int) -> Unit = { id ->
-        selectStations =
-            if (selectStations.first != null && selectStations.second != null) selectStations.copy(
-                first = null,
-                second = null
-            )
-            else if (selectStations.first == null) selectStations.copy(first = subwayStationsState[id])
-            else selectStations.copy(second = subwayStationsState[id])
-    }
+    val selectStations by viewModel.selectStations.collectAsStateWithLifecycle()
 
     val checkSelectStation: (id: Int) -> SelectStation = {
         if (selectStations.first == null || selectStations.second == null) SelectStation.NOT
@@ -116,13 +102,13 @@ fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel(), popBackStack: () 
                 items(items = subwayStationsState, key = { it.id }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Row(
-                            modifier = Modifier.noRippleClickable { onClickStation(it.id) },
+                            modifier = Modifier.noRippleClickable { viewModel.setSelectStation(it.id) },
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             val stationState = checkSelectStation(it.id)
                             SubwayStationComponent(
                                 isSelected = stationState,
-                                stationDirection = stationDirection,
+                                stationDirection = viewModel.getSubwayDirection(),
                                 selectedColor = Color(0xFFFF0000)
                             )
                             WidthSpacer(18.dp)
@@ -145,12 +131,29 @@ fun SubwayScreen(viewModel: SubwayViewModel = hiltViewModel(), popBackStack: () 
                     }
                 }
             }
-            if (isShowSelectStationBox) {
-                SelectStationBox()
-            }
+            SelectStationBox(
+                isVisibility = isShowSelectStationBox,
+                modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .align(Alignment.BottomEnd),
+                startStation = selectStations.first?.stationNm ?: "",
+                endStation = selectStations.second?.stationNm ?: ""
+            )
         }
 
-        MainButton(text = "스케줄 등록", enabled = isExistSelectStation) { }
+        MainButton(
+            text = "스케줄 등록",
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isExistSelectStation
+        ) {
+            val saveData = mapOf(
+                "regionName" to "서울",
+                "lineName" to "1호선",
+                "stationName" to "서울",
+                "dir" to "UP"
+            )
+            appState.popBackStackFromSubway(saveData)
+        }
     }
 }
 
@@ -161,7 +164,7 @@ fun ColumnScope.SubwayAppBar(
     onSubwayStationLineClicked: (stName: String) -> Unit,
     onSearch: (search: String) -> Unit,
 ) {
-    var input by rememberSaveable { mutableStateOf("") }
+    var input by rememberSaveable { mutableStateOf("서울역") }
 
     Row(
         modifier = Modifier

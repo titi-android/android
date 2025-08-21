@@ -3,6 +3,7 @@ package core.designsystem.component.dialog
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -45,13 +46,13 @@ fun CloseDialog(title: String, content: String, onDismissRequest: () -> Unit, on
                 HeightSpacer(height = 20.dp)
                 Row(modifier = Modifier.padding(top = 10.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
-                        MainOutlineButton(text = "취소") {
+                        MainOutlineButton(text = "취소", modifier = Modifier.fillMaxWidth()) {
                             onDismissRequest()
                         }
                     }
                     WidthSpacer(width = 10.dp)
                     Box(modifier = Modifier.weight(1f)) {
-                        MainButton(text = "확인") {
+                        MainButton(text = "확인", modifier = Modifier.fillMaxWidth()) {
                             onDelete()
                             onDismissRequest()
                         }

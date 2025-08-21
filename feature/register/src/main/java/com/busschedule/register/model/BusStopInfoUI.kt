@@ -21,7 +21,6 @@ object BusStopInfoUIFactory {
 }
 
 
-@Stable
 data class BusStopInfoUI(
     private val id: Int = 0,
     val region: String = "",

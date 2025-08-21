@@ -10,6 +10,7 @@ import com.busschedule.subway.model.StationLineUI
 import com.busschedule.subway.model.SubwayManager
 import com.busschedule.subway.model.SubwayStationUI
 import com.busschedule.subway.model.asState
+import com.busschedule.subway.ui.StationDirection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,9 +31,29 @@ class SubwayViewModel @Inject constructor(
     private val _subwayStations = MutableStateFlow(emptyList<SubwayStationUI>())
     val subwayStations: StateFlow<List<SubwayStationUI>> = _subwayStations.asStateFlow()
 
+    private val _selectStations =
+        MutableStateFlow<Pair<SubwayStationUI?, SubwayStationUI?>>(null to null)
+    val selectStations: StateFlow<Pair<SubwayStationUI?, SubwayStationUI?>> =
+        _selectStations.asStateFlow()
+
     private fun changeStationLineState(stName: String) {
         subwayManager.changeStationLineState(stName)
     }
+
+    fun setSelectStation(id: Int) {
+        val (f, s) = if (selectStations.value.first != null && selectStations.value.second != null)
+            null to null
+        else if (selectStations.value.first == null) subwayStations.value[id] to null
+        else selectStations.value.first to subwayStations.value[id]
+        _selectStations.update { f to s }
+        Log.i("daeyoung", "setSelectStation() called, selectStations: ${selectStations.value}")
+    }
+
+    fun getSubwayDirection(): StationDirection =
+        if (selectStations.value.first?.id == null || selectStations.value.second == null) StationDirection.NONE
+        else if (selectStations.value.first!!.id > selectStations.value.second!!.id) StationDirection.UP
+        else StationDirection.DOWN
+
 
     fun fetchGetSubwayStationLineInfo(stName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -42,7 +63,14 @@ class SubwayViewModel @Inject constructor(
                 result.forEach { subwayStationLineInfo ->
                     subwayStationLineInfo.lines
                         .filter { StationLine.isExistStationLine(it) }
-                        .forEach { stationLineSet.add(StationLineUI(name = it, initSelected = false)) }
+                        .forEach {
+                            stationLineSet.add(
+                                StationLineUI(
+                                    name = it,
+                                    initSelected = false
+                                )
+                            )
+                        }
                 }
                 val sortedStationLine = stationLineSet.toList().sortedBy { it.name }
                 fetchGetSubwayStation(sortedStationLine.first().name)

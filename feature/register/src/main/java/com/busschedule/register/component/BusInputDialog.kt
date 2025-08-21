@@ -113,13 +113,13 @@ fun BusInputDialog(
                 HeightSpacer(height = 10.dp)
                 Row(modifier = Modifier.padding(top = 10.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
-                        MainOutlineButton(text = "취소") {
+                        MainOutlineButton(text = "취소", modifier = Modifier.fillMaxWidth()) {
                             onCancel()
                         }
                     }
                     WidthSpacer(width = 10.dp)
                     Box(modifier = Modifier.weight(1f)) {
-                        MainButton(text = "확인") {
+                        MainButton(text = "확인", modifier = Modifier.fillMaxWidth()) {
                             onCheck()
                             onDismissRequest()
                         }

@@ -99,6 +99,20 @@ class ApplicationState(
         navController.popBackStack<Route.RegisterGraph.RegisterSchedule>(inclusive = false)
     }
 
+    fun getPreviousBackStackEntry() = navController.previousBackStackEntry
+        ?.savedStateHandle
+
+    fun popBackStackFromSubway(data: Map<String, String>) {
+        navController.previousBackStackEntry
+            ?.savedStateHandle.apply {
+                data.forEach { key, value ->
+                    this?.set(key, value)
+                }
+            }
+        popBackStack()
+    }
+
+
     fun navigateEncodingUrl(prefixUrl: String, encodeUrl: String, param: String) {
         val encodedUrl = URLEncoder.encode(encodeUrl, StandardCharsets.UTF_8.toString())
         navController.navigate("$prefixUrl/$encodedUrl/$param")

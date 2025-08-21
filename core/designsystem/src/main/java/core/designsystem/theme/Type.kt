@@ -66,6 +66,13 @@ val mTextBtn = TextStyle(
     fontSize = 16.sp,
 )
 
+val mButton = TextStyle(
+    fontSize = 18.sp,
+    fontFamily = FontFamily(Font(R.font.roboto)),
+    fontWeight = FontWeight(700),
+    color = Primary3,
+)
+
 val mTitle = TextStyle(
     fontFamily = FontFamily(Font(R.font.roboto)),
     fontWeight = FontWeight.Medium,

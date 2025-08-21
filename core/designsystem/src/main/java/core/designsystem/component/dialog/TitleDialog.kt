@@ -3,6 +3,7 @@ package core.designsystem.component.dialog
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -42,14 +43,14 @@ fun TitleDialog(title: String, leftBtnText: String, rightBtnText: String, onDism
 //                HeightSpacer(height = 20.dp)
                 Row(modifier = Modifier.padding(top = 10.dp)) {
                     Box(modifier = Modifier.weight(1f)) {
-                        MainOutlineButton(text = leftBtnText) {
+                        MainOutlineButton(modifier = Modifier.fillMaxWidth(), text = leftBtnText) {
                             onNotComplete()
                             onDismissRequest()
                         }
                     }
                     WidthSpacer(width = 10.dp)
                     Box(modifier = Modifier.weight(1f)) {
-                        MainButton(text = rightBtnText) {
+                        MainButton(text = rightBtnText, modifier = Modifier.fillMaxWidth()) {
                             onComplete()
                             onDismissRequest()
                         }

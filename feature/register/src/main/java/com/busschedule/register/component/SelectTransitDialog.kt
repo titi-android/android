@@ -50,40 +50,6 @@ fun SelectTransitDialog(
             }
 
         }
-        /*
-        Card(
-            colors = CardDefaults.cardColors(containerColor = TextWColor),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(
-                    top = 20.dp,
-                    bottom = 10.dp,
-                    start = 17.dp,
-                    end = 17.dp
-                ), horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = title, style = sbTitle3.copy(TextColor))
-                HeightSpacer(height = 8.dp)
-                Text(text = content, style = rTextLabel.copy(TextMColor))
-                HeightSpacer(height = 20.dp)
-                Row(modifier = Modifier.padding(top = 10.dp)) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        MainOutlineButton(text = "취소") {
-                            onDismissRequest()
-                        }
-                    }
-                    WidthSpacer(width = 10.dp)
-                    Box(modifier = Modifier.weight(1f)) {
-                        MainButton(text = "확인") {
-                            onDelete()
-                            onDismissRequest()
-                        }
-                    }
-                }
-            }
-        }
-         */
     }
 }
 

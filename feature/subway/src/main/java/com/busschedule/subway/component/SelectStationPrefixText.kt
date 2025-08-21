@@ -14,16 +14,18 @@ import core.designsystem.theme.TextWColor
 import core.designsystem.theme.sbTitle3
 
 @Composable
-fun SelectStationPrefixText(name: String, color: Color) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = color,
-            contentColor = TextWColor,
-        ),
-    ) {
-        Box(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
-            Text(text = name, style = sbTitle3.copy(color = TextWColor))
+fun SelectStationPrefixText(modifier: Modifier = Modifier, name: String, color: Color) {
+    Box(modifier = modifier,) {
+        Card(
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = color,
+                contentColor = TextWColor,
+            ),
+        ) {
+            Box(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+                Text(text = name, style = sbTitle3.copy(color = TextWColor))
+            }
         }
     }
 }

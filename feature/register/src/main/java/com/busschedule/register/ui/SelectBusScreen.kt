@@ -155,13 +155,15 @@ fun SelectBusScreen(
                                         viewModel.busStop.value.busStop
                                         return@setOnLabelClickListener false
                                     }
-
+/*
                                     viewModel.fetchReadAllBusOfBusStop(
                                         id = busStop.id,
                                         busStopName = label.texts.first(),
                                         nodeId = busStopInfo.nodeId,
                                         hideBottomSheet = { isShowBottomSheet = true }
                                     ) { appState.showToastMsg(it) }
+
+ */
                                     kakaoMapObject.moveCamera(label.position, isUpCamera = true)
                                     false
                                 }
@@ -218,9 +220,11 @@ fun SelectBusScreen(
                 BusesBottomSheet(
                     selectedBusUi = viewModel.busStop.collectAsStateWithLifecycle().value,
                     addBus = { isShowDialog = true }) {
+                    /*
                     viewModel.addBusStopInSelectBusStopInfo(id = busStop.id) {
                         appState.popBackStackRegister()
                     }
+                     */
                 }
             }
 

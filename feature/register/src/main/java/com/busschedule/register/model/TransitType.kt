@@ -22,6 +22,7 @@ sealed class TransitType(
         override val icon: ImageVector = MyIconPack.ImageBus,
         val region: String,
         val busStopName: String,
+        val nodeId: String = "",
         val buses: List<BusInfo> = emptyList(),
     ) : TransitType(content1 =  region, content2 = busStopName) {
         companion object {
