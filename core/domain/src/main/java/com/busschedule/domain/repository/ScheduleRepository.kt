@@ -3,12 +3,12 @@ package com.busschedule.domain.repository
 import com.busschedule.model.DestinationInfo
 import com.busschedule.model.RouteInfo
 import com.busschedule.model.ScheduleRegister
-import com.busschedule.model.ScheduleTicket
+import com.busschedule.model.Schedule
 
 interface ScheduleRepository {
-    suspend fun readNowSchedule(): ScheduleTicket?
-    suspend fun readTodaySchedules(): List<ScheduleTicket>
-    suspend fun readDaySchedules(day: String):List<ScheduleTicket>
+    suspend fun readNowSchedule(): Schedule?
+    suspend fun readTodaySchedules(): List<Schedule>
+    suspend fun readDaySchedules(day: String):List<Schedule>
     suspend fun readSchedule(scheduleId: Int): ScheduleRegister
 
     suspend fun postSchedule(

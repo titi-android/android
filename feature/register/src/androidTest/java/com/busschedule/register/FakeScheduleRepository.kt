@@ -4,18 +4,18 @@ import com.busschedule.domain.repository.ScheduleRepository
 import com.busschedule.model.DestinationInfo
 import com.busschedule.model.BusRegister
 import com.busschedule.model.ScheduleRegister
-import com.busschedule.model.ScheduleTicket
+import com.busschedule.model.Schedule
 
 class FakeScheduleRepository: ScheduleRepository {
-    override suspend fun readNowSchedule(): ScheduleTicket? {
+    override suspend fun readNowSchedule(): Schedule? {
         TODO("Not yet implemented")
     }
 
-    override suspend fun readTodaySchedules(): List<ScheduleTicket> {
+    override suspend fun readTodaySchedules(): List<Schedule> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun readDaySchedules(day: String): List<ScheduleTicket> {
+    override suspend fun readDaySchedules(day: String): List<Schedule> {
         TODO("Not yet implemented")
     }
 

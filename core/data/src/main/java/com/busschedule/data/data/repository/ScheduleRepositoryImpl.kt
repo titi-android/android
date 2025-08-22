@@ -6,19 +6,19 @@ import com.busschedule.data.remote.model.response.asDomain
 import com.busschedule.domain.repository.ScheduleRepository
 import com.busschedule.model.DestinationInfo
 import com.busschedule.model.RouteInfo
+import com.busschedule.model.Schedule
 import com.busschedule.model.ScheduleRegister
-import com.busschedule.model.ScheduleTicket
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(private val scheduleApi: ScheduleApi) :
     ScheduleRepository {
-    override suspend fun readNowSchedule(): ScheduleTicket? =
+    override suspend fun readNowSchedule(): Schedule? =
         scheduleApi.readNowSchedules().getOrThrow().data?.asDomain()
 
-    override suspend fun readTodaySchedules(): List<ScheduleTicket> =
+    override suspend fun readTodaySchedules(): List<Schedule> =
         scheduleApi.readTodayAllSchedules().getOrThrow().data?.map { it.asDomain() } ?: emptyList()
 
-    override suspend fun readDaySchedules(day: String): List<ScheduleTicket> =
+    override suspend fun readDaySchedules(day: String): List<Schedule> =
         scheduleApi.readDaySchedules(day).getOrThrow().data?.map { it.asDomain() } ?: emptyList()
 
     override suspend fun readSchedule(scheduleId: Int): ScheduleRegister =

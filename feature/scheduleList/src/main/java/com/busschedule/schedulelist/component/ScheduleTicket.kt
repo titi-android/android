@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -21,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,10 +36,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.busschedule.model.ArrivingBus
-import com.busschedule.model.BusStopInfo
+import com.busschedule.model.BusArrival
 import com.busschedule.model.constant.BusType
 import com.busschedule.schedulelist.model.ScheduleUI
 import com.busschedule.util.ext.noRippleClickable
@@ -53,7 +49,6 @@ import core.designsystem.shadow.titiShadow
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.svg.myiconpack.IcEdit
-import core.designsystem.svg.myiconpack.IcForwardArrow2
 import core.designsystem.svg.myiconpack.IcNotify
 import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.ImageBusOfTicket
@@ -84,11 +79,15 @@ fun ScheduleTicket(
             onDelete()
         }
     }
-    val busStopInfos = schedule.busStopInfos.take(4)
+
+    /*
+    val busStopInfos = schedule.sections.take(4)
     var curStep by remember { mutableIntStateOf(0) }
     val ticketColors =
         if (schedule.busStopInfos[curStep].busInfos.isEmpty()) BusType.지정
         else BusType.find(schedule.busStopInfos[curStep].busInfos[0].routetp)
+     */
+    val ticketColors = BusType.지정
 
     Box(
         modifier = Modifier
@@ -185,6 +184,7 @@ fun ScheduleTicket(
                     }
                 }
 
+                /*
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -219,8 +219,11 @@ fun ScheduleTicket(
 
                 }
 
+                 */
+
             }
-            ArrivingBusContainer(busInfo = busStopInfos[curStep].busInfos, ticketColors = ticketColors)
+//            ArrivingBusContainer(busInfo = busStopInfos[curStep].busInfos, ticketColors = ticketColors)
+
         }
     }
 }
@@ -263,7 +266,7 @@ fun Modifier.isCurrentStep(isCurrentStep: Boolean) =
 
 @Composable
 fun ColumnScope.ArrivingBusContainer(
-    busInfo: List<ArrivingBus>,
+    busInfo: List<BusArrival>,
     ticketColors: BusType,
 ) {
     Row(
@@ -295,7 +298,7 @@ fun ColumnScope.ArrivingBusContainer(
     }
 }
 
-
+/*
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 fun ScheduleTicketPreview() {
@@ -421,3 +424,4 @@ fun ScheduleTicketPreview() {
     }
 }
 
+ */

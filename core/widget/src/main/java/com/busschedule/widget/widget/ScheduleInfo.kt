@@ -2,8 +2,8 @@
 
 package com.busschedule.widget.widget
 
-import com.busschedule.model.ArrivingBus
-import com.busschedule.model.ScheduleTicket
+import com.busschedule.model.BusArrival
+import com.busschedule.model.Schedule
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -40,15 +40,18 @@ data class BusArrivalData(
     val arrivalTime: Int,
 )
 
-fun ArrivingBus.toBusArrivalData() = BusArrivalData(
+fun BusArrival.toBusArrivalData() = BusArrivalData(
     bus = this.routeno,
     type = this.routetp,
     arrivalTime = this.arrtime
 )
 
-fun ScheduleTicket.toWidgetState(index: Int) = ScheduleInfo.Available(
+fun Schedule.toWidgetState(index: Int) = ScheduleInfo.Available(
     scheduleId = this.id.toString(),
     scheduleName = this.name,
+    busStop = "",
+    busArrivalInfo = emptyList(),
+    /* TODO: 스케줄 불러오는 api 연동하면 수정할 것
     busStop = this.busStopInfos[index].busStopName,
     busArrivalInfo = this.busStopInfos[index].busInfos.map {
         BusArrivalData(
@@ -57,4 +60,5 @@ fun ScheduleTicket.toWidgetState(index: Int) = ScheduleInfo.Available(
             arrivalTime = it.arrtime
         )
     }
+     */
 )

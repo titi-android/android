@@ -1,7 +1,6 @@
 package com.busschedule.widget.widget.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
@@ -15,7 +14,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.busschedule.domain.repository.NotifyRepository
 import com.busschedule.domain.usecase.schedule.ReadNowScheduleUseCase
-import com.busschedule.model.ScheduleTicket
+import com.busschedule.model.Schedule
 import com.busschedule.model.exception.AccessTokenExpiredException
 import com.busschedule.model.exception.AccessTokenIllegalArgumentException
 import com.busschedule.widget.widget.ScheduleGlanceWidget
@@ -80,7 +79,7 @@ class ScheduleWorker @AssistedInject constructor(
                         scheduleId = schedule.id.toString(),
                         scheduleName = schedule.name,
                         busStopIndex = 0,
-                        busStopInfos = schedule.busStopInfos
+                        /* busStopInfos = schedule.busStopInfos */
                     )
                     0
                 }
@@ -105,7 +104,7 @@ class ScheduleWorker @AssistedInject constructor(
         }
     }
 
-    private fun getSuccessWidgetState(schedule: ScheduleTicket?, index: Int? = 0): ScheduleInfo {
+    private fun getSuccessWidgetState(schedule: Schedule?, index: Int? = 0): ScheduleInfo {
         if (schedule == null) {
             return ScheduleInfo.Unavailable.DataIsNull
         }

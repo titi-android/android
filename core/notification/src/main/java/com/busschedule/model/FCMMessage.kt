@@ -1,7 +1,5 @@
 package com.busschedule.model
 
-import com.busschedule.util.ext.toFormatKrTime
-
 data class FCMMessage(
     val scheduleId: String,
     val scheduleName: String,
@@ -17,8 +15,11 @@ data class FCMMessage(
     }
 
     fun getContent(): String {
+        /* TODO: 스케줄 불러오는 api 연동하면 수정할 것
         return busStopInfos.busInfos.joinToString(separator = ", ") {
             "${it.routeno}번 ${it.arrtime.toFormatKrTime()} ${formatArrPrevStationCnt(it.arrprevstationcnt)}"
         }
+         */
+        return ""
     }
 }

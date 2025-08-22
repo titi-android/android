@@ -12,7 +12,6 @@ import com.busschedule.domain.repository.NotifyRepository
 import com.busschedule.widget.widget.ScheduleGlanceWidget
 import com.busschedule.widget.widget.ScheduleInfo
 import com.busschedule.widget.widget.ScheduleStateDefinition
-import com.busschedule.widget.widget.toBusArrivalData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +54,8 @@ class ActionReceiver: BroadcastReceiver() {
                 scheduleId = notifySchedule.scheduleId,
                 busStop = busStopInfo.busStopName,
                 scheduleName = notifySchedule.scheduleName,
-                busArrivalInfo = busStopInfo.busInfos.map { it.toBusArrivalData() }
+                /*busArrivalInfo = busStopInfo.busInfos.map { it.toBusArrivalData() } */
+                busArrivalInfo = emptyList()
             )
 
             setWidgetState(context, glanceIds, scheduleInfo)
