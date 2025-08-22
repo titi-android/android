@@ -156,9 +156,12 @@ fun ScheduleListScreen(
             }
 
             MainBottomButton(text = "스케줄 등록") {
+                /*
                 viewModel.fetchIsExistTempSchedule(
                     navigateToRegister = { appState.navigateToRegister(dayOfWeek = uiState.getSelectedDayOfWeek()) }
                 ) { isShowBringTempScheduleDialog = true }
+                 */
+                appState.navigateToRegister(dayOfWeek = uiState.getSelectedDayOfWeek())
             }
 
         }

@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStop
 import com.busschedule.model.BusStopInfo
-import com.busschedule.model.RouteInfo
+import com.busschedule.model.BusRegister
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -37,16 +37,16 @@ class Converters {
         return gson.fromJson(value, type)
     }
     @TypeConverter
-    fun fromRouteInfoToJson(value: List<RouteInfo>): String {
+    fun fromRouteInfoToJson(value: List<BusRegister>): String {
         val gson = Gson()
-        val type = object : TypeToken<List<RouteInfo>>() {}.type
+        val type = object : TypeToken<List<BusRegister>>() {}.type
         return gson.toJson(value, type)
     }
 
     @TypeConverter
-    fun fromJsonToRouteInfo(value: String): List<RouteInfo> {
+    fun fromJsonToRouteInfo(value: String): List<BusRegister> {
         val gson = Gson()
-        val type = object : TypeToken<List<RouteInfo>>() {}.type
+        val type = object : TypeToken<List<BusRegister>>() {}.type
         return gson.fromJson(value, type)
     }
 

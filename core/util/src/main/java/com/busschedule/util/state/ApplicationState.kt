@@ -1,14 +1,18 @@
 package com.busschedule.util.state
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
+import com.busschedule.model.BusRegister
 import com.busschedule.model.BusStop
 import com.busschedule.model.constant.TransitConst
 import com.busschedule.navigation.LoginGraph
 import com.busschedule.navigation.Route
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -60,7 +64,7 @@ class ApplicationState(
         dayOfWeek: String = "월",
     ) {
         navController.navigate(
-            Route.RegisterGraph.RegisterSchedule(
+            Route.RegisterSchedule(
                 id = id,
                 isExistTempSchedule = isExistTempSchedule,
                 dayOfWeek = dayOfWeek
@@ -69,11 +73,11 @@ class ApplicationState(
     }
 
     fun navigateToSelectRegion(id: Int) {
-        navController.navigate(Route.RegisterGraph.SelectRegion(id))
+        navController.navigate(Route.SelectBus.SelectRegion(id))
     }
 
     fun navigateToSelectBusStop(busStop: BusStop) {
-        navController.navigate(Route.RegisterGraph.SelectBusStop(busStop))
+        navController.navigate(Route.SelectBus.SelectBusStop(busStop))
     }
 
     fun navigateToSelectSubway() {
@@ -97,11 +101,8 @@ class ApplicationState(
     }
 
     fun popBackStackRegister() {
-        navController.popBackStack<Route.RegisterGraph.RegisterSchedule>(inclusive = false)
+        navController.popBackStack<Route.RegisterSchedule>(inclusive = false)
     }
-
-    fun getPreviousBackStackEntry() = navController.previousBackStackEntry
-        ?.savedStateHandle
 
     fun popBackStackFromSubway(data: Map<String, String>) {
         navController.previousBackStackEntry
@@ -113,13 +114,21 @@ class ApplicationState(
         popBackStack()
     }
 
-    fun isBackFromSubway(): Boolean {
-        val transitType = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow(
-            key = "transitType",
-            ""
-        )?.value
-        return transitType == TransitConst.SUBWAY.name
+    fun popBackStackToScheduleRegisterFromBus(key: String = "busStopInfo", value: BusRegister) {
+        val t = navController.getBackStackEntry<Route.RegisterSchedule>()
+        val json = Json.encodeToString<BusRegister>(value)
+        t.savedStateHandle.apply {
+            set(TRANSIT_TYPE, TransitConst.BUS.name)
+            set(key, json)
+        }
+        Log.i("daeyoung", "popBackStackToScheduleRegisterFromBus: ${t}")
+        popBackStackRegister()
+    }
 
+    fun isBackFromSubway(): String {
+        val transitType = navController.currentBackStackEntry?.savedStateHandle?.get<String>(TRANSIT_TYPE)
+        navController.currentBackStackEntry?.savedStateHandle?.remove<String>(TRANSIT_TYPE)
+        return transitType ?: ""
     }
 
     fun getSavedDataFromSubway() =
@@ -128,9 +137,23 @@ class ApplicationState(
                 ?: ""
         }
 
+    fun getSavedDataFromBus(): BusRegister {
+        val jsonString = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow(
+            "busStopInfo",
+            ""
+        )?.value
+        return requireNotNull(Json.decodeFromString<BusRegister>(jsonString!!)) {
+            "busStopInfo is null, RouteInfo 매핑 불가능"
+        }
+    }
+
 
     fun navigateEncodingUrl(prefixUrl: String, encodeUrl: String, param: String) {
         val encodedUrl = URLEncoder.encode(encodeUrl, StandardCharsets.UTF_8.toString())
         navController.navigate("$prefixUrl/$encodedUrl/$param")
+    }
+
+    companion object {
+        private const val TRANSIT_TYPE = "transitType"
     }
 }

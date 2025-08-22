@@ -7,14 +7,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStop
-import com.busschedule.model.RouteInfo
+import com.busschedule.model.BusRegister
 import com.busschedule.model.constant.BusType
 
 object BusStopInfoUIFactory {
     private var id = 1
     fun create() = BusStopInfoUI(id++)
 
-    fun create(routeInfo: RouteInfo) = routeInfo.asBusStopInfoUI(id++)
+    fun create(busRegister: BusRegister) = busRegister.asBusStopInfoUI(id++)
 
     const val ARRIVE_ID = 0
 
@@ -52,19 +52,31 @@ fun BusStopInfoUI.asBusStopInfo() = BusStop(
     nodeId = nodeId,
 )
 
-fun BusStopInfoUI.asRouteInfo() = RouteInfo(
+fun BusStopInfoUI.asRouteInfo() = BusRegister(
     regionName = region,
     busStopName = busStop,
     nodeId = nodeId,
     busInfos = getBuses()
 )
 
-fun RouteInfo.asBusStopInfoUI(id: Int) = BusStopInfoUI(
+fun BusRegister.asBusStopInfoUI(id: Int) = BusStopInfoUI(
     id = id,
     region = regionName,
     busStop = busStopName,
     nodeId = nodeId,
     busesInit = busInfos
+)
+
+fun Bus.asBusInfo() = BusInfo(
+    name = name,
+    type = type.name,
+)
+
+fun SelectedBusUI.asRouteInfo() = BusRegister(
+    regionName = region,
+    busStopName = busStop,
+    nodeId = nodeId,
+    busInfos = buses.filter { it.isSelected }.map { it.asBusInfo() }
 )
 
 

@@ -36,13 +36,9 @@ fun SelectTransitDialog(
     onDismissRequest: () -> Unit = {},
     navigateToSelectRegion: () -> Unit = {},
     navigateToSubway: () -> Unit = {},
-    setLastTransitCardState: () -> Unit = {},
 ) {
 
-    Dialog(onDismissRequest = {
-        onDismissRequest()
-        setLastTransitCardState()
-    }) {
+    Dialog(onDismissRequest = onDismissRequest ) {
         Row {
             TransitImageCard {
                 onDismissRequest()

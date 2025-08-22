@@ -2,7 +2,7 @@ package com.busschedule.register
 
 import com.busschedule.domain.repository.TempSaveScheduleRepository
 import com.busschedule.model.BusStop
-import com.busschedule.model.RouteInfo
+import com.busschedule.model.BusRegister
 import com.busschedule.model.ScheduleRegister
 
 class FakeTempSaveScheduleRepository: TempSaveScheduleRepository {
@@ -12,7 +12,7 @@ class FakeTempSaveScheduleRepository: TempSaveScheduleRepository {
         startTime: String,
         endTime: String,
         isNotify: Boolean,
-        routeInfos: List<RouteInfo>,
+        busRegisters: List<BusRegister>,
         arriveBusStop: BusStop,
     ) {
         TODO("Not yet implemented")

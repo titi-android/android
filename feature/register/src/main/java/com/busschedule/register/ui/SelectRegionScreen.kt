@@ -24,13 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.model.BusStop
-import com.busschedule.register.RegisterBusScheduleViewModel
+import com.busschedule.model.TextBoxColor
+import com.busschedule.register.BusViewModel
 import com.busschedule.register.constant.City
 import com.busschedule.register.constant.Region
 import com.busschedule.register.model.CityUiState
 import com.busschedule.register.model.RegionUiState
 import com.busschedule.register.model.SelectRegionUiState
-import com.busschedule.model.TextBoxColor
 import com.busschedule.util.state.ApplicationState
 import core.designsystem.component.HeightSpacer
 import core.designsystem.component.appbar.BackArrowAppBar
@@ -41,10 +41,9 @@ import core.designsystem.theme.Background
 @Composable
 fun SelectRegionScreen(
     appState: ApplicationState,
-    viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    viewModel: BusViewModel = hiltViewModel(),
     id: Int,
 ) {
-
     val uiState by viewModel.selectRegionUiState.collectAsStateWithLifecycle(
         SelectRegionUiState()
     )

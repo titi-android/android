@@ -36,7 +36,7 @@ class RegisterBusScheduleViewModelTest {
     //테스트에서 사용할 코루틴 스코프
     private val testScope = TestScope(dispatcher)
 
-    lateinit var viewModel: RegisterBusScheduleViewModel
+    lateinit var viewModel: RegisterScheduleViewModel
     lateinit var postScheduleUseCase: PostScheduleUseCase
     lateinit var readAllBusStopUseCase: ReadAllBusStopUseCase
     lateinit var readAllBusOfBusStopUseCase: ReadAllBusOfBusStopUseCase
@@ -57,7 +57,7 @@ class RegisterBusScheduleViewModelTest {
         putScheduleUseCase = PutScheduleUseCase(FakeScheduleRepository())
         recentlySearchBusStopRepository = FakeRecentlySearchBusStopRepository()
         tempSaveScheduleRepository = FakeTempSaveScheduleRepository()
-        viewModel = RegisterBusScheduleViewModel(
+        viewModel = RegisterScheduleViewModel(
             context = getApplicationContext(),
             postScheduleUseCase,
             readAllBusStopUseCase,

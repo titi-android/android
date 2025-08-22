@@ -96,16 +96,17 @@ fun TransitCard(
                         }
                     }
                 }
-                HeightSpacer(16.dp)
+                HeightSpacer(8.dp)
                 TransitCardContentRow(title = transitCardUI.title1, content = transitCardUI.content1)
                 HeightSpacer(16.dp)
                 TransitCardContentRow(title = transitCardUI.title2, content = transitCardUI.content2)
-                HeightSpacer(16.dp)
                 when(transitCardUI) {
                     is TransitCardUI.Bus -> {
+                        HeightSpacer(8.dp)
                         TransitCardBusNumContentRow(buses = transitCardUI.buses)
                     }
                     is TransitCardUI.Subway -> {
+                        HeightSpacer(16.dp)
                         TransitCardContentRow(title = transitCardUI.title3, content = transitCardUI.subwayDirection)
                     }
                 }
@@ -157,7 +158,7 @@ fun TransitCardBusNumContentRow(title: String = "버스 번호", buses: List<Bus
                     icon = MyIconPack.IcBus,
                     name = bus.name,
                     type = bus.type,
-                ) { }
+                )
             }
         }
     }

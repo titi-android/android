@@ -5,7 +5,7 @@ import com.busschedule.data.local.room.model.ScheduleRegisterEntity
 import com.busschedule.data.local.room.model.toModel
 import com.busschedule.domain.repository.TempSaveScheduleRepository
 import com.busschedule.model.BusStop
-import com.busschedule.model.RouteInfo
+import com.busschedule.model.BusRegister
 import com.busschedule.model.ScheduleRegister
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class TempSaveScheduleRepositoryImpl @Inject constructor(
         startTime: String,
         endTime: String,
         isNotify: Boolean,
-        routeInfos: List<RouteInfo>,
+        busRegisters: List<BusRegister>,
         arriveBusStop: BusStop,
     ) {
         val entity = ScheduleRegisterEntity(
@@ -27,7 +27,7 @@ class TempSaveScheduleRepositoryImpl @Inject constructor(
             startTime = startTime,
             endTime = endTime,
             isNotify = isNotify,
-            routeInfos = routeInfos,
+            busRegisters = busRegisters,
             arriveBusStop = arriveBusStop
         )
         registerScheduleDao.insert(entity)

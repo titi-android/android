@@ -8,19 +8,20 @@ data class BusStop(
     val region: String = "",
     val busStop: String = "",
     val nodeId: String = "",
+//    val bus: List<String> = emptyList()
 ) {
     fun isNotBlank() = busStop.isNotBlank() && nodeId.isNotBlank()
 }
 
 
-fun BusStop.asDestinationInfo() = DestinationInfo(
-    regionName = region,
-    busStopName = busStop,
-    nodeId = nodeId,
-)
-
-fun DestinationInfo.asBusStop() = BusStop(
-    region = regionName,
-    busStop = busStopName,
-    nodeId = nodeId,
-)
+//fun BusStop.asDestinationInfo() = DestinationInfo(
+//    regionName = region,
+//    busStopName = busStop,
+//    nodeId = nodeId,
+//)
+//
+//fun DestinationInfo.asBusStop() = BusStop(
+//    region = regionName,
+//    busStop = busStopName,
+//    nodeId = nodeId,
+//)

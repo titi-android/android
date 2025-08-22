@@ -1,5 +1,7 @@
 package com.busschedule.register.ui
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,7 +52,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.model.BusInfo
 import com.busschedule.model.DayOfWeekUi
-import com.busschedule.register.RegisterBusScheduleViewModel
+import com.busschedule.model.constant.TransitConst
+import com.busschedule.register.RegisterScheduleViewModel
 import com.busschedule.register.component.BusBox
 import com.busschedule.register.component.NotifyIcon
 import com.busschedule.register.component.ScheduleNameTextField
@@ -58,7 +61,6 @@ import com.busschedule.register.component.SelectTransitDialog
 import com.busschedule.register.component.TransitCard
 import com.busschedule.register.component.WhiteContentBox
 import com.busschedule.register.constant.TimePickerType
-import com.busschedule.register.model.BusStopInfoUIFactory
 import com.busschedule.register.model.ScheduleRegister
 import com.busschedule.register.model.TransitPointType
 import com.busschedule.register.util.convertTimePickerToUiTime
@@ -85,7 +87,7 @@ import java.util.Calendar
 @Composable
 fun RegisterScheduleScreen(
     appState: ApplicationState,
-    viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    viewModel: RegisterScheduleViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.registerBusScheduleUiState.collectAsStateWithLifecycle(ScheduleRegister())
     val lastTransitCardUI by viewModel.lastTransitCardUIInfos.collectAsStateWithLifecycle()
@@ -94,17 +96,27 @@ fun RegisterScheduleScreen(
     val changeSelectRegisterTypeDialogState: (Boolean) -> Unit =
         remember { { isShowSelectRegisterTypeDialog = it } }
 
-    /*
     BackHandler {
+        /*
         if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }
         else { appState.popBackStack() }
+         */
+        appState.popBackStack()
     }
 
-     */
     LaunchedEffect(Unit) {
-        if (appState.isBackFromSubway()) {
-            val subwayInfo = appState.getSavedDataFromSubway()
-            viewModel.addSubwayInfo(subwayInfo)
+        when (appState.isBackFromSubway()) {
+            TransitConst.BUS.name -> {
+                val busStopInfo = appState.getSavedDataFromBus()
+                viewModel.addBusInfo(busStopInfo)
+            }
+
+            TransitConst.SUBWAY.name -> {
+                val subwayInfo = appState.getSavedDataFromSubway()
+                viewModel.addSubwayInfo(subwayInfo)
+            }
+
+            else -> Log.e("daeyoung", "RegisterScheduleScreen: null")
         }
     }
 
@@ -128,9 +140,8 @@ fun RegisterScheduleScreen(
             SelectTransitDialog(
                 onDismissRequest = { isShowSelectRegisterTypeDialog = false },
                 // TODO: navigateToSelectRegion() 에 들어가는 매개변수 목적 파악
-                navigateToSelectRegion = { appState.navigateToSelectRegion(BusStopInfoUIFactory.ARRIVE_ID) },
+                navigateToSelectRegion = { appState.navigateToSelectRegion(viewModel.getCurrentFocusTransitCard()) },
                 navigateToSubway = { appState.navigateToSelectSubway() },
-                setLastTransitCardState = { viewModel.setLastTransitCardState(false) },
             )
         }
         Column(
@@ -173,23 +184,35 @@ fun RegisterScheduleScreen(
                 if (viewModel.transitCardUIInfos.isEmpty()) {
                     HeightSpacer(16.dp)
                     TransitCard(
-                        onInitClick = changeSelectRegisterTypeDialogState,
+                        onInitClick = {
+                            changeSelectRegisterTypeDialogState(it)
+                            viewModel.setCurrentFocusTransitCard(RegisterScheduleViewModel.START_NOT_INIT_TRANSIT_CARD_ID)
+                        },
                         type = TransitPointType.START,
                     )
                 }
 
-                if (viewModel.transitCardUIInfos.isNotEmpty() && lastTransitCardUI.isEmpty()
-                        .not()
-                ) {
-                    TransferRow { changeSelectRegisterTypeDialogState(true) }
-                } else { HeightSpacer(16.dp) }
+                if (viewModel.transitCardUIInfos.isNotEmpty() && lastTransitCardUI.isEmpty().not()) {
+                    TransferRow {
+                        if (viewModel.transitCardUIInfos.size == RegisterScheduleViewModel.LAST_TRANSIT_CARD_ID) return@TransferRow
+                        changeSelectRegisterTypeDialogState(true)
+                        viewModel.setCurrentFocusTransitCard(viewModel.transitCardUIInfos.size)
+                    }
+                } else {
+                    HeightSpacer(16.dp)
+                }
 
                 viewModel.transitCardUIInfos.forEachIndexed { index, transitInfo ->
                     TransitCard(
-                        id = index,
+                        id = index + 1,
                         type = if (index == 0) TransitPointType.START else TransitPointType.TRANSFER,
                         transitCardUI = transitInfo,
-                        onEditClick = { isNotInit -> if (isNotInit.not()) changeSelectRegisterTypeDialogState(true) },
+                        onEditClick = { isNotInit ->
+                            if (isNotInit.not()) {
+                                changeSelectRegisterTypeDialogState(true)
+                                viewModel.setCurrentFocusTransitCard(index)
+                            }
+                        },
                         onRemoveClick = { viewModel.removeTransitCard(it) }
                     )
                     HeightSpacer(height = 16.dp)
@@ -214,32 +237,18 @@ fun RegisterScheduleScreen(
                     transitCardUI = lastTransitCardUI,
                     onInitClick = {
                         changeSelectRegisterTypeDialogState(it)
-                        viewModel.setLastTransitCardState(true)
+                        viewModel.setCurrentFocusTransitCard(RegisterScheduleViewModel.LAST_TRANSIT_CARD_ID)
                     },
                     onEditClick = {
                         changeSelectRegisterTypeDialogState(true)
-                        viewModel.setLastTransitCardState(true)
+                        viewModel.setCurrentFocusTransitCard(RegisterScheduleViewModel.LAST_TRANSIT_CARD_ID)
                     },
                 )
-                /*
-                ArriveArea(
-                    region = uiState.arriveBusStop.region,
-                    navigateRegionScreen = { appState.navigateToSelectRegion(BusStopInfoUIFactory.ARRIVE_ID) },
-                    busStop = uiState.arriveBusStop.busStop
-                ) { appState.navigateToSelectBusStop(uiState.arriveBusStop) }
-                TransferRow {
-                    viewModel.addBusStopInfoUI()
-                }
-
-                 */
-
             }
             MainBottomButton(text = "완료") {
-                /*
                 viewModel.putOrPostSchedule(
-                    onSuccessOfPut = { appState.navigateToScheduleList() },
-                    onSuccessOfPost = { appState.navigateToScheduleList() },
-                ) { appState.showToastMsg(it) } */
+                    navigateToScheduleList = { appState.navigateToScheduleList() },
+                ) { appState.showToastMsg(it) }
             }
         }
 
@@ -325,7 +334,7 @@ fun RegionArea(
                     icon = MyIconPack.IcBus,
                     name = bus.name,
                     type = bus.type,
-                ) { deleteBus(bus.name) }
+                )
             }
         }
     }

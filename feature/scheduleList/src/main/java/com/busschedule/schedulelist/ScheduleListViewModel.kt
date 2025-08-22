@@ -133,15 +133,17 @@ class ScheduleListViewModel @Inject constructor(
         }
     }
 
+    /*
     fun fetchIsExistTempSchedule(navigateToRegister: () -> Unit, showBringTempScheduleDialog: () -> Unit, ) {
         viewModelScope.launch(Dispatchers.IO) {
             val action = if (tempSaveScheduleRepository.isExist()) {
                 showBringTempScheduleDialog
             } else { navigateToRegister }
-
             withContext(Dispatchers.Main) { action() }
         }
     }
+
+     */
 
     fun fetchDeleteTempSchedule(navigateToRegister: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {

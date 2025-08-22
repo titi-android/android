@@ -1,7 +1,7 @@
 package com.busschedule.domain.repository
 
 import com.busschedule.model.BusStop
-import com.busschedule.model.RouteInfo
+import com.busschedule.model.BusRegister
 import com.busschedule.model.ScheduleRegister
 
 interface TempSaveScheduleRepository {
@@ -11,7 +11,7 @@ interface TempSaveScheduleRepository {
         startTime: String = "",
         endTime: String = "",
         isNotify: Boolean = false,
-        routeInfos: List<RouteInfo> = emptyList(),
+        busRegisters: List<BusRegister> = emptyList(),
         arriveBusStop: BusStop = BusStop(),
     )
 

@@ -1,6 +1,5 @@
 package com.busschedule.navigate
 
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.busschedule.navigation.Route
@@ -17,10 +16,7 @@ fun NavGraphBuilder.scheduleListComposable(appState: ApplicationState) {
 
 fun NavGraphBuilder.registerScheduleComposable(appState: ApplicationState) {
     composable<Route.RegisterSchedule> { entry ->
-        RegisterScheduleScreen(
-            appState = appState,
-            viewModel = hiltViewModel()
-        )
+        RegisterScheduleScreen(appState = appState)
     }
 }
 

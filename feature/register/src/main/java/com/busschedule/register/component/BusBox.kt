@@ -1,7 +1,6 @@
 package com.busschedule.register.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -24,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.busschedule.model.constant.BusType
 import core.designsystem.component.WidthSpacer
-import core.designsystem.svg.MyIconPack
-import core.designsystem.svg.myiconpack.IcClose
 import core.designsystem.theme.BusIcGreen
 import core.designsystem.theme.Primary
 import core.designsystem.theme.TextMColor
@@ -38,7 +35,7 @@ fun BusBox(
     icon: ImageVector,
     name: String,
     type: String,
-    onDelete: () -> Unit,
+//    onDelete: () -> Unit,
 ) {
     val busType = BusType.find(type)
     Card(
@@ -70,15 +67,15 @@ fun BusBox(
                     )
                 )
             )
-            WidthSpacer(width = 4.dp)
-            Icon(
-                imageVector = MyIconPack.IcClose,
-                contentDescription = "ic_close",
-                modifier = Modifier
-                    .size(14.dp)
-                    .clickable { onDelete() },
-                tint = TextMColor
-            )
+//            WidthSpacer(width = 4.dp)
+//            Icon(
+//                imageVector = MyIconPack.IcClose,
+//                contentDescription = "ic_close",
+//                modifier = Modifier
+//                    .size(14.dp)
+//                    .clickable { onDelete() },
+//                tint = TextMColor
+//            )
         }
     }
 }

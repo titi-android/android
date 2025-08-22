@@ -2,7 +2,7 @@ package com.busschedule.register
 
 import com.busschedule.domain.repository.ScheduleRepository
 import com.busschedule.model.DestinationInfo
-import com.busschedule.model.RouteInfo
+import com.busschedule.model.BusRegister
 import com.busschedule.model.ScheduleRegister
 import com.busschedule.model.ScheduleTicket
 
@@ -28,7 +28,7 @@ class FakeScheduleRepository: ScheduleRepository {
         daysList: List<String>,
         startTime: String,
         endTime: String,
-        routeInfos: List<RouteInfo>,
+        busRegisters: List<BusRegister>,
         destinationInfo: DestinationInfo,
         isAlarmOn: Boolean,
     ) {
@@ -45,7 +45,7 @@ class FakeScheduleRepository: ScheduleRepository {
         daysList: List<String>,
         startTime: String,
         endTime: String,
-        routeInfos: List<RouteInfo>,
+        busRegisters: List<BusRegister>,
         destinationInfo: DestinationInfo,
         isAlarmOn: Boolean,
     ) {

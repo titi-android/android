@@ -6,7 +6,7 @@ data class ScheduleRegister(
     val days: List<String> = emptyList(),
     val startTime: String = "",
     val endTime: String = "",
-    val busStops: List<RouteInfo>,
-    val destinationInfo: DestinationInfo,
+    val busStops: List<BusRegister>,
+    val destinationInfo: DestinationInfo = DestinationInfo(),
     val isAlarmOn: Boolean
 )

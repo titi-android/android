@@ -49,12 +49,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.busschedule.model.BusStop
 import com.busschedule.model.RecentlySearchBusStop
 import com.busschedule.model.constant.BusType
-import com.busschedule.register.RegisterBusScheduleViewModel
+import com.busschedule.register.BusViewModel
+import com.busschedule.register.RegisterScheduleViewModel
 import com.busschedule.register.component.BusInputDialog
 import com.busschedule.register.component.CheckBoxIcon
 import com.busschedule.register.model.AddBusDialogUiState
 import com.busschedule.register.model.SelectBusStopUiState
 import com.busschedule.register.model.SelectedBusUI
+import com.busschedule.register.model.asRouteInfo
 import com.busschedule.util.ext.customNavigationBarPadding
 import com.busschedule.util.ext.noRippleClickable
 import com.busschedule.util.state.ApplicationState
@@ -78,17 +80,18 @@ import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mBody
 import core.designsystem.theme.mTitle
 import core.designsystem.theme.rFooter
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun SelectBusScreen(
     appState: ApplicationState,
-    viewModel: RegisterBusScheduleViewModel = hiltViewModel(),
+    viewModel: BusViewModel = hiltViewModel(),
     busStop: BusStop,
 ) {
     val uiState by viewModel.selectBusStopUiState.collectAsStateWithLifecycle(SelectBusStopUiState())
+    val busOfBusStop by viewModel.busOfBusStop.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
@@ -97,7 +100,7 @@ fun SelectBusScreen(
     var isLoading by remember { mutableStateOf(busStop.isNotBlank()) }
 
     LaunchedEffect(busStop) {
-        listOf(async { viewModel.fetchReadAllRecentlySearchBusStop() }, async {
+        listOf(launch { viewModel.fetchReadAllRecentlySearchBusStop() }, launch {
             if (busStop.isNotBlank()) {
                 viewModel.fetchFirstReadAllBusStop(
                     busStop.region,
@@ -105,7 +108,7 @@ fun SelectBusScreen(
                     changeLoadingState = { isLoading = false }
                 ) { msg -> appState.showToastMsg(msg) }
             }
-        }).awaitAll()
+        }).joinAll()
     }
     Box(
         modifier = Modifier
@@ -141,6 +144,7 @@ fun SelectBusScreen(
                                         lng = label.position.longitude
                                     )
 
+                                    /*
                                     if (busStop.id == 0) {
                                         kakaoMapObject.moveCamera(
                                             label.position,
@@ -155,15 +159,15 @@ fun SelectBusScreen(
                                         viewModel.busStop.value.busStop
                                         return@setOnLabelClickListener false
                                     }
-/*
+                                    */
+
                                     viewModel.fetchReadAllBusOfBusStop(
                                         id = busStop.id,
                                         busStopName = label.texts.first(),
                                         nodeId = busStopInfo.nodeId,
-                                        hideBottomSheet = { isShowBottomSheet = true }
+                                        showBottomSheet = { isShowBottomSheet = true }
                                     ) { appState.showToastMsg(it) }
 
- */
                                     kakaoMapObject.moveCamera(label.position, isUpCamera = true)
                                     false
                                 }
@@ -211,20 +215,16 @@ fun SelectBusScreen(
         }
 
         if (isShowBottomSheet) {
-            if (busStop.id == 0) {
+            if (busStop.id == RegisterScheduleViewModel.LAST_TRANSIT_CARD_ID) {
                 MainBottomButton(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     text = "완료"
                 ) { viewModel.completeOfArriveBusStop(region = busStop.region) { appState.popBackStackRegister() } }
             } else {
                 BusesBottomSheet(
-                    selectedBusUi = viewModel.busStop.collectAsStateWithLifecycle().value,
+                    selectedBusUi = busOfBusStop,
                     addBus = { isShowDialog = true }) {
-                    /*
-                    viewModel.addBusStopInSelectBusStopInfo(id = busStop.id) {
-                        appState.popBackStackRegister()
-                    }
-                     */
+                    appState.popBackStackToScheduleRegisterFromBus(value = busOfBusStop.asRouteInfo())
                 }
             }
 
