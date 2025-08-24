@@ -17,6 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +37,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.busschedule.model.TransitInfo
+import com.busschedule.model.constant.BusType
+import com.busschedule.model.constant.TransitConst
 import com.busschedule.util.ext.noRippleClickable
 import com.busschedule.util.ext.toFormatKrTime
 import core.designsystem.component.HeightSpacer
@@ -40,9 +46,6 @@ import core.designsystem.component.WidthSpacer
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcForwardArrow2
 import core.designsystem.theme.BusGreen
-import core.designsystem.theme.BusRed
-import core.designsystem.theme.BusRedM1
-import core.designsystem.theme.BusRedM2
 import core.designsystem.theme.BusYellow
 import core.designsystem.theme.TextBoxDis
 import core.designsystem.theme.TextColor
@@ -57,9 +60,25 @@ import core.designsystem.theme.sbTitle4
 @Composable
 fun ScheduleTicket(
     scheduleName: String = "출근",
-    mainColor: Color = BusRed,
     transit: List<TransitInfo>,
+    destinationName: String,
+
 ) {
+
+    val transitList = transit.take(4)
+    var curStep by remember { mutableIntStateOf(0) }
+
+    val ticketColors =
+        when (transitList[curStep].type) {
+            TransitConst.BUS.name -> {
+                if (transitList[curStep].busStop!!.busArrivals.isEmpty()) BusType.지정
+                else BusType.find(transitList[curStep].busStop!!.busArrivals[0].routetp)
+            }
+            TransitConst.SUBWAY.name -> {
+                BusType.지정
+            }
+            else -> BusType.지정
+        }
 
     val rounded = 16.dp
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -68,7 +87,7 @@ fun ScheduleTicket(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = rounded, topEnd = rounded))
-                .drawBehind { drawRoundRect(color = mainColor) }
+                .drawBehind { drawRoundRect(color = ticketColors.color) }
                 .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.Center
         ) {
@@ -88,7 +107,7 @@ fun ScheduleTicket(
                     .fillMaxWidth()
                     .clip(bottomRoundCornerShape) // Clip to prevent border from drawing outside
                     .border(
-                        color = mainColor,
+                        color = ticketColors.color,
                         width = 1.dp,
                         shape = bottomRoundCornerShape
                     )
@@ -111,13 +130,13 @@ fun ScheduleTicket(
                         imageVector = MyIconPack.IcForwardArrow2,
                         contentDescription = "ic_next",
                         modifier = Modifier.size(16.dp),
-                        tint = mainColor
+                        tint = ticketColors.color
                     )
                 }
                 TicketTransitContent(
                     contentColor = TextBoxDis,
                     step = "도착",
-                    busStop = "집",
+                    busStop = destinationName,
                     isCurrentStep = false
                 ) {}
             }
@@ -130,7 +149,7 @@ fun ScheduleTicket(
             // 점선 구분선
             DashedDivider(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                color = mainColor,
+                color = ticketColors.color,
                 cornerRadius = 16.dp
             )
         }
@@ -145,7 +164,7 @@ fun ScheduleTicket(
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(
-                        color = mainColor,
+                        color = ticketColors.color,
                         width = 1.dp,
                         shape = fullRoundCornerShape
                     )
@@ -157,13 +176,17 @@ fun ScheduleTicket(
                 ArrivedText(
                     routeno = "306",
                     arrtime = 300,
-                    arrprevstationcnt = 2
+                    arrprevstationcnt = 2,
+                    color1 = ticketColors.colorT2,
+                    color2 = ticketColors.colorT1
                 )
                 WidthSpacer(8.dp)
                 ArrivedText(
                     routeno = "306",
                     arrtime = 300,
-                    arrprevstationcnt = 2
+                    arrprevstationcnt = 2,
+                    color1 = ticketColors.colorT2,
+                    color2 = ticketColors.colorT1
                 )
 
             }
@@ -178,11 +201,11 @@ fun ScheduleTicket(
 }
 
 @Composable
-fun ArrivedText(routeno: String, arrtime: Int, arrprevstationcnt: Int) {
+fun ArrivedText(routeno: String, arrtime: Int, arrprevstationcnt: Int, color1: Color, color2: Color) {
     Text(text = buildAnnotatedString {
         append("$routeno ")
-        withStyle(style = mBody.copy(color = BusRedM1).toSpanStyle()) { append("(${arrtime.toFormatKrTime()}) ") }
-        withStyle(style = mBody2.copy(color = BusRedM2).toSpanStyle()) { append("${arrprevstationcnt}정거장") }
+        withStyle(style = mBody.copy(color = color1).toSpanStyle()) { append("(${arrtime.toFormatKrTime()}) ") }
+        withStyle(style = mBody2.copy(color = color2).toSpanStyle()) { append("${arrprevstationcnt}정거장") }
     }, style = mBody.copy(TextColor))
 }
 
@@ -284,7 +307,7 @@ fun Modifier.isCurrentStep(isCurrentStep: Boolean, color: Color) =
 fun ScheduleTicketPreview() {
     ScheduleTicket(
         scheduleName = "출근",
-        mainColor = BusRed,
-        transit = listOf(TransitInfo.EMPTY, TransitInfo.EMPTY)
+        transit = listOf(TransitInfo.EMPTY, TransitInfo.EMPTY),
+        destinationName = "집"
     )
 }
