@@ -181,6 +181,7 @@ fun RegisterScheduleScreen(
                     viewModel.updateIsNotify()
                 }
 
+                // 출발지 등록 안했을 때
                 if (viewModel.transitCardUIInfos.isEmpty()) {
                     HeightSpacer(16.dp)
                     TransitCard(
@@ -192,6 +193,7 @@ fun RegisterScheduleScreen(
                     )
                 }
 
+                // 환승
                 if (viewModel.transitCardUIInfos.isNotEmpty() && lastTransitCardUI.isEmpty().not()) {
                     TransferRow {
                         if (viewModel.transitCardUIInfos.size == RegisterScheduleViewModel.LAST_TRANSIT_CARD_ID) return@TransferRow
@@ -204,7 +206,7 @@ fun RegisterScheduleScreen(
 
                 viewModel.transitCardUIInfos.forEachIndexed { index, transitInfo ->
                     TransitCard(
-                        id = index + 1,
+                        id = index,
                         type = if (index == 0) TransitPointType.START else TransitPointType.TRANSFER,
                         transitCardUI = transitInfo,
                         onEditClick = { isNotInit ->
@@ -232,6 +234,7 @@ fun RegisterScheduleScreen(
 
                      */
                 }
+                // 도착 transitCard
                 TransitCard(
                     type = TransitPointType.END,
                     transitCardUI = lastTransitCardUI,
