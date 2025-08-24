@@ -129,3 +129,9 @@ val rFooter = TextStyle(
     fontWeight = FontWeight.Normal,
     fontSize = 10.sp,
 )
+
+val normal10sp = TextStyle(
+    fontFamily = FontFamily(Font(R.font.roboto)),
+    fontWeight = FontWeight.Medium,
+    fontSize = 10.sp,
+)
