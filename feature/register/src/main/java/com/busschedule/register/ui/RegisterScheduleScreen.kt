@@ -153,8 +153,8 @@ fun RegisterScheduleScreen(
                 /*
                 if ((viewModel.isRouteInfoNotEmpty() || uiState.isNotEmpty()) && viewModel.isUpdateSchedule().not()) { isShowTempSaveScheduleDialog = true }
                 else { appState.popBackStack() }
-
                  */
+                appState.popBackStack()
             }
             val scrollState = rememberScrollState()
             Column(

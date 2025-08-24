@@ -14,14 +14,14 @@ import retrofit2.http.Query
 
 interface ScheduleApi {
     // 현재 스케줄의 가장 빠른 첫 번쨰, 두 번째 버스 정보 조회
-    @GET("/api/v2/schedules/now")
+    @GET("/api/v3/schedules/now")
     suspend fun readNowSchedules(): DefaultResponse<ScheduleResponse>
     // 오늘 스케줄 목록 조회
     @GET("/api/v3/schedules/today")
     suspend fun readTodayAllSchedules(): DefaultResponse<List<ScheduleResponse>>
 
     // 해당 요일 스케줄 목록 조회
-    @GET("/api/v2/schedules/days")
+    @GET("/api/v3/schedules/days")
     suspend fun readDaySchedules(@Query("days") days: String): DefaultResponse<List<ScheduleResponse>>
 
     // 스케줄 ID로 스케줄 조회
