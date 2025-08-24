@@ -118,8 +118,8 @@ fun ScheduleListScreen(
                 ) {
                     items(items = uiState.schedules, key = { it.id }) { schedule ->
                         ScheduleTicket(
-                            scheduleName = schedule.name,
-                            transit = schedule.sections,
+                            scheduleName = schedule.scheduleName,
+                            transit = schedule.ticketUI,
                             destinationName = schedule.destinationName
                         )
                         /*
@@ -147,7 +147,7 @@ fun ScheduleListScreen(
                                 notifyState
                             )
                         }
-                        
+
                          */
                     }
                 }

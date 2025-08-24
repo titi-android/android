@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,22 +32,17 @@ import androidx.compose.ui.unit.dp
 import com.busschedule.model.BusArrival
 import com.busschedule.model.constant.BusType
 import com.busschedule.schedulelist.model.ScheduleUI
-import com.busschedule.util.ext.noRippleClickable
 import com.busschedule.util.ext.toFormatKrTime
 import core.designsystem.component.WidthSpacer
 import core.designsystem.component.dialog.CloseDialog
 import core.designsystem.shadow.titiShadow
 import core.designsystem.svg.MyIconPack
-import core.designsystem.svg.myiconpack.IcClose
-import core.designsystem.svg.myiconpack.IcEdit
-import core.designsystem.svg.myiconpack.IcNotify
-import core.designsystem.svg.myiconpack.IcOffnotify
 import core.designsystem.svg.myiconpack.ImageBusOfTicket
 import core.designsystem.theme.Background
 import core.designsystem.theme.TextWColor
 import core.designsystem.theme.mBody
 import core.designsystem.theme.mBody2
-import core.designsystem.theme.sbTitle2
+
 
 @Composable
 fun TempScheduleTicket(
@@ -60,7 +53,7 @@ fun TempScheduleTicket(
     onDelete: () -> Unit = {},
     changeBusStopStateOfNotify: (String, String, Int) -> Unit = { _, _, _ -> },
 ) {
-    val icNotify = if (schedule.getAlarm()) MyIconPack.IcNotify else MyIconPack.IcOffnotify
+//    val icNotify = if (schedule.getAlarm()) MyIconPack.IcNotify else MyIconPack.IcOffnotify
     var isShowCloseDialog by remember { mutableStateOf(false) }
     if (isShowCloseDialog) {
         CloseDialog(
@@ -135,6 +128,7 @@ fun TempScheduleTicket(
                     .weight(2.1f / 3f)
                     .fillMaxWidth()
             ) {
+                /*
                 Row(
                     modifier = Modifier.padding(start = 16.dp, end = 10.dp, top = 10.dp),
                     verticalAlignment = Alignment.Top
@@ -174,6 +168,8 @@ fun TempScheduleTicket(
                         )
                     }
                 }
+
+                 */
 
                 /*
                 Row(

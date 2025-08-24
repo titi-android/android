@@ -95,14 +95,14 @@ class ScheduleListViewModel @Inject constructor(
         }
     }
 
-    fun fetchDeleteSchedules(scheduleId: Int, showToast: (String) -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            deleteScheduleUseCase(scheduleId).onSuccess {
-                _schedules.update { schedule -> schedule.filter { it.id != scheduleId } }
-                updateWidget()
-            }.onFailure { showToast(it.message!!) }
-        }
-    }
+//    fun fetchDeleteSchedules(scheduleId: Int, showToast: (String) -> Unit) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            deleteScheduleUseCase(scheduleId).onSuccess {
+//                _schedules.update { schedule -> schedule.filter { it.id != scheduleId } }
+//                updateWidget()
+//            }.onFailure { showToast(it.message!!) }
+//        }
+//    }
 
     fun fetchPutScheduleAlarm(
         scheduleId: Int,

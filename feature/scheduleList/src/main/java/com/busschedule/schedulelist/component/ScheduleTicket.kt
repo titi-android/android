@@ -36,9 +36,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.busschedule.model.TransitInfo
 import com.busschedule.model.constant.BusType
-import com.busschedule.model.constant.TransitConst
+import com.busschedule.schedulelist.model.DestinationTransitInfo
+import com.busschedule.schedulelist.model.TransitTicketUI
 import com.busschedule.util.ext.noRippleClickable
 import com.busschedule.util.ext.toFormatKrTime
 import core.designsystem.component.HeightSpacer
@@ -46,7 +46,6 @@ import core.designsystem.component.WidthSpacer
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcForwardArrow2
 import core.designsystem.theme.BusGreen
-import core.designsystem.theme.BusYellow
 import core.designsystem.theme.TextBoxDis
 import core.designsystem.theme.TextColor
 import core.designsystem.theme.TextWColor
@@ -60,24 +59,23 @@ import core.designsystem.theme.sbTitle4
 @Composable
 fun ScheduleTicket(
     scheduleName: String = "출근",
-    transit: List<TransitInfo>,
-    destinationName: String,
-
+    transit: List<TransitTicketUI>,
+    destinationName: String = "집"
 ) {
 
     val transitList = transit.take(4)
     var curStep by remember { mutableIntStateOf(0) }
 
     val ticketColors =
-        when (transitList[curStep].type) {
-            TransitConst.BUS.name -> {
-                if (transitList[curStep].busStop!!.busArrivals.isEmpty()) BusType.지정
-                else BusType.find(transitList[curStep].busStop!!.busArrivals[0].routetp)
-            }
-            TransitConst.SUBWAY.name -> {
+        when (transitList[curStep]) {
+            is TransitTicketUI.SubwayTicketUI -> {
                 BusType.지정
             }
-            else -> BusType.지정
+
+            is TransitTicketUI.BusTicketUI -> {
+                if (transitList[curStep].getDestinationTransits().isEmpty()) BusType.지정
+                else BusType.find(transitList[curStep].getDestinationTransits()[0].routeType)
+            }
         }
 
     val rounded = 16.dp
@@ -94,128 +92,155 @@ fun ScheduleTicket(
             Text(text = scheduleName, style = rTextBtn2.copy(color = TextWColor))
         }
         // 중간 내용
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = (-1).dp)
-                .zIndex(1f)
-        ) {
-            val bottomRoundCornerShape =
-                RoundedCornerShape(bottomStart = rounded, bottomEnd = rounded)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(bottomRoundCornerShape) // Clip to prevent border from drawing outside
-                    .border(
-                        color = ticketColors.color,
-                        width = 1.dp,
-                        shape = bottomRoundCornerShape
-                    )
-                    .padding(vertical = 16.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                transit.forEachIndexed { index, busStopInfo ->
-                    TicketTransitContent(
-                        contentColor = BusGreen,
-                        step = if (index == 0) "출발" else "환승",
-                        busStop = "잠실",
-                        isCurrentStep = false
-                    ) {
-                        // TODO:
-//                        changeBusStopStateOfNotify(schedule.id.toString(), schedule.name, index)
-//                        curStep = index
-                    }
-                    Icon(
-                        imageVector = MyIconPack.IcForwardArrow2,
-                        contentDescription = "ic_next",
-                        modifier = Modifier.size(16.dp),
-                        tint = ticketColors.color
-                    )
-                }
-                TicketTransitContent(
-                    contentColor = TextBoxDis,
-                    step = "도착",
-                    busStop = destinationName,
-                    isCurrentStep = false
-                ) {}
-            }
-            // 흰색 배경 먼저 칠해
-            WhiteDivider(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                color = BusYellow,
-                cornerRadius = 16.dp
-            )
-            // 점선 구분선
-            DashedDivider(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                color = ticketColors.color,
-                cornerRadius = 16.dp
-            )
-        }
+        TicketMiddleContainer(
+            color = ticketColors.color,
+            transit = transitList,
+            destinationName = destinationName
+        )
         // 하단 내용
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = (-2).dp)
-        ) {
-            val fullRoundCornerShape = RoundedCornerShape(rounded)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        color = ticketColors.color,
-                        width = 1.dp,
-                        shape = fullRoundCornerShape
-                    )
-                    .background(Color.White, shape = fullRoundCornerShape)
-//                .drawBehind { drawLine(color = BusIcBlue, start = Offset.Zero, end = size.center) }
-                    .padding(vertical = 16.dp, horizontal = 12.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                ArrivedText(
-                    routeno = "306",
-                    arrtime = 300,
-                    arrprevstationcnt = 2,
-                    color1 = ticketColors.colorT2,
-                    color2 = ticketColors.colorT1
-                )
-                WidthSpacer(8.dp)
-                ArrivedText(
-                    routeno = "306",
-                    arrtime = 300,
-                    arrprevstationcnt = 2,
-                    color1 = ticketColors.colorT2,
-                    color2 = ticketColors.colorT1
-                )
-
-            }
-            // 흰색 배경 먼저 칠해
-            WhiteDivider(
-                modifier = Modifier.align(Alignment.TopCenter),
-                color = TextWColor,
-                cornerRadius = 16.dp
-            )
-        }
+        TicketBottomContainer(
+            color = ticketColors.color,
+            colorT1 = ticketColors.colorT1,
+            colorT2 = ticketColors.colorT2,
+            destinationTransitInfo = transitList[curStep].getDestinationTransits()
+        )
     }
 }
 
 @Composable
-fun ArrivedText(routeno: String, arrtime: Int, arrprevstationcnt: Int, color1: Color, color2: Color) {
-    Text(text = buildAnnotatedString {
-        append("$routeno ")
-        withStyle(style = mBody.copy(color = color1).toSpanStyle()) { append("(${arrtime.toFormatKrTime()}) ") }
-        withStyle(style = mBody2.copy(color = color2).toSpanStyle()) { append("${arrprevstationcnt}정거장") }
-    }, style = mBody.copy(TextColor))
+fun TicketMiddleContainer(
+    rounded: Dp = 16.dp,
+    color: Color,
+    transit: List<TransitTicketUI>,
+    destinationName: String,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .offset(y = (-1).dp)
+            .zIndex(1f)
+    ) {
+        val bottomRoundCornerShape =
+            RoundedCornerShape(bottomStart = rounded, bottomEnd = rounded)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(bottomRoundCornerShape) // Clip to prevent border from drawing outside
+                .border(
+                    color = color,
+                    width = 1.dp,
+                    shape = bottomRoundCornerShape
+                )
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            transit.forEachIndexed { index, t ->
+                TicketTransitContent(
+                    contentColor = BusGreen,
+                    step = if (index == 0) "출발" else "환승",
+                    startPoint = t.getStartingPoint(),
+                    isCurrentStep = false
+                ) {
+                    // TODO:
+//                        changeBusStopStateOfNotify(schedule.id.toString(), schedule.name, index)
+//                        curStep = index
+                }
+                Icon(
+                    imageVector = MyIconPack.IcForwardArrow2,
+                    contentDescription = "ic_next",
+                    modifier = Modifier.size(16.dp),
+                    tint = color
+                )
+            }
+            TicketTransitContent(
+                contentColor = TextBoxDis,
+                step = "도착",
+                startPoint = destinationName,
+                isCurrentStep = false
+            ) {}
+        }
+        WhiteDivider(modifier = Modifier.align(Alignment.BottomCenter), cornerRadius = 16.dp)
+        DashedDivider(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            color = color,
+            cornerRadius = 16.dp
+        )
+    }
 }
 
 @Composable
+fun TicketBottomContainer(
+    rounded: Dp = 16.dp,
+    color: Color,
+    colorT1: Color,
+    colorT2: Color,
+    destinationTransitInfo: List<DestinationTransitInfo>
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .offset(y = (-2).dp)
+    ) {
+        val fullRoundCornerShape = RoundedCornerShape(rounded)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    color = color,
+                    width = 1.dp,
+                    shape = fullRoundCornerShape
+                )
+                .background(Color.White, shape = fullRoundCornerShape)
+//                .drawBehind { drawLine(color = BusIcBlue, start = Offset.Zero, end = size.center) }
+                .padding(vertical = 16.dp, horizontal = 12.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (destinationTransitInfo.isEmpty()) {
+                Text(text = "도착 예정이 없습니다." ,style = mBody.copy(TextColor))
+            }
+            destinationTransitInfo.forEachIndexed { index, dest ->
+                ArrivedText(
+                    routeno = dest.routeno,
+                    arrtime = dest.arrtime,
+                    arrprevstationcnt = dest.arrprevstationcnt,
+                    color1 = colorT2,
+                    color2 = colorT1
+                )
+               if (index == 0)  WidthSpacer(8.dp)
+            }
+
+        }
+        WhiteDivider(modifier = Modifier.align(Alignment.TopCenter), cornerRadius = 16.dp)
+    }
+}
+
+@Composable
+fun ArrivedText(
+    routeno: String,
+    arrtime: Int,
+    arrprevstationcnt: String,
+    color1: Color,
+    color2: Color,
+) {
+    Text(text = buildAnnotatedString {
+        append("$routeno ")
+        withStyle(
+            style = mBody.copy(color = color1).toSpanStyle()
+        ) { append("(${arrtime.toFormatKrTime()}) ") }
+        withStyle(
+            style = mBody2.copy(color = color2).toSpanStyle()
+        ) { append("${arrprevstationcnt}]") }
+    }, style = mBody.copy(TextColor))
+}
+
+/**
+ * 좌측 round와 우측 round를 가리기 위해 흰색 배경 설정
+ */
+@Composable
 fun WhiteDivider(
     modifier: Modifier,
-    color: Color = Color.Red,
     strokeWidth: Dp = 3.dp,
-    dashWidth: Dp = 10.dp,
-    dashGap: Dp = 6.dp,
     cornerRadius: Dp = 16.dp,
 ) {
     Canvas(
@@ -233,6 +258,9 @@ fun WhiteDivider(
     }
 }
 
+/**
+ * 점선 구분선
+ */
 @Composable
 fun DashedDivider(
     modifier: Modifier,
@@ -265,12 +293,15 @@ fun DashedDivider(
     }
 }
 
+/**
+ * @param startPoint: 교통정보 도착 정보를 받아오는 변수 이름, 버스의 경우 버스 정류장: "더샾 센트리체", 지하철의 경우 지하철 이름: "잠실역"
+ */
 @Composable
 fun RowScope.TicketTransitContent(
     contentColor: Color,
     step: String,
     isCurrentStep: Boolean,
-    busStop: String,
+    startPoint: String,
     onClick: () -> Unit,
 ) {
     Column(
@@ -293,7 +324,7 @@ fun RowScope.TicketTransitContent(
             )
         }
         HeightSpacer(height = 4.dp)
-        Text(text = busStop, style = sbTitle4, color = TextColor, overflow = TextOverflow.Ellipsis)
+        Text(text = startPoint, style = sbTitle4, color = TextColor, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -307,7 +338,7 @@ fun Modifier.isCurrentStep(isCurrentStep: Boolean, color: Color) =
 fun ScheduleTicketPreview() {
     ScheduleTicket(
         scheduleName = "출근",
-        transit = listOf(TransitInfo.EMPTY, TransitInfo.EMPTY),
+        transit = emptyList(),
         destinationName = "집"
     )
 }
