@@ -45,7 +45,6 @@ import core.designsystem.component.HeightSpacer
 import core.designsystem.component.WidthSpacer
 import core.designsystem.svg.MyIconPack
 import core.designsystem.svg.myiconpack.IcForwardArrow2
-import core.designsystem.theme.BusGreen
 import core.designsystem.theme.TextBoxDis
 import core.designsystem.theme.TextColor
 import core.designsystem.theme.TextWColor
@@ -137,7 +136,7 @@ fun TicketMiddleContainer(
         ) {
             transit.forEachIndexed { index, t ->
                 TicketTransitContent(
-                    contentColor = BusGreen,
+                    contentColor = color,
                     step = if (index == 0) "출발" else "환승",
                     startPoint = t.getStartingPoint(),
                     isCurrentStep = false
