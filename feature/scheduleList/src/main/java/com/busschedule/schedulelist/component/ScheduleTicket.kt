@@ -79,7 +79,7 @@ fun ScheduleTicket(
 
     val rounded = 16.dp
     Column(modifier = Modifier.fillMaxWidth()) {
-        // 상단 내용, 출근
+        // 상단 내용, 스케줄 이름
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,7 +94,9 @@ fun ScheduleTicket(
         TicketMiddleContainer(
             color = ticketColors.color,
             transit = transitList,
-            destinationName = destinationName
+            destinationName = destinationName,
+            currentStep = curStep,
+            onChangeCurrentStep = {curStep = it}
         )
         // 하단 내용
         TicketBottomContainer(
@@ -112,6 +114,8 @@ fun TicketMiddleContainer(
     color: Color,
     transit: List<TransitTicketUI>,
     destinationName: String,
+    currentStep: Int,
+    onChangeCurrentStep: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -139,12 +143,8 @@ fun TicketMiddleContainer(
                     contentColor = color,
                     step = if (index == 0) "출발" else "환승",
                     startPoint = t.getStartingPoint(),
-                    isCurrentStep = false
-                ) {
-                    // TODO:
-//                        changeBusStopStateOfNotify(schedule.id.toString(), schedule.name, index)
-//                        curStep = index
-                }
+                    isCurrentStep = currentStep == index
+                ) { onChangeCurrentStep(index) }
                 Icon(
                     imageVector = MyIconPack.IcForwardArrow2,
                     contentDescription = "ic_next",
@@ -229,7 +229,7 @@ fun ArrivedText(
         ) { append("(${arrtime.toFormatKrTime()}) ") }
         withStyle(
             style = mBody2.copy(color = color2).toSpanStyle()
-        ) { append("${arrprevstationcnt}]") }
+        ) { append(arrprevstationcnt) }
     }, style = mBody.copy(TextColor))
 }
 
@@ -318,7 +318,7 @@ fun RowScope.TicketTransitContent(
             Text(
                 text = step,
                 style = normal10sp,
-                color = if (isCurrentStep) contentColor else contentColor,
+                color = if (isCurrentStep) TextWColor else contentColor,
                 modifier = Modifier.align(Alignment.Center),
             )
         }

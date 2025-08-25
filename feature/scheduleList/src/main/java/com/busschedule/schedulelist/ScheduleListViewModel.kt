@@ -91,7 +91,7 @@ class ScheduleListViewModel @Inject constructor(
             readDaysSchedulesUseCase(dayOfWeek).onSuccess { schedules ->
                 _schedules.update { schedules.map { it.asStateUI() } }
                 changeLoadingState()
-            }.onFailure { showToast(it.message!!) }
+            }.onFailure { withContext(Dispatchers.Main) {showToast(it.message!!) } }
         }
     }
 
