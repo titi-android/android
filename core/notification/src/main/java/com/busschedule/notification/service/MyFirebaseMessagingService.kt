@@ -4,16 +4,14 @@ import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
 import com.busschedule.domain.repository.NotifyRepository
-import com.busschedule.model.BusStopInfo
-import com.busschedule.model.FCMMessage
 import com.busschedule.model.NotificationBuilder
+import com.busschedule.model.RouteInfo
 import com.busschedule.notification.constant.FCMMsgData
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -22,7 +20,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    private val TAG = "FirebaseService"
+    private val TAG = this::class.simpleName
 
     val serviceScope = CoroutineScope(Dispatchers.IO)
 
@@ -37,12 +35,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         try {
-            Log.d(TAG, "FCM DATA: ${message.data}")
-            val busStopInfosJson = message.data[FCMMsgData.BUSSTOP_INFOS.value] ?: "[]"
-            val busStopInfos = Json.decodeFromString<List<BusStopInfo>>(busStopInfosJson)
+            Log.d("fcm", "FCM DATA: ${message.data}")
+
+            val busStopInfosJson = message.data[FCMMsgData.SECTIONS.value] ?: "[]"
+            val busStopInfos = Json.decodeFromString<List<RouteInfo>>(busStopInfosJson)
             val scheduleId = message.data[FCMMsgData.SCHEDULE_ID.value] ?: ""
             val scheduleName = message.data[FCMMsgData.SCHEDULENAME.value] ?: ""
             serviceScope.launch {
+                /*
                 launch {
                     val isExist = async { repository.isExist(scheduleId) }.await()
                     if (isExist) {
@@ -58,22 +58,29 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                             busStopInfos = busStopInfos
                         )
                     }
+
                 }.join()
+                 */
                 val notifyScheduleEntity = repository.read(scheduleId)
-                val curBusStop = notifyScheduleEntity.busStopInfos[notifyScheduleEntity.busStopIndex]
-                val notificationMessage = FCMMessage(
-                    scheduleId = notifyScheduleEntity.scheduleId,
-                    scheduleName = notifyScheduleEntity.scheduleName,
-                    busStopInfos = curBusStop
-                )
-                sendNotification(
-                    scheduleId = notificationMessage.scheduleId,
-                    maxBusStopSize = notifyScheduleEntity.busStopInfos.size,
-                    scheduleIndex = notifyScheduleEntity.busStopIndex,
-                    title = notificationMessage.getTitle(),
-                    body = notificationMessage.getContent()
-                )
+
+                /*
+
+            val curBusStop = notifyScheduleEntity.busStopInfos[notifyScheduleEntity.busStopIndex]
+            val notificationMessage = FCMMessage(
+            scheduleId = notifyScheduleEntity.scheduleId,
+            scheduleName = notifyScheduleEntity.scheduleName,
+            busStopInfos = curBusStop
+            )
+            sendNotification(
+            scheduleId = notificationMessage.scheduleId,
+            maxBusStopSize = notifyScheduleEntity.busStopInfos.size,
+            scheduleIndex = notifyScheduleEntity.busStopIndex,
+            title = notificationMessage.getTitle(),
+            body = notificationMessage.getContent()
+            )
+            */
             }
+
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e(TAG, "FCM 메시지 처리 중 오류 발생: ${e.message}")

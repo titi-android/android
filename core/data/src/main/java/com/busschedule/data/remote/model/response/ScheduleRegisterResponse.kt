@@ -1,7 +1,7 @@
 package com.busschedule.data.remote.model.response
 
 import com.busschedule.model.DestinationInfo
-import com.busschedule.model.BusRegister
+import com.busschedule.model.RouteInfo
 import com.busschedule.model.ScheduleRegister
 import kotlinx.serialization.Serializable
 
@@ -9,10 +9,10 @@ import kotlinx.serialization.Serializable
 data class ScheduleRegisterResponse(
     val id: Int = 0,
     val name: String = "",
-    val days: List<String> = emptyList(),
+    val daysList: List<String> = emptyList(),
     val startTime: String = "",
     val endTime: String = "",
-    val busStops: List<BusRegister>,
+    val routeInfos: List<RouteInfo>,
     val destinationInfo: DestinationInfo,
     val isAlarmOn: Boolean
 )
@@ -20,10 +20,10 @@ data class ScheduleRegisterResponse(
 fun ScheduleRegisterResponse.asDomain() = ScheduleRegister(
     id = id,
     name = name,
-    days = days,
+    days = daysList,
     startTime = startTime,
     endTime = endTime,
-    busStops = busStops,
+    routeInfos = routeInfos,
     destinationInfo = destinationInfo,
     isAlarmOn = isAlarmOn
 )

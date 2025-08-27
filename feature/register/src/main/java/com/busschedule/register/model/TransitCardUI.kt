@@ -35,7 +35,8 @@ sealed class TransitCardUI(
         override val buses: List<BusInfo> = emptyList(),
     ) : TransitCardUI() {
         override fun isEmpty(): Boolean =
-            this.buses.isEmpty() || content2.isEmpty() || content1.isEmpty()
+//            this.buses.isEmpty() || content2.isEmpty() || content1.isEmpty()
+            content2.isEmpty() || content1.isEmpty()
 
     }
 
@@ -50,11 +51,12 @@ sealed class TransitCardUI(
         val upDownDir: String = "UP",
     ) : TransitCardUI() {
         override fun isEmpty(): Boolean =
-            this.content1.isEmpty() || this.content2.isEmpty() || this.subwayDirection.isEmpty()
+//            this.content1.isEmpty() || this.content2.isEmpty() || this.subwayDirection.isEmpty()
+            this.content2.isEmpty()
     }
 
     fun asRouteInfo(): RouteInfo =
-        when(this) {
+        when (this) {
             is Bus -> {
                 RouteInfo(
                     type = TransitConst.BUS.name,
@@ -67,6 +69,7 @@ sealed class TransitCardUI(
                     subwaySection = null
                 )
             }
+
             is Subway -> {
                 val list = content2.split(", ")
                 RouteInfo(
@@ -82,7 +85,7 @@ sealed class TransitCardUI(
             }
         }
 
-    fun asDestinationInfo(): DestinationInfo = when(this) {
+    fun asDestinationInfo(): DestinationInfo = when (this) {
         is Bus -> {
             DestinationInfo(
                 type = TransitConst.BUS.name,
@@ -92,6 +95,7 @@ sealed class TransitCardUI(
                 dir = ""
             )
         }
+
         is Subway -> {
             val list = content2.split(", ")
             DestinationInfo(
@@ -105,3 +109,64 @@ sealed class TransitCardUI(
     }
 }
 
+fun RouteInfo.asTransitCardUI(): TransitCardUI {
+    return when (type) {
+        TransitConst.BUS.name -> {
+            val busStopSection = busStopSection!!
+            TransitCardUI.Bus(
+                content1 = busStopSection.regionName,
+                content2 = busStopSection.busStopName,
+                nodeId = busStopSection.nodeId,
+                buses = busStopSection.busList
+            )
+        }
+
+        TransitConst.SUBWAY.name -> {
+            val subwaySection = subwaySection!!
+            TransitCardUI.Subway(
+                content1 = subwaySection.regionName,
+                content2 = "${subwaySection.lineName} ${subwaySection.stationName}",
+                subwayDirection = "",
+                upDownDir = subwaySection.dir
+            )
+        }
+
+        else -> {
+            val busStopSection = busStopSection!!
+            TransitCardUI.Bus(
+                content1 = busStopSection.regionName,
+                content2 = busStopSection.busStopName,
+                nodeId = busStopSection.nodeId,
+                buses = busStopSection.busList
+            )
+        }
+    }
+}
+
+fun DestinationInfo.asTransitCardUI(): TransitCardUI = when (this.type) {
+    TransitConst.BUS.name -> {
+        TransitCardUI.Bus(
+            content1 = this.regionName,
+            content2 = this.desName,
+            nodeId = "",
+            buses = emptyList()
+        )
+    }
+
+    TransitConst.SUBWAY.name -> {
+        TransitCardUI.Subway(
+            content1 = this.regionName,
+            content2 = "${this.lineName} ${this.desName}",
+            subwayDirection = "",
+            upDownDir = ""
+        )
+    }
+    else -> {
+        TransitCardUI.Bus(
+            content1 = this.regionName,
+            content2 = this.desName,
+            nodeId = "",
+            buses = emptyList()
+        )
+    }
+}

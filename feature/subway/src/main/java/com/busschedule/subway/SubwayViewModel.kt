@@ -51,8 +51,7 @@ class SubwayViewModel @Inject constructor(
         _selectStations.update { f to s }
     }
 
-    fun getSubwayDirection(): StationDirection =
-        if (selectStations.value.first?.id == null || selectStations.value.second == null) StationDirection.NONE
+    fun getSubwayDirection(): StationDirection = if (selectStations.value.first?.id == null || selectStations.value.second == null) StationDirection.NONE
         else if (selectStations.value.first!!.id > selectStations.value.second!!.id) StationDirection.UP
         else StationDirection.DOWN
 
@@ -69,6 +68,7 @@ class SubwayViewModel @Inject constructor(
     fun fetchGetSubwayStationLineInfo(stName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             getSubwayStationLineInfoUseCase(stName).onSuccess { result ->
+                Log.d("daeyoung", "fetchGetSubwayStationLineInfo() called: $result")
                 val inputStationName = result.first().stationName
                 val stationLineSet = mutableSetOf<StationLineUI>()
                 result.forEach { subwayStationLineInfo ->

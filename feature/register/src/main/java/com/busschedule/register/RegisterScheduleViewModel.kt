@@ -20,6 +20,7 @@ import com.busschedule.model.constant.DayOfWeek
 import com.busschedule.navigation.Route
 import com.busschedule.register.model.ScheduleRegister
 import com.busschedule.register.model.TransitCardUI
+import com.busschedule.register.model.asTransitCardUI
 import com.busschedule.widget.widget.worker.ScheduleWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -88,14 +89,14 @@ class RegisterScheduleViewModel @Inject constructor(
             )
         }
 
-    /*
+
     init {
-        if (isExistTempSchedule) fetchReadTempSchedule()
+        if (isExistTempSchedule) /*fetchReadTempSchedule() */
         else if (isUpdateSchedule()) viewModelScope.launch {
             fetchReadSchedule(scheduleId!!) { showToastMsg(it) }
         }
     }
-     */
+
 
     fun isUpdateSchedule(): Boolean = scheduleId != null
 
@@ -133,6 +134,7 @@ class RegisterScheduleViewModel @Inject constructor(
             subwayDirection = data[3],
             upDownDir = data[4],
         )
+//        Log.e("daeyoung", "wubway: $subway")
         if (subway.isEmpty()) return
 
         if (currentFocusTransitCard == LAST_TRANSIT_CARD_ID) {
@@ -205,7 +207,7 @@ class RegisterScheduleViewModel @Inject constructor(
     }
 
     private fun setRouteInfos(list: List<TransitCardUI>) {
-        _transitCardUIInfos.clear()
+        if (transitCardUIInfos.isNotEmpty()) _transitCardUIInfos.clear()
         _transitCardUIInfos.addAll(list)
     }
 
@@ -246,7 +248,7 @@ class RegisterScheduleViewModel @Inject constructor(
         return true
     }
 
-    /*
+
     private fun fetchReadSchedule(scheduleId: Int, showToast: (String) -> Unit) {
         viewModelScope.launch {
             readScheduleUseCase(scheduleId).onSuccess { scheduleRegister ->
@@ -263,14 +265,13 @@ class RegisterScheduleViewModel @Inject constructor(
                     _startTime.update { res.startTime }
                     _endTime.update { res.endTime }
                     _isNotify.update { res.isAlarmOn }
-                    setRouteInfos(res.busStops.map { BusStopInfoUIFactory.create(it) })
-                    _arriveBusStop.update { res.destinationInfo.asBusStop() }
+                    setRouteInfos(res.routeInfos.map { it.asTransitCardUI() })
+                    _lastTransitCardUIInfos.update { res.destinationInfo.asTransitCardUI() }
                 }
             }.onFailure { showToast(it.message!!) }
         }
     }
 
-     */
 
 
     private fun fetchPutSchedule(onSuccess: () -> Unit, showToast: (String) -> Unit) {

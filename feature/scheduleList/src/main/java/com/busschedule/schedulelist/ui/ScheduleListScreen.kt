@@ -121,7 +121,9 @@ fun ScheduleListScreen(
                             scheduleName = schedule.scheduleName,
                             transit = schedule.ticketUI,
                             destinationName = schedule.destinationName
-                        )
+                        ) {
+                            appState.navigateToRegister(schedule.id)
+                        }
                         /*
                         TempScheduleTicket(
                             holeColor = Background,

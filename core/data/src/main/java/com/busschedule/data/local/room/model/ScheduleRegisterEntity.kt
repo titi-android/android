@@ -25,7 +25,8 @@ fun ScheduleRegisterEntity.toModel() = ScheduleRegister(
     days = dayOfWeeks,
     startTime = startTime,
     endTime = endTime,
-    busStops = busRegisters,
+//    busStops = busRegisters,
+    routeInfos = emptyList(),
 //    destinationInfo = arriveBusStop.asDestinationInfo(),
-    isAlarmOn = isNotify,
+    isAlarmOn = isNotify
 )

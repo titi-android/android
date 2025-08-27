@@ -15,7 +15,6 @@ class HttpSuccessAuthenticator(private val tokenManager: TokenManager) {
         val refreshToken = runBlocking {
             tokenManager.getRefreshToken().first()
         }
-        Log.d("daeyoung", "refreshToken : $refreshToken")
 
         if (refreshToken == null || refreshToken == "LOGIN") {
 //            response.close()

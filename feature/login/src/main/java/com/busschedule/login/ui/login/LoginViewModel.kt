@@ -57,7 +57,7 @@ class LoginViewModel @Inject constructor(
                 tokenRepository.saveAutoLoginState(autoLoginState)
                 withContext(Dispatchers.Main) { navigationToScheduleList() }
             }.onFailure {
-                showToast(it.message!!)
+                withContext(Dispatchers.Main) { showToast(it.message!!) }
                 it.printStackTrace()
             }
         }

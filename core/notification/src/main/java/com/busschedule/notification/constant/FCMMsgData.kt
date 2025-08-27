@@ -4,5 +4,5 @@ enum class FCMMsgData(val value: String) {
     SCHEDULE_ID("scheduleId"),
     SCHEDULENAME("scheduleName"),
     DAYS("days"),
-    BUSSTOP_INFOS("busStopInfos"),
+    SECTIONS("sections"),
 }

@@ -59,7 +59,8 @@ import core.designsystem.theme.sbTitle4
 fun ScheduleTicket(
     scheduleName: String = "출근",
     transit: List<TransitTicketUI>,
-    destinationName: String = "집"
+    destinationName: String = "집",
+    onEdit: () -> Unit = {},
 ) {
 
     val transitList = transit.take(4)
@@ -78,7 +79,9 @@ fun ScheduleTicket(
         }
 
     val rounded = 16.dp
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .noRippleClickable { onEdit() }) {
         // 상단 내용, 스케줄 이름
         Row(
             modifier = Modifier
@@ -96,7 +99,7 @@ fun ScheduleTicket(
             transit = transitList,
             destinationName = destinationName,
             currentStep = curStep,
-            onChangeCurrentStep = {curStep = it}
+            onChangeCurrentStep = { curStep = it }
         )
         // 하단 내용
         TicketBottomContainer(
@@ -115,7 +118,7 @@ fun TicketMiddleContainer(
     transit: List<TransitTicketUI>,
     destinationName: String,
     currentStep: Int,
-    onChangeCurrentStep: (Int) -> Unit
+    onChangeCurrentStep: (Int) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -174,7 +177,7 @@ fun TicketBottomContainer(
     color: Color,
     colorT1: Color,
     colorT2: Color,
-    destinationTransitInfo: List<DestinationTransitInfo>
+    destinationTransitInfo: List<DestinationTransitInfo>,
 ) {
     Box(
         modifier = Modifier
@@ -196,7 +199,7 @@ fun TicketBottomContainer(
             horizontalArrangement = Arrangement.Center
         ) {
             if (destinationTransitInfo.isEmpty()) {
-                Text(text = "도착 예정이 없습니다." ,style = mBody.copy(TextColor))
+                Text(text = "도착 예정이 없습니다.", style = mBody.copy(TextColor))
             }
             destinationTransitInfo.forEachIndexed { index, dest ->
                 ArrivedText(
@@ -206,7 +209,7 @@ fun TicketBottomContainer(
                     color1 = colorT2,
                     color2 = colorT1
                 )
-               if (index == 0)  WidthSpacer(8.dp)
+                if (index == 0) WidthSpacer(8.dp)
             }
 
         }
@@ -323,7 +326,12 @@ fun RowScope.TicketTransitContent(
             )
         }
         HeightSpacer(height = 4.dp)
-        Text(text = startPoint, style = sbTitle4, color = TextColor, overflow = TextOverflow.Ellipsis)
+        Text(
+            text = startPoint,
+            style = sbTitle4,
+            color = TextColor,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
