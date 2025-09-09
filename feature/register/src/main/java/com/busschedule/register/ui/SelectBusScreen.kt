@@ -202,7 +202,7 @@ fun SelectBusScreen(
                         isShowBottomSheet = false
                     }
                 },
-                onDeleteFromRecentlyBusStop = { viewModel.fetchDeleteRecentlySearchBusStop(it.search)},
+                onDeleteFromRecentlyBusStop = { viewModel.fetchDeleteRecentlySearchBusStop(it.search) },
                 popBackStack = { appState.popBackStack() }) {
                 isLoading = true
                 viewModel.fetchReadAllBusStop(
@@ -219,7 +219,9 @@ fun SelectBusScreen(
                 MainBottomButton(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     text = "완료"
-                ) { viewModel.completeOfArriveBusStop(region = busStop.region) { appState.popBackStackRegister() } }
+                ) {
+                    appState.popBackStackToScheduleRegisterFromBus(value = busOfBusStop.asRouteInfo())
+                }
             } else {
                 BusesBottomSheet(
                     selectedBusUi = busOfBusStop,

@@ -1,7 +1,6 @@
 package com.busschedule.util.state
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
@@ -121,7 +120,6 @@ class ApplicationState(
             set(TRANSIT_TYPE, TransitConst.BUS.name)
             set(key, json)
         }
-        Log.i("daeyoung", "popBackStackToScheduleRegisterFromBus: ${t}")
         popBackStackRegister()
     }
 

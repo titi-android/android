@@ -125,29 +125,6 @@ class BusViewModel @Inject constructor(
         "nodeId" to busOfBusStop.value.nodeId,
     )
 
-
-    /*
-    // 버스 선택이 후 완료 버튼을 눌렀을 때
-    */
-    fun completeOfArriveBusStop(region: String, popBackStack: () -> Unit) {
-        val bus = busOfBusStop.value
-        val busStopInfo = getSelectBusStopInfo()
-        val (k , v) = " " to busOfBusStop.value.buses
-        /*
-        _arriveBusStop.update {
-            it.copy(
-                region = bus.region,
-                busStop = bus.busStop,
-                nodeId = bus.nodeId
-            )
-        }
-
-         */
-        cityOfRegion.value.unAllSelect()
-        popBackStack()
-    }
-
-
     // 이미 지역이 정해져 있을 때 지도 화면 출력 시 한번 호출하는 함수
     fun fetchFirstReadAllBusStop(
         region: String,
