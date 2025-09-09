@@ -97,9 +97,13 @@ fun TransitCard(
                     }
                 }
                 HeightSpacer(8.dp)
-                TransitCardContentRow(title = transitCardUI.title1, content = transitCardUI.content1)
-                HeightSpacer(16.dp)
+
+                if (type != TransitPointType.END) {
+                    TransitCardContentRow(title = transitCardUI.title1, content = transitCardUI.content1)
+                    HeightSpacer(16.dp)
+                }
                 TransitCardContentRow(title = transitCardUI.title2, content = transitCardUI.content2)
+                if (type == TransitPointType.END) return@Column
                 when(transitCardUI) {
                     is TransitCardUI.Bus -> {
                         HeightSpacer(8.dp)
@@ -121,6 +125,7 @@ fun TransitCard(
 
     }
 }
+
 
 @Composable
 fun TransitCardContentRow(title: String, content: String) {
