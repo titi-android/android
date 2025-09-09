@@ -45,9 +45,9 @@ sealed class TransitCardUI(
         override val title2: String = "지하철 역",
         override val title3: String = "지하철 방향",
         override val icon: ImageVector = MyIconPack.ImageSubway,
-        override val content1: String,
-        override val content2: String,
-        override val subwayDirection: String,
+        override val content1: String, // 서울 특별시
+        override val content2: String, // 1호선 종각역
+        override val subwayDirection: String, // 신설동역 방향
         val upDownDir: String = "UP",
     ) : TransitCardUI() {
         override fun isEmpty(): Boolean =
@@ -79,6 +79,7 @@ sealed class TransitCardUI(
                         regionName = content1,
                         lineName = list[0],
                         stationName = list[1],
+                        dirName = subwayDirection,
                         dir = upDownDir
                     )
                 )

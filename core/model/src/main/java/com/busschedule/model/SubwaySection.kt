@@ -7,5 +7,6 @@ data class SubwaySection(
     val regionName: String = "", // 서울
     val lineName: String = "", // 1호선
     val stationName: String = "",  // 잠실
+    val dirName: String = "", // 신설동역 방면
     val dir: String = "", // UP, DOWN
 )
