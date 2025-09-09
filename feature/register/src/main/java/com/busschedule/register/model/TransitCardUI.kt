@@ -127,7 +127,7 @@ fun RouteInfo.asTransitCardUI(): TransitCardUI {
             TransitCardUI.Subway(
                 content1 = subwaySection.regionName,
                 content2 = "${subwaySection.lineName} ${subwaySection.stationName}",
-                subwayDirection = "",
+                subwayDirection = subwaySection.dirName,
                 upDownDir = subwaySection.dir
             )
         }

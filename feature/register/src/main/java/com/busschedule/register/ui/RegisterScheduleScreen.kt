@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,16 +48,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.busschedule.model.BusInfo
 import com.busschedule.model.DayOfWeekUi
 import com.busschedule.model.constant.TransitConst
 import com.busschedule.register.RegisterScheduleViewModel
-import com.busschedule.register.component.BusBox
 import com.busschedule.register.component.NotifyIcon
 import com.busschedule.register.component.ScheduleNameTextField
 import com.busschedule.register.component.SelectTransitDialog
 import com.busschedule.register.component.TransitCard
-import com.busschedule.register.component.WhiteContentBox
 import com.busschedule.register.constant.TimePickerType
 import com.busschedule.register.model.ScheduleRegister
 import com.busschedule.register.model.TransitPointType
@@ -72,8 +67,6 @@ import core.designsystem.component.appbar.BackArrowAppBar
 import core.designsystem.component.button.MainBottomButton
 import core.designsystem.component.dialog.TitleDialog
 import core.designsystem.svg.MyIconPack
-import core.designsystem.svg.myiconpack.IcBus
-import core.designsystem.svg.myiconpack.IcMinus
 import core.designsystem.svg.myiconpack.IcPlus
 import core.designsystem.theme.Background
 import core.designsystem.theme.Primary
@@ -218,21 +211,6 @@ fun RegisterScheduleScreen(
                         onRemoveClick = { viewModel.removeTransitCard(it) }
                     )
                     HeightSpacer(height = 16.dp)
-                    /*
-                    RegionArea(
-                        title = if (index == 0) "출발" else "환승",
-                        region = busStopInfoUI.region,
-                        navigateRegionScreen = { appState.navigateToSelectRegion(busStopInfoUI.getID()) },
-                        busStop = busStopInfoUI.busStop,
-                        buses = busStopInfoUI.getBuses(),
-                        isRemoveRegionArea = viewModel.routeInfos.size >= 2,
-                        removeRegionArea = { viewModel.removeBusStopInfoUI(busStopInfoUI.getID()) },
-                        deleteBus = { busStopInfoUI.remove(it) }) {
-                        Log.d("daeyoung", "busStopInfoUI: $busStopInfoUI")
-                        appState.navigateToSelectBusStop(busStopInfoUI.asBusStopInfo())
-                    }
-
-                     */
                 }
                 // 도착 transitCard
                 TransitCard(
@@ -286,80 +264,6 @@ fun NotifyArea(
             onNotifyClick(it)
         }
 
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun RegionArea(
-    title: String = "출발",
-    region: String,
-    navigateRegionScreen: () -> Unit,
-    busStop: String,
-    buses: List<BusInfo>,
-    isRemoveRegionArea: Boolean = false,
-    removeRegionArea: () -> Unit = {},
-    deleteBus: (String) -> Unit,
-    navigateBusStopScreen: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 32.dp, end = 8.dp)
-    ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = title, style = sbTitle2.copy(TextColor))
-            if (isRemoveRegionArea) {
-                IconButton(
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = TextWColor,
-                        contentColor = Primary
-                    ), onClick = { removeRegionArea() }) {
-                    Icon(
-                        imageVector = MyIconPack.IcMinus,
-                        contentDescription = "ic_plus",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-        }
-        HeightSpacer(height = 14.dp)
-        WhiteContentBox(text = region.ifBlank { "도시(지역)" }) { navigateRegionScreen() }
-        HeightSpacer(height = 14.dp)
-        WhiteContentBox(text = busStop.ifBlank { "버스 정류장" }) { navigateBusStopScreen() }
-        HeightSpacer(height = 14.dp)
-        WhiteContentBox(text = "버스 번호") {}
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            buses.forEach { bus ->
-                BusBox(
-                    icon = MyIconPack.IcBus,
-                    name = bus.name,
-                    type = bus.type,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ArriveArea(
-    region: String,
-    navigateRegionScreen: () -> Unit,
-    busStop: String,
-    navigateBusStopScreen: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 32.dp, end = 8.dp)
-    ) {
-        Text(text = "도착", style = sbTitle2.copy(TextColor))
-        HeightSpacer(height = 14.dp)
-        WhiteContentBox(text = region.ifBlank { "도시(지역)" }) { navigateRegionScreen() }
-        HeightSpacer(height = 14.dp)
-        WhiteContentBox(text = busStop.ifBlank { "버스 정류장" }) { navigateBusStopScreen() }
     }
 }
 
