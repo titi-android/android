@@ -100,11 +100,6 @@ class RegisterScheduleViewModel @Inject constructor(
 
     fun isUpdateSchedule(): Boolean = scheduleId != null
 
-//    fun isRouteInfoNotEmpty():Boolean {
-//        if (transitTypeInfos.isEmpty()) return false
-//        return transitTypeInfos.first().isNotBlank()
-//    }
-
     fun setCurrentFocusTransitCard(id: Int) {
         currentFocusTransitCard = id
     }
@@ -175,32 +170,6 @@ class RegisterScheduleViewModel @Inject constructor(
     fun removeTransitCard(id: Int) {
         _transitCardUIInfos.removeAt(id)
     }
-
-//    fun addBusStopInfoUI() {
-//        _transitTypeInfos.add(BusStopInfoUIFactory.create())
-//    }
-
-//    fun removeBusStopInfoUI(id: Int) {
-//        _transitTypeInfos.removeIf { it.compareID(id) }
-//    }
-
-
-//    fun addBusStopInSelectBusStopInfo(id: Int, popBackStack: () -> Unit) {
-//        val bus = busStop.value
-//        val index = _transitTypeInfos.indexOfFirst { it.compareID(id) }
-//        Log.d("daeyoung", "index: $index")
-//        _transitTypeInfos[index] = _transitTypeInfos[index].copy(
-//            region = bus.region,
-//            busStop = bus.busStop,
-//            nodeId = bus.nodeId,
-//            busesInit = bus.buses.filter { it.isSelected }
-//                .map { BusInfo(name = it.name, type = it.type.name) }
-//        )
-//        cityOfRegion.value.unAllSelect()
-//        _busStopInput.update { "" }
-//        _busStop.update { SelectedBusUI() }
-//        popBackStack()
-//    }
 
     private fun showToastMsg(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

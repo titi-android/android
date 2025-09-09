@@ -1,5 +1,6 @@
 package com.busschedule.register.model
 
+import android.util.Log
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.busschedule.model.BusInfo
 import com.busschedule.model.BusStopSection
@@ -71,7 +72,8 @@ sealed class TransitCardUI(
             }
 
             is Subway -> {
-                val list = content2.split(", ")
+                Log.e("daeyoung", "content2: $content2")
+                val list = content2.split(" ")
                 RouteInfo(
                     type = TransitConst.SUBWAY.name,
                     busStopSection = null,
@@ -98,7 +100,7 @@ sealed class TransitCardUI(
         }
 
         is Subway -> {
-            val list = content2.split(", ")
+            val list = content2.split(" ")
             DestinationInfo(
                 type = TransitConst.SUBWAY.name,
                 regionName = content1,
