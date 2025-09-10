@@ -309,7 +309,8 @@ fun RowScope.TicketTransitContent(
     Column(
         modifier = Modifier
             .weight(1f)
-            .noRippleClickable { onClick() },
+            .noRippleClickable { onClick() }
+            .padding(horizontal = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -330,6 +331,7 @@ fun RowScope.TicketTransitContent(
             text = startPoint,
             style = sbTitle4,
             color = TextColor,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
     }
