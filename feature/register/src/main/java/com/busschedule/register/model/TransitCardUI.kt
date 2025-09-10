@@ -37,8 +37,7 @@ sealed class TransitCardUI(
     ) : TransitCardUI() {
         override fun isEmpty(): Boolean =
 //            this.buses.isEmpty() || content2.isEmpty() || content1.isEmpty()
-            content2.isEmpty() || content1.isEmpty()
-
+            content2.isEmpty()
     }
 
     data class Subway(
