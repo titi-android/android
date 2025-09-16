@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.busschedule.domain.repository.NotifyRepository
-import com.busschedule.model.FCMMessage
 import com.busschedule.model.NotificationBuilder
 import com.busschedule.notification.constant.NotifyAction
 import com.busschedule.notification.service.MyFirebaseMessagingService
@@ -26,7 +25,7 @@ class NotificationReceiver: BroadcastReceiver() {
         receiverScope.launch {
             val scheduleId = intent?.getStringExtra("scheduleId") ?: ""
             val notifyScheduleEntity = repository.read(scheduleId)
-            var nextBusStopIndex = notifyScheduleEntity.busStopIndex
+            var nextBusStopIndex = notifyScheduleEntity.notifyIndex
             if (intent?.action == NotifyAction.CLICK_NEXT_BUTTON.value) {
                 repository.updateBusStopIndex(scheduleId, ++nextBusStopIndex)
             }
@@ -34,11 +33,7 @@ class NotificationReceiver: BroadcastReceiver() {
                 repository.updateBusStopIndex(scheduleId, --nextBusStopIndex)
             }
 
-            val fcmMessage = FCMMessage(
-                scheduleId = scheduleId,
-                scheduleName = notifyScheduleEntity.scheduleName,
-                busStopInfos = notifyScheduleEntity.busStopInfos[nextBusStopIndex]
-            )
+            val notifyMessage = notifyScheduleEntity.notifyMessages[nextBusStopIndex]
 
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -49,10 +44,10 @@ class NotificationReceiver: BroadcastReceiver() {
                 MyFirebaseMessagingService.CHANNEL_NAME,
                 context,
                 scheduleId = scheduleId,
-                maxBusStopSize = notifyScheduleEntity.busStopInfos.size,
+                maxBusStopSize = notifyScheduleEntity.notifyMessages.size,
                 scheduleIndex = nextBusStopIndex,
-                title = fcmMessage.getTitle(),
-                body = fcmMessage.getContent()
+                title = notifyMessage.title,
+                body = notifyMessage.detail
             )
 
             // 알림 생성

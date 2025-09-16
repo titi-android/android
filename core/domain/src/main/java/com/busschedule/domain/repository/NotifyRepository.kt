@@ -1,6 +1,6 @@
 package com.busschedule.domain.repository
 
-import com.busschedule.model.BusStopInfo
+import com.busschedule.model.NotifyMessage
 import com.busschedule.model.ScheduleNotify
 
 interface NotifyRepository {
@@ -8,7 +8,7 @@ interface NotifyRepository {
         scheduleId: String,
         scheduleName: String,
         busStopIndex: Int = 0,
-        busStopInfos: List<BusStopInfo> = emptyList(),
+        notifyMessages: List<NotifyMessage> = emptyList(),
     )
 
     suspend fun read(scheduleId: String): ScheduleNotify
@@ -17,7 +17,7 @@ interface NotifyRepository {
 
     suspend fun isExist(scheduleId: String): Boolean
 
-    suspend fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>)
+    suspend fun update(scheduleId: String, scheduleName: String, notifyMessages: List<NotifyMessage>)
 
     suspend fun updateBusStopIndex(scheduleId: String, busStopIndex: Int)
 

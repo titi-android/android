@@ -17,7 +17,7 @@ import com.busschedule.data.local.room.model.ScheduleRegisterEntity
         RecentlySearchBusStopEntity::class,
         ScheduleRegisterEntity::class
                ],
-    version = 6
+    version = 7
 )
 @TypeConverters(Converters::class)
 abstract class RoomDataBase : RoomDatabase() {

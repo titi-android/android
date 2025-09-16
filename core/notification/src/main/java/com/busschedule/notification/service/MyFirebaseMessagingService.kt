@@ -5,13 +5,14 @@ import android.content.Context
 import android.util.Log
 import com.busschedule.domain.repository.NotifyRepository
 import com.busschedule.model.NotificationBuilder
-import com.busschedule.model.RouteInfo
+import com.busschedule.model.NotifyMessage
 import com.busschedule.notification.constant.FCMMsgData
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -35,50 +36,45 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         try {
-            Log.d("fcm", "FCM DATA: ${message.data}")
+            Log.d(TAG, "FCM DATA: ${message.data}")
 
-            val busStopInfosJson = message.data[FCMMsgData.SECTIONS.value] ?: "[]"
-            val busStopInfos = Json.decodeFromString<List<RouteInfo>>(busStopInfosJson)
+            val sectionsJson = message.data[FCMMsgData.SECTIONS.value] ?: "[]"
+            val notifyMessages = Json.decodeFromString<List<NotifyMessage>>(sectionsJson)
             val scheduleId = message.data[FCMMsgData.SCHEDULE_ID.value] ?: ""
             val scheduleName = message.data[FCMMsgData.SCHEDULENAME.value] ?: ""
             serviceScope.launch {
-                /*
+
                 launch {
                     val isExist = async { repository.isExist(scheduleId) }.await()
                     if (isExist) {
                         repository.update(
                             scheduleId = scheduleId,
                             scheduleName = scheduleName,
-                            busStopInfos = busStopInfos
+                            notifyMessages = notifyMessages
                         )
                     } else {
                         repository.insert(
                             scheduleId = scheduleId,
                             scheduleName = scheduleName,
-                            busStopInfos = busStopInfos
+                            notifyMessages = notifyMessages
                         )
                     }
 
                 }.join()
-                 */
+
                 val notifyScheduleEntity = repository.read(scheduleId)
 
-                /*
+                val curNotifyMsg =
+                    notifyScheduleEntity.notifyMessages[notifyScheduleEntity.notifyIndex]
 
-            val curBusStop = notifyScheduleEntity.busStopInfos[notifyScheduleEntity.busStopIndex]
-            val notificationMessage = FCMMessage(
-            scheduleId = notifyScheduleEntity.scheduleId,
-            scheduleName = notifyScheduleEntity.scheduleName,
-            busStopInfos = curBusStop
-            )
-            sendNotification(
-            scheduleId = notificationMessage.scheduleId,
-            maxBusStopSize = notifyScheduleEntity.busStopInfos.size,
-            scheduleIndex = notifyScheduleEntity.busStopIndex,
-            title = notificationMessage.getTitle(),
-            body = notificationMessage.getContent()
-            )
-            */
+                sendNotification(
+                    scheduleId = notifyScheduleEntity.scheduleId,
+                    maxBusStopSize = notifyScheduleEntity.notifyMessages.size,
+                    scheduleIndex = notifyScheduleEntity.notifyIndex,
+                    title = curNotifyMsg.title,
+                    body = curNotifyMsg.detail
+                )
+
             }
 
         } catch (e: Exception) {

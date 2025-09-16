@@ -2,24 +2,24 @@ package com.busschedule.data.local.room
 
 import androidx.room.TypeConverter
 import com.busschedule.model.BusInfo
-import com.busschedule.model.BusStop
-import com.busschedule.model.BusStopInfo
 import com.busschedule.model.BusRegister
+import com.busschedule.model.BusStop
+import com.busschedule.model.NotifyMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class Converters {
     @TypeConverter
-    fun fromBusStopInfoToJson(value: List<BusStopInfo>): String {
+    fun fromNotifyMessageToJson(value: List<NotifyMessage>): String {
         val gson = Gson()
-        val type = object : TypeToken<List<BusStopInfo>>() {}.type
+        val type = object : TypeToken<List<NotifyMessage>>() {}.type
         return gson.toJson(value, type)
     }
 
     @TypeConverter
-    fun fromJsonToBusStopInfo(value: String): List<BusStopInfo> {
+    fun fromJsonToNotifyMessage(value: String): List<NotifyMessage> {
         val gson = Gson()
-        val type = object : TypeToken<List<BusStopInfo>>() {}.type
+        val type = object : TypeToken<List<NotifyMessage>>() {}.type
         return gson.fromJson(value, type)
     }
 

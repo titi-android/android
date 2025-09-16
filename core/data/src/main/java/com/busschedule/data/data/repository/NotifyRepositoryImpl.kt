@@ -5,7 +5,7 @@ import com.busschedule.data.local.room.dao.NotifyScheduleDao
 import com.busschedule.data.local.room.model.ScheduleNotifyEntity
 import com.busschedule.data.local.room.model.toModel
 import com.busschedule.domain.repository.NotifyRepository
-import com.busschedule.model.BusStopInfo
+import com.busschedule.model.NotifyMessage
 import com.busschedule.model.ScheduleNotify
 import javax.inject.Inject
 
@@ -16,13 +16,13 @@ class NotifyRepositoryImpl @Inject constructor(
         scheduleId: String,
         scheduleName: String,
         busStopIndex: Int,
-        busStopInfos: List<BusStopInfo>,
+        notifyMessages: List<NotifyMessage>,
     ) {
         val scheduleNotifyEntity = ScheduleNotifyEntity(
             scheduleId = scheduleId,
             scheduleName = scheduleName,
             busStopIndex = busStopIndex,
-            busStopInfos = busStopInfos
+            notifyMessages = notifyMessages
         )
         dao.insert(scheduleNotifyEntity)
     }
@@ -34,8 +34,8 @@ class NotifyRepositoryImpl @Inject constructor(
 
     override suspend fun isExist(scheduleId: String): Boolean = dao.isExist(scheduleId)
 
-    override suspend fun update(scheduleId: String, scheduleName: String, busStopInfos: List<BusStopInfo>) {
-        dao.update(scheduleId, scheduleName, busStopInfos)
+    override suspend fun update(scheduleId: String, scheduleName: String, notifyMessages: List<NotifyMessage>) {
+        dao.update(scheduleId, scheduleName, notifyMessages)
     }
 
     override suspend fun updateBusStopIndex(scheduleId: String, busStopIndex: Int) {

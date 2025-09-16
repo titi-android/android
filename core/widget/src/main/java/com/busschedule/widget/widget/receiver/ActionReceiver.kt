@@ -3,9 +3,7 @@ package com.busschedule.widget.widget.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.glance.GlanceId
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
 import com.busschedule.domain.repository.NotifyRepository
@@ -33,12 +31,13 @@ class ActionReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
         scope.launch {
+            /*
             val manager = GlanceAppWidgetManager(context)
             val scheduleId = intent?.getStringExtra("scheduleId") ?: ""
             Log.d("daeyoung", "scheduleId: ${scheduleId}")
             val notifySchedule = repository.read(scheduleId)
             val maxSize = notifySchedule.busStopInfos.size
-            var nextBusStopIndex = notifySchedule.busStopIndex
+            var nextBusStopIndex = notifySchedule.notifyIndex
             Log.d("daeyoung", "maxSize: ${maxSize}, nextBusStopIndex: ${nextBusStopIndex}")
 
             if (intent?.action == WidgetAction.CLICK_NEXT_BUTTON.value && nextBusStopIndex < maxSize-1) {
@@ -59,6 +58,7 @@ class ActionReceiver: BroadcastReceiver() {
             )
 
             setWidgetState(context, glanceIds, scheduleInfo)
+             */
         }
     }
 
